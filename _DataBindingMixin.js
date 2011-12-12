@@ -178,7 +178,19 @@ define([
 			}
 			var ref = this.ref, pw, pb, binding;
 			// Now compute the model node to bind to
-			if(ref && lang.isFunction(ref.toPlainObject)){ // programmatic instantiation or direct ref
+			if(typeof ref == "object" && !lang.isFunction(ref.toPlainObject)){ // hash table of ref handles (dojox.mvc.at)
+				var atWatchHandles = [];
+				this._unwatchArray(this._atWatchHandles);
+				for(var prop in ref){
+					if((ref[prop] || {}).atsignature != "dojox.mvc.at"){
+						throw new Error("dojox.mvc._DataBindingMixin: '" + this.domNode +
+							"' widget with illegal ref['" + prop + "'] not evaluating to a dojox.mvc.at: '" + ref[prop] + "'");
+					}
+					atWatchHandles.push(ref[prop].bind(this, prop));
+				}
+				this._atWatchHandles = atWatchHandles;
+				return;
+			}else if(ref && lang.isFunction(ref.toPlainObject)){ // programmatic instantiation or direct ref
 				binding = ref;
 			}else if(/^\s*expr\s*:\s*/.test(ref)){ // declarative: refs as dot-separated expressions
 				ref = ref.replace(/^\s*expr\s*:\s*/, "");

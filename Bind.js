@@ -7,6 +7,43 @@ define([
 		mvc = dojox.mvc;
 	=====*/
 
+	/*=====
+	dojox.mvc.Bind.bindTwo.handle = {
+		// summary:
+		//		A handle of data binding synchronization.
+
+		unwatch: function(){
+			// summary:
+			//		Stops data binding synchronization.
+		}
+	};
+	=====*/
+
+	function getLogContent(/*dojo.Stateful*/ target, /*String*/ targetProp, /*dojo.Stateful*/ source, /*String*/ sourceProp){
+		return [
+			(source.id ? [source.id] : []).concat([source.declaredClass, sourceProp]).join(":"),
+			(target.id ? [target.id] : []).concat([target.declaredClass, targetProp]).join(":")
+		];
+	}
+
+	function copy(/*dojo.Stateful*/ target, /*String*/ targetProp, /*dojo.Stateful*/ source, /*String*/ sourceProp, /*Anything*/ old, /*Anything*/ current){
+		// summary:
+		//		Watch for change in property in dojo.Stateful object.
+		// description:
+		//		Called when sourceProp property in source is changed.
+		//		When older value and newer value are different, copies the newer value to targetProp property in target.
+
+		// Bail if there is no change in value
+		if(old === current){ return; }
+
+		if(dojox.debugDataBinding){
+			console.log(getLogContent(target, targetProp, source, sourceProp).join(" is being copied to: ") + " (Value: " + current + " from " + old + ")");
+		}
+
+		// Copy the new value to target
+		target.set(targetProp, current);
+	}
+
 	return lang.mixin(mvc, {
 		bind: function(/*dojo.Stateful*/ source, /*String*/ sourceProp,
 					/*dojo.Stateful*/ target, /*String*/ targetProp,
@@ -39,6 +76,56 @@ define([
 			});
 		},
 
+		bindTwo: function(/*dojo.Stateful*/ target, /*String*/ targetProp, /*dojo.Stateful*/ source, /*String*/ sourceProp){
+			// summary:
+			//		Synchronize two dojo.Stateful properties.
+			// description:
+			//		Synchronize two dojo.Stateful properties.
+			// target: dojo.Stateful
+			//		Target dojo.Stateful to be synchronized.
+			// targetProp: String
+			//		The property name in target to be synchronized.
+			// source: dojo.Stateful
+			//		Source dojo.Stateful to be synchronized.
+			// sourceProp: String
+			//		The property name in source to be synchronized.
+			// returns:
+			//		The handle of data binding synchronization.
+
+			var _watchHandles = [];
+
+			// Start synchronization from target to source (e.g. from model to widget)
+			_watchHandles.push(target.watch(targetProp, function(name, old, current){
+				copy(source, sourceProp, target, name, old, current);
+			}));
+
+			// Initial copy from target to source (e.g. from model to widget)
+			var value = target.get(targetProp);
+			if(value != null){
+				copy(source, sourceProp, target, targetProp, null, value);
+			}
+
+			// Start synchronization from source to target (e.g. from widget to model)
+			_watchHandles.push(source.watch(sourceProp, function(name, old, current){
+				copy(target, targetProp, source, name, old, current);
+			}));
+
+			if(dojox.debugDataBinding){
+				console.log(getLogContent(target, targetProp, source, sourceProp).join(" is bound to: "));
+			}
+
+			return {
+				unwatch: function(){
+					darray.forEach(_watchHandles, function(h){
+						h.unwatch();
+						if(dojox.debugDataBinding){
+							console.log(getLogContent(target, targetProp, source, sourceProp).join(" is unbound from: "));
+						}
+					});
+				}
+			}; // dojox.mvc.Bind.bindTwo.handle
+		},
+
 		bindInputs: function(/*dojo.Stateful[]*/ sourceBindArray, /*Function*/ func){
 			// summary:
 			//		Bind the values at the sources specified in the first argument
@@ -59,3 +146,4 @@ define([
 		}
 	});
 });
+

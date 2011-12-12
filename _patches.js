@@ -32,7 +32,10 @@ define([
 		if(this._viewWatchHandles){
 			array.forEach(this._viewWatchHandles, function(h){ h.unwatch(); });
 		}
-		oldWidgetBaseDestroy.apply(this, [preserveDom]);		
+		if(this._atWatchHandles){
+			array.forEach(this._atWatchHandles, function(h){ h.unwatch(); });
+		}
+		oldWidgetBaseDestroy.apply(this, [preserveDom]);
 	};
 
 	// monkey patch dijit.form.ValidationTextBox.isValid to check this.inherited for isValid

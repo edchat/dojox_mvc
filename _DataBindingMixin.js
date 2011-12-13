@@ -186,7 +186,7 @@ define([
 						throw new Error("dojox.mvc._DataBindingMixin: '" + this.domNode +
 							"' widget with illegal ref['" + prop + "'] not evaluating to a dojox.mvc.at: '" + ref[prop] + "'");
 					}
-					atWatchHandles.push(ref[prop].bind(this, prop));
+					atWatchHandles.push(ref[prop].setParent(parentBinding || this._getParentBindingFromDOM()).bind(this, prop));
 				}
 				this._atWatchHandles = atWatchHandles;
 				return;

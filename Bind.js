@@ -116,7 +116,7 @@ define([
 
 			return {
 				unwatch: function(){
-					darray.forEach(_watchHandles, function(h){
+					array.forEach(_watchHandles, function(h){
 						h.unwatch();
 						if(dojox.debugDataBinding){
 							console.log(getLogContent(target, targetProp, source, sourceProp).join(" is unbound from: "));

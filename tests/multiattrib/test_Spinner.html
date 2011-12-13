@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html class="basicBox" xmlns:v="urn:schemas-microsoft-com:vml">
+	<head>
+		<title>Spinner Test</title>
+		<script src="../../../../dojo/dojo.js" data-dojo-config="isDebug: true, async:true"></script>
+		<script language="JavaScript" type="text/javascript">
+			require([
+				"dojo/parser",
+				"dijit/_base/manager",
+				"dijit/layout/ContentPane",
+				"dijit/layout/StackContainer",
+				"dojox/mvc/_patches",
+				"dojox/mvc/at",
+				"dojox/mvc/widget/SpinnerController",
+				"dojox/mvc/widget/Spinner",
+				"dojox/mvc/widget/StatefulButton"
+			], function(parser, dmanager, ContentPane){
+				dojox.mvc.debugDataBinding = (location.search.match(/[&\?]debugDataBinding=([^&]*)/i) || [])[1] in {"true": 1, 1: 1};
+
+				var closablePane;
+
+				closablePaneController = dojo.mixin(new dojo.Stateful, {paneState: false});
+				closablePaneController.watch("paneState", function(name, old, current){
+					if (old === current){ return; }
+					if (current) {
+						closablePane = new ContentPane({
+							content: '<div>'
+							 + '<span id="spinnerControllerDestroyable" data-dojo-type="dojox.mvc.widget.SpinnerController"'
+							 + ' data-dojo-props="ref: {ActivityCount: dojox.mvc.at(dijit.byId(\'spinnerController\'), \'ActivityCount\')}"></span>'
+							 + '<input type="button" data-dojo-type="dojox.mvc.widget.StatefulButton"'
+							 + ' data-dojo-props="ref: {value: dojox.mvc.at(dijit.byId(\'spinnerControllerDestroyable\'), \'loading\')}, titles: {\'false\': \'Start Spinner\', \'true\': \'Stop Spinner\'}, next: {\'false\': true, \'true\': false}">'
+							 + '</div>'
+						});
+						closablePane.placeAt('stackContainer');
+						closablePane.domNode.style.background = 'orange';
+						closablePane.startup();
+						dmanager.byId('stackContainer').selectChild(closablePane);
+					} else {
+						dmanager.byId('stackContainer').closeChild(closablePane);
+					}
+				});
+
+				parser.parse();
+			});
+		</script>
+		<style>
+			@import "../../../../dijit/themes/claro/document.css";
+			@import "../../../../dijit/tests/css/dijitTests.css";
+
+			.basicBox {
+				position: relative;
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+				-moz-box-sizing: border-box;
+				-webkit-box-sizing: border-box;
+			}
+		</style>
+		<link id="themeStyles" rel="stylesheet" href="../../../../dijit/themes/claro/claro.css"/>
+	</head>
+	<body class="claro basicBox">
+		<div style="position:absolute;top:8px;left:8px;">
+			<span id="spinnerController" data-dojo-type="dojox.mvc.widget.SpinnerController"></span>
+			<div data-dojo-type="dojox.mvc.widget.Spinner"
+			 data-dojo-props="ref: {value: dojox.mvc.at(dijit.byId('spinnerController'), 'ActivityCount')}, endColor: [63, 63, 255]"></div>
+			<div style="margin-top:8px;">
+				<input type="button" data-dojo-type="dojox.mvc.widget.StatefulButton"
+				 data-dojo-props="ref: {value: dojox.mvc.at(closablePaneController, 'paneState')}, titles: {'false': 'Open Orange Pane', 'true': 'Close Orange Pane'}, next: {'false': true, 'true': false}">
+			</div>
+		</div>
+		<div id="stackContainer" class="basicBox" style="position:absolute;top:0;left:15%;width:85%;"
+		 data-dojo-type="dijit.layout.StackContainer">
+			<div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="closable:true">
+				<input type="button" data-dojo-type="dojox.mvc.widget.StatefulButton" data-dojo-props="ref: {value: dojox.mvc.at(dijit.byId('spinnerController'), 'loading')}, titles: {'false': 'Start Spinner', 'true': 'Stop Spinner'}, next: {'false': true, 'true': false}">
+			</div>
+		</div>
+	</body>
+</html>

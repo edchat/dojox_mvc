@@ -34,7 +34,7 @@ define([
 		//		When older value and newer value are different, copies the newer value to targetProp property in target.
 
 		// Bail if there is no change in value
-		if(old === current){ return; }
+		if(old === current || typeof old == "number" && isNaN(old) && typeof current == "number" && isNaN(current)){ return; }
 
 		if(dojox.debugDataBinding){
 			console.log(getLogContent(target, targetProp, source, sourceProp).join(" is being copied to: ") + " (Value: " + current + " from " + old + ")");
@@ -116,7 +116,7 @@ define([
 
 			return {
 				unwatch: function(){
-					darray.forEach(_watchHandles, function(h){
+					array.forEach(_watchHandles, function(h){
 						h.unwatch();
 						if(dojox.debugDataBinding){
 							console.log(getLogContent(target, targetProp, source, sourceProp).join(" is unbound from: "));

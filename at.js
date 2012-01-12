@@ -8,6 +8,13 @@ define([
 		// summary:
 		//		A handle of data binding target (a dojo.Stateful property), which is used for start synchronization with data binding source (another dojo.Stateful property).
 
+		setParent: function(parent){
+			// summary:
+			//		Set parent binding.
+			// parent: dojo.Stateful
+			//		The parent binding to set.
+		},
+
 		bind: function(source, sourceProp){
 			// summary:
 			//		Start data binding synchronization with specified data binding source, with the data binding target defined in this handle.
@@ -41,15 +48,23 @@ define([
 		//		Synchronize attrbinwidget attribute in my.widget with propertyname in stateful.
 		// |		<div data-dojo-type="my.widget" data-dojo-props="ref: {attribinwidget: dojox.mvc.at(stateful, 'propertyname')}"></div>
 
+		var _parent = null;
+
 		return {
 			atsignature: "dojox.mvc.at",
+
+			setParent: function(/*dojo.Stateful*/ parent){
+				_parent = parent;
+				return this; // dojox.mvc.at.handle
+			},
+
 			bind: function(/*dojo.Stateful|String*/ source, /*String*/ sourceProp){
-				var resolvedTarget = resolve(target, targetProp) || {};
+				var resolvedTarget = resolve(target, _parent) || {};
 				if(!resolvedTarget.set || !resolvedTarget.watch){
 					logBindingFailure(target, targetProp);
 				}
 
-				var resolvedSource = resolve(source, sourceProp) || {};
+				var resolvedSource = resolve(source, _parent) || {};
 				if(!resolvedSource.set || !resolvedTarget.watch){
 					logBindingFailure(source, sourceProp);
 				}

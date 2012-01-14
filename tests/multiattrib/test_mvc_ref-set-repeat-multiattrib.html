@@ -126,11 +126,11 @@
 					<div id="outergroupId"	 data-dojo-type="dojox.mvc.Group" data-dojo-props="ref: 'model1'">
 						<div id="repeatId" data-dojo-type="dojox.mvc.Repeat" data-dojo-props="ref: 'Results'">
 							<div class="row" data-dojo-type="dojox.mvc.Group" data-dojo-props="ref: 'rel:${this.index}'">
-								<input class="cell" data-dojo-type="dijit.form.CheckBox" id="CBInput${this.index}" data-dojo-props="ref: {checked: dojox.mvc.at('rel:Checked', 'value')}"/>
+								<input class="cell" data-dojo-type="dijit.form.CheckBox" id="CBInput${this.index}" data-dojo-props="checked: dojox.mvc.at('rel:Checked', 'value')"/>
 								<label data-dojo-type="dojox.mvc.Output" for="CBInput${this.index}" data-dojo-props="ref: 'First'"></label>
 					<!--  		<label for="CBInput${this.index}" data-dojo-props="ref: 'First'">LABEL(firstname)->${model1.Results[this.index].First}</label>-->	
-								<input class="cell" data-dojo-type="dijit.form.TextBox" id="nameInput${this.index}" data-dojo-props="ref: {value: dojox.mvc.at('rel:First', 'value')}"/>
-								<input class="cell" data-dojo-type="dijit.form.TextBox" id="nameInputLast${this.index}" data-dojo-props="ref: {value: dojox.mvc.at('Last', 'value')}"/>
+								<input class="cell" data-dojo-type="dijit.form.TextBox" id="nameInput${this.index}" data-dojo-props="value: dojox.mvc.at('rel:First', 'value')"/>
+								<input class="cell" data-dojo-type="dijit.form.TextBox" id="nameInputLast${this.index}" data-dojo-props="value: dojox.mvc.at('Last', 'value')"/>
 							</div>
 						</div>
 					</div>

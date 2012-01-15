@@ -15,6 +15,20 @@ define([
 			//		The parent binding to set.
 		},
 
+		direct: function(direction){
+			// summary:
+			//		Sets data binding direction.
+			// direction: Number
+			//		The data binding direction, choose from: dojox.mvc.Bind.from, dojox.mvc.Bind.to or dojox.mvc.Bind.both.
+		},
+
+		attach: function(converter){
+			// summary:
+			//		Attach a data converter.
+			// converter: dojox.mvc.Bind.converter
+			//		Class/object containing the converter functions used when the data goes between data binding target (e.g. data model or controller) to data binding origin (e.g. widget).
+		},
+
 		bind: function(source, sourceProp){
 			// summary:
 			//		Start data binding synchronization with specified data binding source, with the data binding target defined in this handle.
@@ -48,7 +62,7 @@ define([
 		//		Synchronize attrbinwidget attribute in my.widget with propertyname in stateful.
 		// |		<div data-dojo-type="my.widget" data-dojo-props="ref: {attribinwidget: dojox.mvc.at(stateful, 'propertyname')}"></div>
 
-		var _parent = null;
+		var _parent = null, _direction = Bind.both, _converter = null;
 
 		return {
 			atsignature: "dojox.mvc.at",
@@ -56,6 +70,16 @@ define([
 			setParent: function(/*dojo.Stateful*/ parent){
 				_parent = parent;
 				return this; // dojox.mvc.at.handle
+			},
+
+			direct: function(/*Number*/ direction){
+				_direction = direction;
+				return this;
+			},
+
+			attach: function(/*dojox.mvc.Bind.converter*/ converter){
+				_converter = converter;
+				return this;
 			},
 
 			bind: function(/*dojo.Stateful|String*/ source, /*String*/ sourceProp){
@@ -71,7 +95,7 @@ define([
 
 				if(!resolvedTarget.set || !resolvedTarget.watch || !resolvedSource.set || !resolvedTarget.watch){ return; }
 
-				return Bind.bindTwo(resolvedTarget, targetProp, resolvedSource, sourceProp); // dojox.mvc.Bind.handle
+				return Bind.bindTwo(resolvedTarget, targetProp, resolvedSource, sourceProp, _direction, _converter); // dojox.mvc.Bind.handle
 			}
 		}; // dojox.mvc.at.handle
 	};

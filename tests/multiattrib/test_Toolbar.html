@@ -21,6 +21,11 @@
 		data-dojo-config="isDebug: true, async: true"></script>
 
 	<script type="text/javascript">
+		negativeConverter = {
+			format: function(value){ return !value },
+			parse: function(value){ return !value }
+		};
+
 		require([
 			"dojox",
 			"dojo/parser",
@@ -99,13 +104,13 @@
 	</div>
 
 	<div style="margin-top:8px;">
-		State for "Bold":
-		<input data-dojo-type="dijit.form.CheckBox" checked data-dojo-props="checked: dojox.mvc.at(boldItemModel, 'checked')">
+		Change the state for "Bold" (but this check box is free from change in the tool bar):
+		<input data-dojo-type="dijit.form.CheckBox" checked data-dojo-props="checked: dojox.mvc.at(boldItemModel, 'checked').direct(dojox.mvc.to)">
 	</div>
 
 	<div style="margin-top:8px;">
-		State for "Italic" (directly bound to the tool bar item widget):
-		<input data-dojo-type="dijit.form.CheckBox" checked data-dojo-props="checked: dojox.mvc.at(dijit.byId('toolbar1.italic'), 'checked')">
+		"Italic" should be unselected (directly bound to the tool bar item widget):
+		<input data-dojo-type="dijit.form.CheckBox" checked data-dojo-props="checked: dojox.mvc.at(dijit.byId('toolbar1.italic'), 'checked').attach(negativeConverter)">
 	</div>
   </body>
 </html>

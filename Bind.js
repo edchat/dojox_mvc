@@ -31,6 +31,19 @@ define([
 		}
 	};
 
+	dojox.mvc.Bind.options = {
+		// summary:
+		//		Data binding options.
+
+		// direction: Number
+		//		The data binding direction, choose from: dojox.mvc.Bind.from, dojox.mvc.Bind.to or dojox.mvc.Bind.both.
+		direction: dojox.mvc.both,
+
+		// converter: dojox.mvc.Bind.converter
+		//		Class/object containing the converter functions used when the data goes between data binding target (e.g. data model or controller) to data binding origin (e.g. widget).
+		converter: null
+	};
+
 	dojox.mvc.Bind.bindTwo.handle = {
 		// summary:
 		//		A handle of data binding synchronization.
@@ -110,7 +123,7 @@ define([
 			});
 		},
 
-		bindTwo: function(/*dojo.Stateful*/ target, /*String*/ targetProp, /*dojo.Stateful*/ source, /*String*/ sourceProp, /*Number?*/ direction, /*dojox.mvc.Bind.converter?*/ converter){
+		bindTwo: function(/*dojo.Stateful*/ target, /*String*/ targetProp, /*dojo.Stateful*/ source, /*String*/ sourceProp, /*dojox.mvc.Bind.options*/ options){
 			// summary:
 			//		Synchronize two dojo.Stateful properties.
 			// description:
@@ -123,21 +136,19 @@ define([
 			//		Source dojo.Stateful to be synchronized.
 			// sourceProp: String
 			//		The property name in source to be synchronized.
-			// direction: Number?
-			//		The data binding direction, choose from: dojox.mvc.Bind.from, dojox.mvc.Bind.to or dojox.mvc.Bind.both.
-			// converter: dojox.mvc.Bind.converter?
-			//		Class/object containing the converter functions used when the data goes between data binding target (e.g. data model or controller) to data binding origin (e.g. widget).
+			// options: dojox.mvc.Bind.options
+			//		Data binding options.
 			// returns:
 			//		The handle of data binding synchronization.
 
-			var converterInstance, formatFunc, parseFunc;
+			var converter = (options || {}).converter, converterInstance, formatFunc, parseFunc;
 			if(converter){
 				converterInstance = {target: target, source: source};
 				formatFunc = lang.hitch(converterInstance, converter.format);
 				parseFunc = lang.hitch(converterInstance, converter.parse);
 			}
 
-			direction = direction || mvc.both;
+			direction = (options || {}).direction || mvc.both;
 
 			var _watchHandles = [];
 
@@ -149,18 +160,14 @@ define([
 
 				// Initial copy from target to source (e.g. from model to widget)
 				var value = target.get(targetProp);
-				if(value != null){
-					copy(formatFunc, source, sourceProp, target, targetProp, null, value);
-				}
+				copy(formatFunc, source, sourceProp, target, targetProp, null, value);
 			}
 
 			if(direction & mvc.to){
 				if(!(direction & mvc.from)){
 					// Initial copy from source to target (e.g. from widget to model), only done for one-way binding from widget to model
 					var value = source.get(sourceProp);
-					if(value != null){
-						copy(parseFunc, target, targetProp, source, sourceProp, null, value);
-					}
+					copy(parseFunc, target, targetProp, source, sourceProp, null, value);
 				}
 
 				// Start synchronization from source to target (e.g. from widget to model)

@@ -95,7 +95,7 @@ define([
 
 				if(!resolvedTarget.set || !resolvedTarget.watch || !resolvedSource.set || !resolvedTarget.watch){ return; }
 
-				return Bind.bindTwo(resolvedTarget, targetProp, resolvedSource, sourceProp, _direction, _converter); // dojox.mvc.Bind.handle
+				return Bind.bindTwo(resolvedTarget, targetProp, resolvedSource, sourceProp, {direction: _direction, converter: _converter}); // dojox.mvc.Bind.handle
 			}
 		}; // dojox.mvc.at.handle
 	};

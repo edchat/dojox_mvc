@@ -8,6 +8,42 @@ define([
 	=====*/
 
 	/*=====
+	dojox.mvc.Bind.converter = {
+		// summary:
+		//		Class/object containing the converter functions used when the data goes between data binding target (e.g. data model or controller) to data binding origin (e.g. widget).
+
+		format: function(value, constraints){
+			// summary:
+			//		The converter function used when the data comes from data binding target (e.g. data model or controller) to data binding origin (e.g. widget).
+			// value: Anything
+			//		The data.
+			// constraints: Object
+			//		The options for data conversion, which is: mixin({}, dataBindingTarget.constraints, dataBindingOrigin.constraints).
+		},
+
+		parse: function(value, constraints){
+			// summary:
+			//		The converter function used when the data comes from data binding origin (e.g. widget) to data binding target (e.g. data model or controller).
+			// value: Anything
+			//		The data.
+			// constraints: Object
+			//		The options for data conversion, which is: mixin({}, dataBindingTarget.constraints, dataBindingOrigin.constraints).
+		}
+	};
+
+	dojox.mvc.Bind.options = {
+		// summary:
+		//		Data binding options.
+
+		// direction: Number
+		//		The data binding direction, choose from: dojox.mvc.Bind.from, dojox.mvc.Bind.to or dojox.mvc.Bind.both.
+		direction: dojox.mvc.both,
+
+		// converter: dojox.mvc.Bind.converter
+		//		Class/object containing the converter functions used when the data goes between data binding target (e.g. data model or controller) to data binding origin (e.g. widget).
+		converter: null
+	};
+
 	dojox.mvc.Bind.bindTwo.handle = {
 		// summary:
 		//		A handle of data binding synchronization.
@@ -26,7 +62,7 @@ define([
 		];
 	}
 
-	function copy(/*dojo.Stateful*/ target, /*String*/ targetProp, /*dojo.Stateful*/ source, /*String*/ sourceProp, /*Anything*/ old, /*Anything*/ current){
+	function copy(/*Function*/ convertFunc, /*dojo.Stateful*/ target, /*String*/ targetProp, /*dojo.Stateful*/ source, /*String*/ sourceProp, /*Anything*/ old, /*Anything*/ current){
 		// summary:
 		//		Watch for change in property in dojo.Stateful object.
 		// description:
@@ -35,6 +71,8 @@ define([
 
 		// Bail if there is no change in value
 		if(old === current || typeof old == "number" && isNaN(old) && typeof current == "number" && isNaN(current)){ return; }
+
+		current = convertFunc ? convertFunc(current) : current;
 
 		if(dojox.debugDataBinding){
 			console.log(getLogContent(target, targetProp, source, sourceProp).join(" is being copied to: ") + " (Value: " + current + " from " + old + ")");
@@ -45,6 +83,15 @@ define([
 	}
 
 	return lang.mixin(mvc, {
+		// Data binding goes from the target to the source
+		from: 1,
+
+		// Data binding goes from the source to the target
+		to: 2,
+
+		// Data binding goes in both directions (dojox.mvc.Bind.from | dojox.mvc.Bind.to)
+		both: 3,
+
 		bind: function(/*dojo.Stateful*/ source, /*String*/ sourceProp,
 					/*dojo.Stateful*/ target, /*String*/ targetProp,
 					/*Function?*/ func, /*Boolean?*/ bindOnlyIfUnequal){
@@ -76,7 +123,7 @@ define([
 			});
 		},
 
-		bindTwo: function(/*dojo.Stateful*/ target, /*String*/ targetProp, /*dojo.Stateful*/ source, /*String*/ sourceProp){
+		bindTwo: function(/*dojo.Stateful*/ target, /*String*/ targetProp, /*dojo.Stateful*/ source, /*String*/ sourceProp, /*dojox.mvc.Bind.options*/ options){
 			// summary:
 			//		Synchronize two dojo.Stateful properties.
 			// description:
@@ -89,26 +136,45 @@ define([
 			//		Source dojo.Stateful to be synchronized.
 			// sourceProp: String
 			//		The property name in source to be synchronized.
+			// options: dojox.mvc.Bind.options
+			//		Data binding options.
 			// returns:
 			//		The handle of data binding synchronization.
 
-			var _watchHandles = [];
-
-			// Start synchronization from target to source (e.g. from model to widget)
-			_watchHandles.push(target.watch(targetProp, function(name, old, current){
-				copy(source, sourceProp, target, name, old, current);
-			}));
-
-			// Initial copy from target to source (e.g. from model to widget)
-			var value = target.get(targetProp);
-			if(value != null){
-				copy(source, sourceProp, target, targetProp, null, value);
+			var converter = (options || {}).converter, converterInstance, formatFunc, parseFunc;
+			if(converter){
+				converterInstance = {target: target, source: source};
+				formatFunc = lang.hitch(converterInstance, converter.format);
+				parseFunc = lang.hitch(converterInstance, converter.parse);
 			}
 
-			// Start synchronization from source to target (e.g. from widget to model)
-			_watchHandles.push(source.watch(sourceProp, function(name, old, current){
-				copy(target, targetProp, source, name, old, current);
-			}));
+			direction = (options || {}).direction || mvc.both;
+
+			var _watchHandles = [];
+
+			if(direction & mvc.from){
+				// Start synchronization from target to source (e.g. from model to widget)
+				_watchHandles.push(target.watch(targetProp, function(name, old, current){
+					copy(formatFunc, source, sourceProp, target, name, old, current);
+				}));
+
+				// Initial copy from target to source (e.g. from model to widget)
+				var value = target.get(targetProp);
+				copy(formatFunc, source, sourceProp, target, targetProp, null, value);
+			}
+
+			if(direction & mvc.to){
+				if(!(direction & mvc.from)){
+					// Initial copy from source to target (e.g. from widget to model), only done for one-way binding from widget to model
+					var value = source.get(sourceProp);
+					copy(parseFunc, target, targetProp, source, sourceProp, null, value);
+				}
+
+				// Start synchronization from source to target (e.g. from widget to model)
+				_watchHandles.push(source.watch(sourceProp, function(name, old, current){
+					copy(parseFunc, target, targetProp, source, name, old, current);
+				}));
+			}
 
 			if(dojox.debugDataBinding){
 				console.log(getLogContent(target, targetProp, source, sourceProp).join(" is bound to: "));

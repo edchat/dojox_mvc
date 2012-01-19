@@ -14,6 +14,11 @@
 <script type="text/javascript" djConfig="parseOnLoad:0,isDebug:1,async:1" src="../../../../dojo/dojo.js"></script>
 
 	<script type="text/javascript">
+		negativeConverter = {
+			format: function(value){ return !value },
+			parse: function(value){ return !value }
+		};
+
 		require([
 			"dojox/mvc",
 			"dojo/parser",
@@ -51,42 +56,46 @@
 						doh.register("check initial values and bindings", [{
 							name : "initial",
 							runTest : function() {
-								doh.is("Copy", dijit.byId("dijit_form_Select_2").get('value'),"value should be Copy");
+								doh.is("Copy", dijit.byId("selCopy").get('value'),"value should be Copy");
 								doh.is("Copy",  dijit.byId("toolbar1.copy").get('label'),"label should be Copy");
 
-								doh.t(dijit.byId("dijit_form_CheckBox_0").get('checked'),"bold checkbox should be true");
-								doh.t(dijit.byId("toolbar1.bold").get('checked'),"bold checkbox should be true");
-								
-								doh.f(dijit.byId("dijit_form_CheckBox_1").get('checked'),"bold checkbox should be false");
-								doh.f(dijit.byId("toolbar1.italic").get('checked'),"bold checkbox should be false");
+								doh.f(dijit.byId("checkBold").get('checked'),"bold checkbox should be false");
+								doh.f(dijit.byId("toolbar1.bold").get('checked'),"bold toolbar should be false");
+
+								doh.t(dijit.byId("checkItalic").get('checked'),"italic checkbox should be true");
+								doh.f(dijit.byId("toolbar1.italic").get('checked'),"italic toolbar should be false");
 							}
 						}]);
 
 						doh.register("update Copy Label", [{
 							name : "Update-First-Name",
 							runTest : function() {
-								var copyLabel, bold, italic;
+								var copyLabel, boldToolbar, bold, italic;
 								//test first relevant false
-								copyLabel = dijit.byId("dijit_form_Select_2");
-								copyLabel.set("value","Copy to clipboard...");
+								copyLabel = dijit.byId("selCopy");
 								if (copyLabel) {
-									doh.is("Copy to clipboard...", dijit.byId("dijit_form_Select_2").get('value'),"value should be Copy to clipboard...");
+									copyLabel.set("value","Copy to clipboard...");
+									doh.is("Copy to clipboard...", dijit.byId("selCopy").get('value'),"value should be Copy to clipboard...");
 									doh.is("Copy to clipboard...",  dijit.byId("toolbar1.copy").get('label'),"label should be Copy to clipboard...");
 								}
-								bold = dijit.byId("dijit_form_CheckBox_0");
-								bold.set("checked",false);
+								boldToolbar = dijit.byId("boldtoolbar1.copy");
+								if (boldToolbar) {
+									boldToolbar.set("checked", true);
+									doh.f(dijit.byId("checkBold").get('checked'),"bold checkbox should be false");
+									doh.t(dijit.byId("toolbar1.bold").get('checked'),"bold toolbar should be true");
+								}
+								bold = dijit.byId("checkBold");
 								if (bold) {
-									doh.f(dijit.byId("dijit_form_CheckBox_0").get('checked'),"bold checkbox should be false");
+									bold.set("checked",false);
+									doh.f(dijit.byId("checkBold").get('checked'),"bold checkbox should be false");
 									doh.f(dijit.byId("toolbar1.bold").get('checked'),"bold toolbar should be false");
 								}
-								italic = dijit.byId("dijit_form_CheckBox_1");
-								italic.set("checked",true);
-								if (bold) {
-									doh.t(dijit.byId("dijit_form_CheckBox_1").get('checked'),"bold checkbox should be true");
-									doh.t(dijit.byId("toolbar1.italic").get('checked'),"bold checkbox should be true");
+								italic = dijit.byId("checkItalic");
+								if (italic) {
+									italic.set("checked",true);
+									doh.t(dijit.byId("checkItalic").get('checked'),"italic checkbox should be false");
+									doh.f(dijit.byId("toolbar1.italic").get('checked'),"italic toolbar should be false");
 								}
-
-
 							}
 						}]);
 						doh.run();
@@ -140,20 +149,20 @@
 
 	<div style="margin-top:8px;">
 		Label for "Copy":
-		<select data-dojo-type="dijit.form.Select" data-dojo-props="value: dojox.mvc.at(copyItemModel, 'label')">
+		<select id="selCopy" data-dojo-type="dijit.form.Select" data-dojo-props="value: dojox.mvc.at(copyItemModel, 'label')">
 			<option value="Copy">Copy</option>
 			<option value="Copy to clipboard...">Copy to clipboard...</option>
 		</select>
 	</div>
 
 	<div style="margin-top:8px;">
-		State for "Bold":
-		<input data-dojo-type="dijit.form.CheckBox" checked data-dojo-props="checked: dojox.mvc.at(boldItemModel, 'checked')">
+		Change the state for "Bold" (but this check box is free from change in the tool bar):
+		<input id="checkBold" data-dojo-type="dijit.form.CheckBox" checked data-dojo-props="checked: dojox.mvc.at(boldItemModel, 'checked').direct(dojox.mvc.to)">
 	</div>
 
 	<div style="margin-top:8px;">
-		State for "Italic" (directly bound to the tool bar item widget):
-		<input data-dojo-type="dijit.form.CheckBox" checked data-dojo-props="checked: dojox.mvc.at(dijit.byId('toolbar1.italic'), 'checked')">
+		"Italic" should be unselected (directly bound to the tool bar item widget):
+		<input id="checkItalic" data-dojo-type="dijit.form.CheckBox" checked data-dojo-props="checked: dojox.mvc.at(dijit.byId('toolbar1.italic'), 'checked').attach(negativeConverter)">
 	</div>
   </body>
 

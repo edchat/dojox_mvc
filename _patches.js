@@ -32,7 +32,7 @@ define([
 	var oldWidgetBaseSet = wb.prototype.set;
 	wb.prototype.set = function(/*String*/ name, /*Anything*/ value){
 		if((value || {}).atsignature == "dojox.mvc.at"){
-			return this._dbset(name, value);
+			return this._setAtWatchHandle(name, value);
 		}
 		return oldWidgetBaseSet.apply(this, lang._toArray(arguments));
 	};

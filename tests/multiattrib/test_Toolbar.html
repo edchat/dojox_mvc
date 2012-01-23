@@ -67,7 +67,7 @@
 	<div id="toolbar1" data-dojo-type="dijit.Toolbar"
 			><div data-dojo-type="ToolbarSectionStart" data-dojo-props='label:"Buttons"'></div
 			><div id="toolbar1.cut" data-dojo-type="dijit.form.Button" data-dojo-props='showLabel:false, iconClass: dojox.mvc.at(cutItemModel, "iconClass")'>Cut</div
-			><div id="toolbar1.copy" data-dojo-type="dijit.form.Button" data-dojo-props='showLabel:true, iconClass: dojox.mvc.at(copyItemModel, "iconClass"), label: dojox.mvc.at(copyItemModel, "label")'>Copy</div
+			><div id="toolbar1.copy" data-dojo-type="dijit.form.Button" data-dojo-props='showLabel:true, "*": dojox.mvc.at(copyItemModel, "*")'>Copy</div
 
 			><div data-dojo-type="ToolbarSectionStart" data-dojo-props='label:"Toggles"'></div
 			><div id="toolbar1.bold" data-dojo-type="dijit.form.ToggleButton" data-dojo-props='iconClass:"dijitEditorIcon dijitEditorIconBold", showLabel:false, checked: dojox.mvc.at(boldItemModel, "checked")'>Bold</div

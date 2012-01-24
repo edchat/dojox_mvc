@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<title>MVC Repeat with Selectable RoundRectDataList - Single Select</title>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"/>
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<title>MVC Repeat with Selectable RoundRectList - Single Select</title>
+
+	<script type="text/javascript" src="../../../dojox/mobile/deviceTheme.js" data-dojo-config="mblThemeFiles: ['base']"></script>
 
 	<!-- required: dojo.js -->
 	<script type="text/javascript" src="../../../dojo/dojo.js"
-		data-dojo-config="isDebug: true, async: true"></script>
+		data-dojo-config="isDebug: true, async: true, parseOnLoad: false"></script>
 
 	<script type="text/javascript">
 		require([
 			"dojox",
 			"dojox/mvc",
-			"dojox/mobile/parser",
+			//"dojox/mobile/parser",
+			"dojo/parser",
 			"dojo/store/Memory",
+			"dojo/ready",
 			"dojox/mvc/_patches",
 			"dojox/mvc/at",
 			"dojox/mvc/Group",
@@ -34,9 +38,9 @@
 			"dojox/mobile/deviceTheme",
 			"dojox/mobile/RoundRectCategory",
 			"dojox/mobile/Heading"
-		], function(dojox, mvc, parser, MemoryStore){
+		], function(dojox, mvc, parser, MemoryStore, ready){
 
-			dojox.debugDataBinding = true;
+			dojox.debugDataBinding = false;
 
 			var search_results_init1 =
 			[{
@@ -81,19 +85,24 @@
 						}
 					]
 				}];
-
 			var memStore1 = new MemoryStore({data : search_results_init1});
 			model1 = mvc.newStatefulModel({ store : memStore1 })[0];
 
 			var memStore2 = new MemoryStore({data : search_results_init2});
 			model2 = mvc.newStatefulModel({ store : memStore2 })[0];
 			
-			parser.parse();
+			// when "dojo/ready" is ready call parser.parse (if not doing parseOnLoad)
+			ready(function(){
+				parser.parse();
+			});
+
+
 
 		});
 
 		// called to reset the model for each of the repeats
 		function swapToModel1() {
+			dijit.byId('repeatId1').set('ref',model1.Results); 
 			dijit.byId('repeatId2').set('ref',model1.Results); 
 			dijit.byId('repeatid2arem').set('ref',model1.Results);
 			dijit.byId('repeatid2aremg').set('ref',model1.Results);
@@ -101,6 +110,7 @@
 		};
 
 		function swapToModel2() {
+			dijit.byId('repeatId1').set('ref',model2.Results); 
 			dijit.byId('repeatId2').set('ref',model2.Results); 
 			dijit.byId('repeatid2arem').set('ref',model2.Results);
 			dijit.byId('repeatid2aremg').set('ref',model2.Results);
@@ -110,7 +120,7 @@
 		
 	</script>
 </head>
-<body class="claro">
+<body style="visibility:hidden;">
 		<div id="wrapper">
 			<div id="header">
 				<div id="navigation"></div>
@@ -121,19 +131,15 @@
 			<div id="main">
 				<div id="leftNav"></div>
 				<div id="mainContent">
-				<h4>Here is one using MVC using Repeat no Group, using useParent it has style and 
-				selection problems because of the Group nodes, updates to the model are reflected here, looks good, but has selection problems...
-				Also the Swap model buttons do not work with this one.
-				</h4>
-				<ul data-dojo-type="dojox.mobile.RoundRectList"  id="repeatparentid" select="single">
-					<div data-dojo-type="dojox.mvc.Repeat" id="repeatid2a" data-dojo-props="exprchar:'#', ref:'model1.Results', useParent:'repeatparentid'">
-							<li id="configure_item#{this.index}" class="mblVariableHeight" data-dojo-type="dojox.mobile.ListItem"  
-								data-dojo-props="label: dojox.mvc.at('model1.Results.#{this.index}.First', 'value'),
-												checked: dojox.mvc.at('model1.Results.#{this.index}.Checked', 'value')">
+				<h4>Here is one using dojox.mvc.Repeat as a mixin with no Group and dojo.parser instead of dojox.mobile.parser it is all good using mixin.</h4>
+				<ul data-dojo-type="dojox.mobile.RoundRectList"  id="repeatId1" select="single" 
+					data-dojo-mixins="dojox.mvc.Repeat" data-dojo-props="exprchar:'#', ref:'model1.Results'">
+							<li id="configure_itemmix1#{this.index}" class="mblVariableHeight" data-dojo-type="dojox.mobile.ListItem"  
+								data-dojo-props="label: dojox.mvc.at('rel:#{this.index}.First', 'value'),
+												checked: dojox.mvc.at('rel:#{this.index}.Checked', 'value')">
 							</li>
-					</div>
 				</ul>
-
+				
 				<h4>Here is one using MVC using Repeat no Group, with removeRepeatNode set true it is all good if Repeat sets select and onCheckStateChanged.</h4>
 				<ul data-dojo-type="dojox.mobile.RoundRectList"  id="repeatparentidrem" select="single">
 					<div data-dojo-type="dojox.mvc.Repeat" id="repeatid2arem" data-dojo-props="exprchar:'#', ref:'model1.Results', removeRepeatNode:true">
@@ -172,6 +178,20 @@
 					<button type="button" data-dojo-type="dojox.mobile.Button" data-dojo-props="onClick: function(){swapToModel2();}">Swap Model2</button> 
 					<button type="button" data-dojo-type="dojox.mobile.Button" data-dojo-props="onClick: function(){swapToModel1();}">Swap Model1</button> 					
 					<button id="reset" type="button" data-dojo-type="dojox.mobile.Button" data-dojo-props="onClick: function(){model1.reset();model2.reset();}">Reset all</button>
+				
+				<h4>Here is one using MVC using Repeat no Group, using useParent it has style and 
+				selection problems because of the Group nodes, updates to the model are reflected here, looks good, but has selection problems...
+				Also the Swap model buttons do not work with this one.
+				</h4>
+				<ul data-dojo-type="dojox.mobile.RoundRectList"  id="repeatparentid" select="single">
+					<div data-dojo-type="dojox.mvc.Repeat" id="repeatid2a" data-dojo-props="exprchar:'#', ref:'model1.Results', useParent:'repeatparentid'">
+							<li id="configure_item#{this.index}" class="mblVariableHeight" data-dojo-type="dojox.mobile.ListItem"  
+								data-dojo-props="label: dojox.mvc.at('model1.Results.#{this.index}.First', 'value'),
+												checked: dojox.mvc.at('model1.Results.#{this.index}.Checked', 'value')">
+							</li>
+					</div>
+				</ul>
+
 
 		<!--
 					<h4>Here is a normal RoundRectList for comparison Item one should be selected</h4>

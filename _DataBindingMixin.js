@@ -188,12 +188,20 @@ define([
 					this._atWatchHandles[s].unwatch();
 					delete this._atWatchHandles[s];
 				}
+				// Clear the cache of properties that data binding is established with
+				this._excludes = null;
+				// First, establish non-wildcard data bindings
 				for(var prop in refs){
+					if(prop == "*"){ continue; }
 					if((refs[prop] || {}).atsignature != "dojox.mvc.at"){
 						throw new Error("dojox.mvc._DataBindingMixin: '" + this.domNode +
 							"' widget with illegal ref['" + prop + "'] not evaluating to a dojox.mvc.at: '" + refs[prop] + "'");
 					}
 					atWatchHandles[prop] = refs[prop].setParent(parentBinding || this._getParentBindingFromDOM()).bind(this, prop);
+				}
+				// Then establish wildcard data bindings
+				if((refs["*"] || {}).atsignature == "dojox.mvc.at"){
+					atWatchHandles["*"] = refs["*"].setParent(parentBinding || this._getParentBindingFromDOM()).bind(this, "*");
 				}
 				return;
 			}
@@ -264,7 +272,7 @@ define([
 			}
 		},
 
-		_dbset: function(/*String*/ name, /*Anything*/ value){
+		_setAtWatchHandle: function(/*String*/ name, /*Anything*/ value){
 			// summary:
 			//		Called if the value is a dojox.mvc.at handle.
 			//		If this widget has started, start data binding with the new dojox.mvc.at handle.
@@ -279,6 +287,9 @@ define([
 			// Claar the value
 			this[name] = null;
 
+			// Clear the cache of properties that data binding is established with
+			this._excludes = null;
+
 			if(this._started){
 				// If this widget has started, start data binding with the new dojox.mvc.at handle
 				this._atWatchHandles[name] = value.setParent(this._getParentBindingFromDOM()).bind(this, name);
@@ -288,6 +299,33 @@ define([
 			}
 
 			return this;
+		},
+
+		_getExcludesAttr: function(){
+			// summary:
+			//		Returns list of all properties that data binding is established with.
+
+			if(this._excludes){ return this._excludes; }
+			var list = [];
+			for(var s in this._atWatchHandles){
+				if(s != "*"){ list.push(s); }
+			}
+			return list; // String[]
+		},
+
+		_getPropertiesAttr: function(){
+			// summary:
+			//		Returns list of all properties in this widget, except "id".
+
+			if(this.constructor._attribs){
+				return this.constructor._attribs;
+			}
+			var list = [].concat(this.constructor._setterAttrs);
+			array.forEach(["id", "excludes", "properties"], function(s){
+				var index = array.indexOf(list, s);
+				if (index >= 0){ list.splice(index, 1); }
+			});
+			return this.constructor._attribs = list; // String[]
 		},
 
 		_isEqual: function(one, other){

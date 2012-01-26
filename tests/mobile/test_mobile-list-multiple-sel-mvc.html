@@ -4,12 +4,12 @@
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
 	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"/>
 	<meta name="apple-mobile-web-app-capable" content="yes"/>
-	<title>MVC Repeat with Selectable RoundRectList - Single Select</title>
+	<title>MVC Repeat with Selectable RoundRectDataList - Multiple Select</title>
 
-	<script type="text/javascript" src="../../../dojox/mobile/deviceTheme.js" data-dojo-config="mblThemeFiles: ['base']"></script>
+	<script type="text/javascript" src="./../../../dojox/mobile/deviceTheme.js" data-dojo-config="mblThemeFiles: ['base']"></script>
 
 	<!-- required: dojo.js -->
-	<script type="text/javascript" src="../../../dojo/dojo.js"
+	<script type="text/javascript" src="../../../../dojo/dojo.js"
 		data-dojo-config="isDebug: true, async: true, parseOnLoad: false"></script>
 
 	<script type="text/javascript">
@@ -125,23 +125,23 @@
 			<div id="header">
 				<div id="navigation"></div>
 				<div id="headerInsert">
-					<h2>MVC Repeat with Selectable RoundRectDataList - Single Select</h2>
+					<h2>MVC Repeat with Selectable RoundRectList - Multiple Select</h2>
 				</div>
 			</div>
 			<div id="main">
 				<div id="leftNav"></div>
 				<div id="mainContent">
 				<h4>Here is one using dojox.mvc.Repeat as a mixin with no Group and dojo.parser instead of dojox.mobile.parser it is all good using mixin.</h4>
-				<ul data-dojo-type="dojox.mobile.RoundRectList"  id="repeatId1" select="single" 
+				<ul data-dojo-type="dojox.mobile.RoundRectList"  id="repeatId1" select="multiple" 
 					data-dojo-mixins="dojox.mvc.Repeat" data-dojo-props="exprchar:'#', ref:'model1.Results'">
 							<li id="configure_itemmix1#{this.index}" class="mblVariableHeight" data-dojo-type="dojox.mobile.ListItem"  
 								data-dojo-props="label: dojox.mvc.at('rel:#{this.index}.First', 'value'),
 												checked: dojox.mvc.at('rel:#{this.index}.Checked', 'value')">
 							</li>
 				</ul>
-				
+
 				<h4>Here is one using MVC using Repeat no Group, with removeRepeatNode set true it is all good if Repeat sets select and onCheckStateChanged.</h4>
-				<ul data-dojo-type="dojox.mobile.RoundRectList"  id="repeatparentidrem" select="single">
+				<ul data-dojo-type="dojox.mobile.RoundRectList"  id="repeatparentidrem" select="multiple">
 					<div data-dojo-type="dojox.mvc.Repeat" id="repeatid2arem" data-dojo-props="exprchar:'#', ref:'model1.Results', removeRepeatNode:true">
 							<li id="configure_itemrem#{this.index}" class="mblVariableHeight" data-dojo-type="dojox.mobile.ListItem"  
 								data-dojo-props="label: dojox.mvc.at('rel:#{this.index}.First', 'value'),
@@ -151,7 +151,7 @@
 				</ul>
 
 				<h4>Here is one using MVC using Repeat with a Group, with removeRepeatNode set true it is all good if Repeat sets select and onCheckStateChanged.</h4>
-				<ul data-dojo-type="dojox.mobile.RoundRectList"  id="repeatparentidremg" select="single">
+				<ul data-dojo-type="dojox.mobile.RoundRectList"  id="repeatparentidremg" select="multiple">
 					<div data-dojo-type="dojox.mvc.Repeat" id="repeatid2aremg" data-dojo-props="exprchar:'#', ref:'model1.Results', removeRepeatNode:true">
 						<div data-dojo-type="dojox.mvc.Group" data-dojo-props="ref: '#{this.index}'">
 							<li id="configure_itemremg#{this.index}" class="mblVariableHeight" data-dojo-type="dojox.mobile.ListItem"  
@@ -183,7 +183,7 @@
 				selection problems because of the Group nodes, updates to the model are reflected here, looks good, but has selection problems...
 				Also the Swap model buttons do not work with this one.
 				</h4>
-				<ul data-dojo-type="dojox.mobile.RoundRectList"  id="repeatparentid" select="single">
+				<ul data-dojo-type="dojox.mobile.RoundRectList"  id="repeatparentid" select="multiple">
 					<div data-dojo-type="dojox.mvc.Repeat" id="repeatid2a" data-dojo-props="exprchar:'#', ref:'model1.Results', useParent:'repeatparentid'">
 							<li id="configure_item#{this.index}" class="mblVariableHeight" data-dojo-type="dojox.mobile.ListItem"  
 								data-dojo-props="label: dojox.mvc.at('model1.Results.#{this.index}.First', 'value'),
@@ -192,10 +192,9 @@
 					</div>
 				</ul>
 
-
 		<!--
 					<h4>Here is a normal RoundRectList for comparison Item one should be selected</h4>
-					<ul id="list1a" data-dojo-type="dojox.mobile.RoundRectList" select="single" >
+					<ul id="list1a" data-dojo-type="dojox.mobile.RoundRectList" select="multiple" >
 							<li id="configure_itemXX0" class="mblVariableHeight" data-dojo-type="dojox.mobile.ListItem"  
 								data-dojo-props="label: dojox.mvc.at(model1.Results[0].First, 'value'),
 												checked: dojox.mvc.at(model1.Results[0].Checked, 'value')">

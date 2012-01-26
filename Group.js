@@ -23,7 +23,7 @@ define(["dojo/_base/declare", "dijit/_WidgetBase", 	"dojo/_base/lang"], function
 					this.onCheckStateChanged = this.getParent().onCheckStateChanged;
 				}
 			}			
-			this.inherited(arguments);			
+			this.inherited(arguments);
 		},
 		
 	});

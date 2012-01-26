@@ -14,7 +14,7 @@ define([
 		_Container = dojox.mvc._Container;
 	=====*/
 
-	return declare("dojox.mvc.Repeat", [_Container], {
+	return declare("dojox.mvc.Repeat", _Container, {
 		// summary:
 		//		A model-bound container which binds to a collection within a data model
 		//		and produces a repeating user-interface from a template for each

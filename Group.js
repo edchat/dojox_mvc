@@ -1,10 +1,10 @@
-define(["dojo/_base/declare", "dijit/_WidgetBase", 	"dojo/_base/lang"], function(declare, WidgetBase, lang){
+define(["dojo/_base/declare", "dijit/_WidgetBase", 	"dojo/_base/lang"], function(declare, _WidgetBase, lang){
 	/*=====
 		WidgetBase = dijit._WidgetBase;
 		declare = dojo.declare;
 	=====*/
 
-	return declare("dojox.mvc.Group", [WidgetBase], {
+	return declare("dojox.mvc.Group", _WidgetBase, {
 		// summary:
 		//		A simple model-bound container widget with single-node binding to a data model.
 		//

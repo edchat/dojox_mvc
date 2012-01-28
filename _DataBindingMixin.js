@@ -235,7 +235,7 @@ define([
 					binding = lang.getObject("" + ref, false, parentBinding);
 				}else{
 					try{
-						if(lang.getObject(ref) instanceof Stateful){
+						if(lang.getObject("" + ref) instanceof Stateful){
 							binding = lang.getObject(ref);
 						}						
 					}catch(err){

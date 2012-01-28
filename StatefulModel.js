@@ -2,8 +2,9 @@ define([
 	"dojo/_base/lang",
 	"dojo/_base/array",
 	"dojo/_base/declare",
-	"dojo/Stateful"
-], function(lang, array, declare, Stateful){
+	"dojo/Stateful",
+	"./StatefulArray"
+], function(lang, array, declare, Stateful, StatefulArray){
 	/*=====
 		declare = dojo.declare;
 		Stateful = dojo.Stateful;
@@ -244,6 +245,26 @@ define([
 			return ret;
 		},
 
+		splice: function(/*Number*/ idx, /*Number*/ n){
+			// summary:
+			//		Removes and then adds some elements to this array.
+			//		Updates the removed/added elements, as well as the length, as stateful.
+			// idx: Number
+			//		The index where removal/addition should be done.
+			// n: Number
+			//		How many elements to be removed at idx.
+			// varargs: Anything[]
+			//		The elements to be added to idx.
+			// returns: dojox.mvc.StatefulArray
+			//		The removed elements.
+
+			var a = (new StatefulArray([])).splice.apply(this, lang._toArray(arguments));
+			for(var i = 0; i < a.length; i++){
+				(this._removals = this._removals || []).push(a[i].toPlainObject());
+			}
+			return a;
+		},
+
 		add: function(/*String*/ name, /*dojo.Stateful*/ stateful){
 			// summary:
 			//		Adds a dojo.Stateful tree represented by the given
@@ -257,37 +278,12 @@ define([
 			//		In case of arrays, the property names are indices passed
 			//		as Strings. An addition of such a dojo.Stateful node
 			//		results in right-shifting any trailing sibling nodes.
-			var n, n1, elem, elem1, save = new StatefulModel({ data : "" });
+
 			if(typeof this.get("length") === "number" && /^[0-9]+$/.test(name.toString())){
-				n = name;
-				if(!this.get(n)){
-					if(this.get("length") == 0 && n == 0){ // handle the empty array case
-						this.set(n, stateful);
-					} else {
-						n1 = n-1;
-						if(!this.get(n1)){
-							throw new Error("Out of bounds insert attempted, must be contiguous.");
-						}
-						this.set(n, stateful);
-					}
-				}else{
-					n1 = n-0+1;
-					elem = stateful;
-					elem1 = this.get(n1);
-					if(!elem1){
-						this.set(n1, elem);
-					}else{
-						do{
-							this._copyStatefulProperties(elem1, save);
-							this._copyStatefulProperties(elem, elem1);
-							this._copyStatefulProperties(save, elem);
-							this.set(n1, elem1); // for watchers
-							elem1 = this.get(++n1);
-						}while(elem1);
-						this.set(n1, elem);
-					}
+				if(this.get("length") < (name - 0)){
+					throw new Error("Out of bounds insert attempted, must be contiguous.");
 				}
-				this.set("length", this.get("length") + 1);
+				this.splice(name - 0, 0, stateful);
 			}else{
 				this.set(name, stateful);
 			}
@@ -302,33 +298,14 @@ define([
 			//		In case of arrays, the property names are indices passed
 			//		as Strings. A removal of such a dojo.Stateful node
 			//		results in left-shifting any trailing sibling nodes.
-			var n, elem, elem1;
 			if(typeof this.get("length") === "number" && /^[0-9]+$/.test(name.toString())){
-				n = name;
-				elem = this.get(n);
-				if(!elem){
+				if(!this.get(name)){
 					throw new Error("Out of bounds delete attempted - no such index: " + n);
 				}else{
-					this._removals = this._removals || [];
-					this._removals.push(elem.toPlainObject());
-					n1 = n-0+1;
-					elem1 = this.get(n1);
-					if(!elem1){
-						this.set(n, undefined);
-						delete this[n];
-					}else{
-						while(elem1){
-							this._copyStatefulProperties(elem1, elem);
-							elem = this.get(n1++);
-							elem1 = this.get(n1);
-						}
-						this.set(n1-1, undefined);
-						delete this[n1-1];
-					}
-					this.set("length", this.get("length") - 1);
+					this.splice(name - 0, 1);
 				}
 			}else{
-				elem = this.get(name);
+				var elem = this.get(name);
 				if(!elem){
 					throw new Error("Illegal delete attempted - no such property: " + name);
 				}else{
@@ -436,24 +413,6 @@ define([
 				}, this);
 			}else{
 				store.put(dataToCommit);
-			}
-		},
-
-		_copyStatefulProperties: function(/*dojo.Stateful*/ src, /*dojo.Stateful*/ dest){
-			// summary:
-			//		Copy only the dojo.Stateful properties from src to dest (uses
-			//		duck typing).
-			//	src:
-			//		The source object for the copy.
-			//	dest:
-			//		The target object of the copy.
-			// tags:
-			//		private
-			for(var x in src){
-				var o = src.get(x);
-				if(o && lang.isObject(o) && lang.isFunction(o.get)){
-					dest.set(x, o);
-				}
 			}
 		}
 	});

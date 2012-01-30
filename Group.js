@@ -25,6 +25,14 @@ define(["dojo/_base/declare", "dijit/_WidgetBase", 	"dojo/_base/lang"], function
 			}			
 			this.inherited(arguments);
 		},
-		
+
+		_setTargetAttr: function(/*dojo.Stateful*/ value){
+			// summary:
+			//		Handler for calls to set("target", val).
+			// description:
+			//		Sets "binding" property so that child widgets can refer to.
+
+			this.set("binding", value);
+		}
 	});
 });

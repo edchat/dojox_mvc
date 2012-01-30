@@ -18,7 +18,7 @@ define([
 			var tokens = target.match(/^(rel|widget):(.*)$/) || [];
 			try{
 				if(tokens[1] == "rel"){
-					target = lang.getObject(tokens[2], false, parent);
+					target = lang.getObject(tokens[2] || "", false, parent);
 				}else if(tokens[1] == "widget"){
 					target = registry.byId(tokens[2]);
 				}else{

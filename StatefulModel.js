@@ -1,10 +1,13 @@
 define([
+	"dojo/_base/kernel",
 	"dojo/_base/lang",
 	"dojo/_base/array",
 	"dojo/_base/declare",
 	"dojo/Stateful",
+	"./getStateful",
+	"./getPlainValue",
 	"./StatefulArray"
-], function(lang, array, declare, Stateful, StatefulArray){
+], function(kernel, lang, array, declare, Stateful, getStateful, getPlainValue, StatefulArray){
 	/*=====
 		declare = dojo.declare;
 		Stateful = dojo.Stateful;
@@ -224,25 +227,8 @@ define([
 			//		Object
 			//		The plain JavaScript object representation of the data in this
 			//		model.
-			var ret = {};
-			var nested = false;
-			for(var p in this){
-				if(this[p] && lang.isFunction(this[p].toPlainObject)){
-					if(!nested && typeof this.get("length") === "number"){
-						ret = [];
-					}
-					nested = true;
-					ret[p] = this[p].toPlainObject();
-				}
-			}
-			if(!nested){
-				if(this.get("length") === 0){
-					ret = [];
-				}else{				
-					ret = this.value;
-				}
-			}
-			return ret;
+
+			return getPlainValue(this, StatefulModel.getPlainValueOptions);
 		},
 
 		splice: function(/*Number*/ idx, /*Number*/ n){
@@ -352,30 +338,28 @@ define([
 			// tags:
 			//		private
 			var data = (args && "data" in args) ? args.data : this.data; 
-			this._createModel(data);
+
+			if(data != null){
+				kernel.deprecated("To create dojox.mvc.StatefulModel from data, dojox.mvc.getStateful() should be used.");
+				data = getStateful(data, StatefulModel.getStatefulOptions);
+				if(lang.isArray(data)){
+					// Some consumers of dojox.mvc.StatefulModel inherits it via dojo.declare(), where we cannot use array inheritance technique
+					// (dojo.declare() does not support return value in constructor)
+					this.length = 0;
+					[].splice.apply(this, data);
+				}else if(lang.isObject(data)){
+					for(var s in data){
+						if(data.hasOwnProperty(s)){
+							this[s] = data[s];
+						}
+					}
+				}else{
+					this.set("value", data);
+				}
+			}
 		},
 
 		//////////////////////// PRIVATE METHODS ////////////////////////
-
-		_createModel: function(/*Object*/ obj){
-			// summary:
-			//		Create this data model from provided input data.
-			//	obj:
-			//		The input for the model, as a plain JavaScript object.
-			// tags:
-			//		private
-			if(lang.isObject(obj) && !(obj instanceof Date) && !(obj instanceof RegExp) && obj !== null){
-				for(var x in obj){
-					var newProp = new StatefulModel({ data : obj[x] });
-					this.set(x, newProp);
-				}
-				if(lang.isArray(obj)){
-					this.set("length", obj.length);
-				}
-			}else{
-				this.set("value", obj);
-			}
-		},
 
 		_commit: function(){
 			// summary:
@@ -413,6 +397,100 @@ define([
 				}, this);
 			}else{
 				store.put(dataToCommit);
+			}
+		}
+	});
+
+	lang.mixin(StatefulModel, {
+		getStatefulOptions: {
+			// summary:
+			//		An object that defines how model object should be created from plain object hierarchy.
+
+			getType: function(/*Anything*/ v){
+				// summary:
+				//		Returns the type of the given value.
+				// v: Anything
+				//		The value.
+
+				return lang.isArray(v) ? "array" : {}.toString.call(v) == "[object Object]" ? "object" : "value"; // String
+			},
+
+			getStatefulArray: function(/*Anything[]*/ a){
+				// summary:
+				//		Create a stateful array from a plain array.
+				// a: Anything[]
+				//		The plain array.
+
+				var _self = this, statefularray = lang.mixin(new StatefulArray(array.map(a, function(item){ return getStateful(item, _self); })));
+				for(var s in StatefulModel.prototype){
+					if(s != "set"){ statefularray[s] = StatefulModel.prototype[s]; }
+				}
+				statefularray.data = a;
+				return statefularray;
+			},
+
+			getStatefulObject: function(/*Object*/ o){
+				// summary:
+				//		Create a stateful object from a plain object.
+				// o: Object
+				//		The plain object.
+
+				var object = new StatefulModel();
+				object.data = o;
+				for(var s in o){
+					object.set(s, getStateful(o[s], this));
+				}
+				return object; // dojox.mvc.StatefulModel
+			},
+
+			getStatefulValue: function(/*Anything*/ v){
+				// summary:
+				//		Create a stateful value from a plain value.
+				// v: Anything
+				//		The plain value.
+
+				var value = new StatefulModel();
+				value.data = v;
+				value.set("value", v);
+				return value;
+			}
+		},
+
+		getPlainValueOptions: {
+			// summary:
+			//		An object that defines how plain value should be created from model object.
+
+			getType: function(/*Anything*/ v){
+				// summary:
+				//		Returns the type of the given value.
+				// v: Anything
+				//		The value.
+
+				if(lang.isArray(v)){ return "array"; }
+				if(lang.isObject(v)){ // Primitive values may have their own properties
+					for(var s in v){
+						if(v.hasOwnProperty(s) && s != "value" && (v[s] || {}).get && (v[s] || {}).watch){
+							return "object";
+						}
+					}
+				}
+				return "value";
+			},
+
+			getPlainArray: function(/*dojox.mvc.StatefulArray*/ a){
+				return array.map(this, function(item){ return getPlainValue(item, this); });
+			},
+
+			getPlainObject: function(/*dojox.mvc.StatefulModel*/ o){
+				var plain = {};
+				for(var s in o){
+					plain[s] = getPlainValue(o[s], this);
+				}
+				return plain;
+			},
+
+			getPlainValue: function(/*Anything*/ v){
+				return (v || {}).set && (v || {}).watch ? v.value : v;
 			}
 		}
 	});

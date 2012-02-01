@@ -4,27 +4,19 @@ define(["dojo/_base/lang"], function(lang){
 		// summary:
 		//		An object that defines how model object should be created from plain object hierarchy.
 
-		getStatefulArray: function(a){
+		getType: function(v){
 			// summary:
-			//		Create a stateful array from a plain array.
-			// a: Anything[]
-			//		The plain array.
+			//		Returns the type of the given value.
+			// v: Anything
+			//		The value.
 
-			return a; // dojox.mvc.StatefulArray
+			return "value"; // String
 		},
 
-		getStatefulObject: function(o){
+		getStatefulType: function(v){
 			// summary:
-			//		Create a stateful object from a plain object.
-			// o: Object
-			//		The plain object.
-
-			return o; // dojo.Stateful
-		},
-
-		getStatefulValue: function(v){
-			// summary:
-			//		Create a stateful value from a plain value.
+			//		Creates a stateful value from a plain value.
+			//		The "Type" in this function name is actually what getType() returns, with first character uppercased, such as: getStatefulArray, getStatefulObject, getStatefulValue.
 			// v: Anything
 			//		The plain value.
 
@@ -45,13 +37,7 @@ define(["dojo/_base/lang"], function(lang){
 		// returns: Anything
 		//		 The converted value.
 
-		if(lang.isArray(value)){
-			return options.getStatefulArray(value);
-		}else if({}.toString.call(value) == "[object Object]"){
-			return options.getStatefulObject(value);
-		}else{
-			return options.getStatefulValue(value);
-		}
+		return options["getStateful" + options.getType(value).replace(/^[a-z]/, function(c){ return c.toUpperCase(); })](value); // Anything
 	};
 
 	return lang.setObject("dojox.mvc.getStateful", getStateful);

@@ -2,12 +2,11 @@ define([
 	"dojo/_base/kernel",
 	"dojo/_base/lang",
 	"./getStateful",
-	"./getStatefulModelOptions",
 	"./StatefulModel",
 	"./Bind",
 	"./_DataBindingMixin",
 	"./_patches"
-], function(kernel, lang, getStateful, getStatefulModelOptions, StatefulModel){
+], function(kernel, lang, getStateful, StatefulModel){
 	// module:
 	//		dojox/mvc/_base
 	// summary:
@@ -45,18 +44,18 @@ define([
 		//			  Promise
 
 		if(args.data){
-			return getStateful(args.data, getStatefulModelOptions);
+			return getStateful(args.data, StatefulModel.getStatefulOptions);
 		}else if(args.store && lang.isFunction(args.store.query)){
 			var model;
 			var result = args.store.query(args.query);
 			if(result.then){
 				return (result.then(function(data){
-					model = getStateful(data, getStatefulModelOptions);
+					model = getStateful(data, StatefulModel.getStatefulOptions);
 					model.store = args.store;
 					return model;
 				}));
 			}else{
-				model = getStateful(result, getStatefulModelOptions);
+				model = getStateful(result, StatefulModel.getStatefulOptions);
 				model.store = args.store;
 				return model;
 			}

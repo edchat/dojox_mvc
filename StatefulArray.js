@@ -2,15 +2,29 @@ define([
 	"dojo/_base/lang",
 	"dojo/Stateful"
 ], function(lang, Stateful){
+	/*=====
+	dojox.mvc.StatefulArray.watchElements.handle = {
+		// summary:
+		//		A handle of setting watch callback for array elements.
+
+		unwatch: function(){
+			// summary:
+			//		Stops watching for array elements.
+		}
+	};
+	=====*/
+
 	function update(/*dojox.mvc.StatefulArray*/ a){
 		// summary:
 		//		Set all array elements as stateful so that watch function runs.
 		// a: dojox.mvc.StatefulArray
 		//		The array.
 
-		for(var i = 0; i < a.get("length"); i++){
-			a.set(i, a[i]);
+		// Notify change of elements.
+		if(a._watchElementCallbacks){
+			a._watchElementCallbacks();
 		}
+
 		return a; // dojox.mvc.StatefulArray
 	}
 
@@ -32,33 +46,26 @@ define([
 		var l = a.get("length"),
 		 p = Math.min(idx, l),
 		 removals = a.slice(idx, idx + n),
-		 adds = lang._toArray(arguments).slice(3),
-		 slid = a.notifySlides && a.slice(idx, idx + l - p - n);
+		 adds = lang._toArray(arguments).slice(3);
 
-		// If we don't need to notify slid elements, do the modification in a native manner except for setting additions
-		if(!a.notifySlides){
-			[].splice.apply(this, [idx, n].concat(new Array(adds.length)));
-		}
+		// Do the modification in a native manner except for setting additions
+		[].splice.apply(this, [idx, n].concat(new Array(adds.length)));
 
 		// Set additions in a stateful manner
 		for(var i = 0; i < adds.length; i++){
 			a.set(p + i, adds[i]);
 		}
 
-		// Set slid elements in a stateful manner to notify of them
-		if(a.notifySlides && (n > 0 || adds.length > 0)){
-			for(i = 0; i < slid.length; i++){
-				a.set(p + adds.length + i, slid[i]);
-			}
+		// Notify change of elements.
+		if(this._watchElementCallbacks){
+			this._watchElementCallbacks(idx, removals, adds);
 		}
 
-		// Set elements of reduced index, in a stateful manner
-		for(var i = l - n + adds.length; i < l; i++){
-			a.set(i, void 0);
+		// Notify change of length.
+		// Not calling the setter for "length" though, given removal/addition of array automatically changes the length.
+		if(this._watchCallbacks){
+			this._watchCallbacks("length", l, l - removals.length + adds.length);
 		}
-
-		// Update the length
-		a.set("length", l - n + adds.length);
 
 		return removals; // dojox.mvc.StatefulArray
 	}
@@ -105,9 +112,7 @@ define([
 		// value: Anything
 		//		The new value.
 
-		if(arguments.callee.caller.caller == splice){
-			return Stateful.prototype.set.call(this, name, value);
-		}else if(name == "length"){
+		if(name == "length"){
 			var old = a.get("length");
 			if(old < value){
 				a.splice.apply(a, [old, 0].concat(new Array(value - old)))
@@ -119,6 +124,38 @@ define([
 			Stateful.prototype.set.call(this, name, value);
 			return Stateful.prototype.set.call(this, "length", this.length);
 		}
+	}
+
+	function watchElements(/*dojox.mvc.StatefulArray*/ a, /*Function*/ callback){
+		// summary:
+		//		Watch for change in array elements.
+		// a: dojox.mvc.StatefulArray
+		//		The array.
+		// callback: Function
+		//		The callback function, which should take: The array index, the removed elements, and the added elements.
+
+		var callbacks = a._watchElementCallbacks;
+		if(!callbacks){
+			callbacks = a._watchElementCallbacks = function(idx, removals, adds){
+				for(var list = [].concat(callbacks.list), i = 0; i < list.length; i++){
+					list[i].call(a, idx, removals, adds);
+				}
+			};
+			callbacks.list = [];
+		}
+
+		callbacks.list.push(callback);
+
+		return {
+			unwatch: function(){
+				for(var list = callbacks.list, i = 0; i < list.length; i++){
+					if(list[i] == callback){
+						list.splice(i, 1);
+						break;
+					}
+				}
+			}
+		}; // dojox.mvc.StatefulArray.watchElements.handle
 	}
 
 	var StatefulArray = /*===== dojox.mvc.StatefulArray = =====*/ function(/*Anything[]*/ a){
@@ -176,6 +213,9 @@ define([
 			},
 			slice: function(/*Number*/ start, /*Number*/ end){
 				return slice.apply(this, [this].concat(lang._toArray(arguments)));
+			},
+			watchElements: function(/*Function*/ callback){
+				return watchElements(this, callback);
 			}
 		}, Stateful.prototype, {
 			set: function(/*Number|String*/ name, /*Anything*/ value){

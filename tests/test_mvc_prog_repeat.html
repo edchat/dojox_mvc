@@ -44,7 +44,7 @@
 			'dojo/on',
 			'dojo/domReady!'
 		], function (parser, mvc, Memory, DateTextBox, Calendar, StatefulModel, Repeat, Group, 
-					At, registry, Button, Output, TextBox, dateStamp, dom, domconstruct) {
+					at, registry, Button, Output, TextBox, dateStamp, dom, domconstruct) {
 
 			dojox.debugDataBinding = true;
 
@@ -139,7 +139,7 @@
 			test2_repeat.startup();
 			
 			var test3_repeat = new Repeat({
-					ref: model1.Results
+					children: at(model1, 'Results')
 			}, document.getElementById('test3_repeat'));
 			test3_repeat.startup();
 			
@@ -179,7 +179,7 @@
 	<h2>Test 3: A programmatic repeat with the html inline using mvc.at.</h2>
 	<div  style="border-style: solid; border-width: 2px; width: 827px;">
 		<div id="test3_repeat">
-			<div class="row" data-dojo-type="dojox.mvc.Group" data-dojo-props="ref: '${this.index}'">
+			<div class="row" data-dojo-type="dojox.mvc.Group" data-dojo-props="target: dojox.mvc.at('rel:${this.index}')">
 				<label class="cell">Name:</label> 
 				<input  class="cell"  data-dojo-type="dijit.form.TextBox" data-dojo-props="value: dojox.mvc.at('rel:First', 'value')"></input>
 				<input  class="cell"  data-dojo-type="dijit.form.TextBox" data-dojo-props="value: dojox.mvc.at('rel:Last', 'value')"></input>
@@ -194,7 +194,7 @@
 		<div id="swapbutton3" ></div>
 	</div>
 
-	<h2>Test 4: Swap models, (these are declarative buttons) this one is done by swapping between different models, I would like to be able to update the model data without replacing the model.</h2>
+	<h2>Test 5: Swap models, (these are declarative buttons) this one is done by swapping between different models, I would like to be able to update the model data without replacing the model.</h2>
 	<div id="swapbuttons2" class="row">
 		<button type="button" data-dojo-type="dijit.form.Button" data-dojo-props="onClick: function(){swapToModel(model1);}">Swap Model1</button>
 		<button type="button" data-dojo-type="dijit.form.Button" data-dojo-props="onClick: function(){swapToModel(model2);}">Swap Model2</button>
@@ -204,10 +204,15 @@
 	
 	<script type="text/javascript">
 	function swapToModel(model) {
-		var widget = dijit.byId("test1_repeat");
-		widget.set("ref", model.Results);
-		dijit.byId("test2_repeat").set("ref", model.Results);
-		dijit.byId("test3_repeat").set("ref", model.Results);
+		require([
+			"dijit/registry",
+			"dojox/mvc/at"
+		], function(registry, at){
+			var widget = registry.byId("test1_repeat");
+			widget.set("ref", model.Results);
+			registry.byId("test2_repeat").set("ref", model.Results);
+			registry.byId("test3_repeat").set("children", at(model, 'Results'));
+		});
 	}
 </script>
 	

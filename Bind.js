@@ -232,6 +232,8 @@ define([
 			}
 
 			return {
+				bindsignature: "dojox.mvc.Bind.BindTwo",
+
 				unwatch: function(){
 					for(var h = null; h = _watchHandles.pop();){
 						h.unwatch();

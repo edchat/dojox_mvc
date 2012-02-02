@@ -43,7 +43,7 @@ define([
 	};
 	=====*/
 
-	function logBindingFailure(target, targetProp){
+	function logResolveFailure(target, targetProp){
 		console.warn(targetProp + " could not be resolved" + (typeof target == "string" ? (" with " + target) : "") + ".");
 	}
 
@@ -85,15 +85,23 @@ define([
 			bind: function(/*dojo.Stateful|String*/ source, /*String*/ sourceProp){
 				var resolvedTarget = resolve(target, _parent) || {};
 				if(!resolvedTarget.set || !resolvedTarget.watch){
-					logBindingFailure(target, targetProp);
+					logResolveFailure(target, targetProp);
 				}
 
 				var resolvedSource = resolve(source, _parent) || {};
 				if(!resolvedSource.set || !resolvedTarget.watch){
-					logBindingFailure(source, sourceProp);
+					logResolveFailure(source, sourceProp);
 				}
 
 				if(!resolvedTarget.set || !resolvedTarget.watch || !resolvedSource.set || !resolvedTarget.watch){ return; }
+
+				// If target property is not specified, it means this handle is just for resolving data binding target.
+				// (For dojox.mvc.Group and dojox.mvc.Repeat)
+				// Do not perform data binding synchronization in such case.
+				if(!targetProp){
+					resolvedSource.set(sourceProp, resolvedTarget);
+					return resolvedTarget;
+				}
 
 				return Bind.bindTwo(resolvedTarget, targetProp, resolvedSource, sourceProp, {direction: _direction, converter: _converter}); // dojox.mvc.Bind.handle
 			}

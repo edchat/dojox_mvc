@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<title>Dojo MVC Node Widget Test</title>
+
+	<style type="text/css">
+		@import "../../../dijit/themes/claro/document.css";
+		@import "../../../dijit/tests/css/dijitTests.css";
+
+		.bgRed {
+			background-color: red;
+		}
+
+		.bgGreen {
+			background-color: green;
+		}
+
+		.bgBlue {
+			background-color: blue;
+		}
+
+		.boldText {
+			font-weight: Bold;
+		}
+	</style>
+
+	<!-- required: a default dijit theme: -->
+	<link id="themeStyles" rel="stylesheet" href="../../../dijit/themes/claro/claro.css"/>
+
+	<!-- required: dojo.js -->
+	<script type="text/javascript" src="../../../dojo/dojo.js"
+		data-dojo-config="isDebug: true, async: true"></script>
+
+	<script type="text/javascript">
+		require([
+			"dojox",
+			"dojo/parser",
+			"dojox/mvc/_patches",
+			"dojox/mvc/at",
+			"dijit/form/Select",
+			"dijit/form/CheckBox"
+		], function(dojox, parser){
+			dojox.debugDataBinding = true;
+			parser.parse();
+		});
+	</script>
+</head>
+<body class="claro">
+	<div>
+		<div>
+			Text:
+			<span data-dojo-type="dijit._WidgetBase"
+			 data-dojo-props="_setTitleAttr: {node: 'domNode', type: 'innerText'},
+			                   class: dojox.mvc.at('widget:boldtext', 'checked').direct(dojox.mvc.from).attach({format: function(value){ return value ? 'boldText' : ''; }}),
+			                   title: dojox.mvc.at('widget:title', 'value')"></span>
+		</div>
+		<div>
+			Choose text from:
+			<select id="title" data-dojo-type="dijit.form.Select">
+				<option value="Foo">Foo</option>
+				<option value="Bar">Bar</option>
+			</select>
+		</div>
+	</div>
+
+	<div style="margin-top:8px;">
+		<div style="width:200px;height:200px;" data-dojo-type="dijit._WidgetBase" data-dojo-props="class: dojox.mvc.at('widget:color', 'value')"></div>
+		<div>
+			Choose color from:
+			<select id="color" data-dojo-type="dijit.form.Select">
+				<option value="bgRed">Red</option>
+				<option value="bgGreen">Green</option>
+				<option value="bgBlue">Blue</option>
+			</select>
+		</div>
+	</div>
+
+	<div style="margin-top:8px;">
+		The text should be bold:
+		<input id="boldtext" data-dojo-type="dijit.form.CheckBox">
+	</div>
+  </body>
+</html>

@@ -243,8 +243,9 @@ define([
 					binding = lang.getObject("" + ref, false, parentBinding);
 				}else{
 					try{
-						if(lang.getObject(ref) instanceof Stateful){
-							binding = lang.getObject(ref);
+						var b = lang.getObject("" + ref) || {};
+						if(lang.isFunction(b.set) && lang.isFunction(b.watch)){
+							binding = b;
 						}						
 					}catch(err){
 						if(ref.indexOf("${") == -1){ // Ignore templated refs such as in repeat body

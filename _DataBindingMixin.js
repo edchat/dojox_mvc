@@ -176,12 +176,8 @@ define([
 			// tags:
 			//		private
 
-			var ref = this.ref, refs = this.ref, h, pw, pb, binding;
-			for(var prop in this._refs){
-				refs = this._refs;
-				break;
-			}
-			if(refs && typeof refs == "object" && !lang.isFunction(refs.toPlainObject)){ // hash table of ref handles (dojox.mvc.at)
+			var ref = this.ref, refs = this._refs, h, pw, pb, binding;
+			if(refs){ // hash table of ref handles (dojox.mvc.at)
 				var atWatchHandles = this._atWatchHandles = this._atWatchHandles || {};
 				// When this widget starts up, or there is a change in ref attribute, stop and clean up all active data binding created with dojox.mvc.at
 				for(var s in this._atWatchHandles){
@@ -211,7 +207,6 @@ define([
 						atWatchHandles["*"] = h;
 					}
 				}
-				return;
 			}
 			// Now compute the model node to bind to
 			if(!this.ref){

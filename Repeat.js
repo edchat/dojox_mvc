@@ -67,6 +67,9 @@ define([
 					}
 				}			
 			}
+
+			this._buildRepeatReady = true;
+			if(!this._started){ this._setChildrenAttr(this.children); }
 			this.inherited(arguments);			
 		},
 
@@ -99,10 +102,25 @@ define([
 			this._buildContained();
 		},
 
-		_buildContained: function(){
+		_setChildrenAttr: function(/*dojo.Stateful*/ value){
+			// summary:
+			//		Handler for calls to set("children", val).
+			// description:
+			//		Sets "binding" property so that child widgets can refer to, and then rebuilds the children.
+
+			if(value && this._buildRepeatReady){
+				this.set("binding", value);
+				this._buildContained(value);
+			}
+			this._set("children", value);
+		},
+
+		_buildContained: function(/*dojo.Stateful*/ children){
 			// summary:
 			//		Destroy any existing contained view, recreate the repeating UI
 			//		markup and parse the new contents.
+			// children: dojo.Stateful
+			//		The array of child widgets.
 			// tags:
 			//		private
 
@@ -112,10 +130,10 @@ define([
 			}
 
 			this._destroyBody();
-			this._updateAddRemoveWatch();
+			this._updateAddRemoveWatch(children);
 
 			var insert = "";
-			for(this.index = 0; this.get("binding").get(this.index); this.index++){
+			for(this.index = 0; (children || this.get("binding")).get(this.index); this.index++){
 				insert += this._exprRepl(this.templateString);
 			}
 			var repeatNode = this.srcNodeRef || this.domNode;
@@ -153,20 +171,20 @@ define([
 			}			
 		},
 
-		_updateAddRemoveWatch: function(){
+		_updateAddRemoveWatch: function(/*dojo.Stateful*/ children){
 			// summary:
 			//		Updates the watch handle when binding changes.
+			// children: dojo.Stateful
+			//		The array of child widgets.
 			// tags:
 			//		private
 			if(this._addRemoveWatch){
 				this._addRemoveWatch.unwatch();
 			}
 			var pThis = this;
-			this._addRemoveWatch = this.get("binding").watch(function(name,old,current){
-				if(/^[0-9]+$/.test(name.toString())){
-					if(!old || !current){
-						pThis._buildContained();
-					} // else not an insert or delete, will get updated in above
+			this._addRemoveWatch = this.get("binding").watchElements(function(idx, removals, adds){
+				if(!removals || !adds || removals.length || adds.length){
+					pThis._buildContained();
 				}
 			});
 		}

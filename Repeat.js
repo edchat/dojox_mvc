@@ -182,11 +182,9 @@ define([
 				this._addRemoveWatch.unwatch();
 			}
 			var pThis = this;
-			this._addRemoveWatch = (children || this.get("binding")).watch(function(name,old,current){
-				if(/^[0-9]+$/.test(name.toString())){
-					if(!old || !current){
-						pThis._buildContained();
-					} // else not an insert or delete, will get updated in above
+			this._addRemoveWatch = this.get("binding").watchElements(function(idx, removals, adds){
+				if(!removals || !adds || removals.length || adds.length){
+					pThis._buildContained();
 				}
 			});
 		}

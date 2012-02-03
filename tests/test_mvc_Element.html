@@ -38,6 +38,7 @@
 			"dojo/parser",
 			"dojox/mvc/_patches",
 			"dojox/mvc/at",
+			"dojox/mvc/Element",
 			"dijit/form/Select",
 			"dijit/form/CheckBox"
 		], function(dojox, parser){
@@ -50,7 +51,7 @@
 	<div>
 		<div>
 			Text:
-			<span data-dojo-type="dijit._WidgetBase"
+			<span data-dojo-type="dojox.mvc.Element"
 			 data-dojo-props="_setTitleAttr: {node: 'domNode', type: 'innerText'},
 			                   class: dojox.mvc.at('widget:boldtext', 'checked').direct(dojox.mvc.from).attach({format: function(value){ return value ? 'boldText' : ''; }}),
 			                   title: dojox.mvc.at('widget:title', 'value')"></span>
@@ -65,7 +66,7 @@
 	</div>
 
 	<div style="margin-top:8px;">
-		<div style="width:200px;height:200px;" data-dojo-type="dijit._WidgetBase" data-dojo-props="class: dojox.mvc.at('widget:color', 'value')"></div>
+		<div style="width:200px;height:200px;" data-dojo-type="dojox.mvc.Element" data-dojo-props="class: dojox.mvc.at('widget:color', 'value')"></div>
 		<div>
 			Choose color from:
 			<select id="color" data-dojo-type="dijit.form.Select">

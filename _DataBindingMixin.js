@@ -176,7 +176,7 @@ define([
 			// tags:
 			//		private
 
-			var ref = this.ref, refs = this.ref, pw, pb, binding;
+			var ref = this.ref, refs = this.ref, h, pw, pb, binding;
 			for(var prop in this._refs){
 				refs = this._refs;
 				break;
@@ -197,11 +197,19 @@ define([
 						throw new Error("dojox.mvc._DataBindingMixin: '" + this.domNode +
 							"' widget with illegal ref['" + prop + "'] not evaluating to a dojox.mvc.at: '" + refs[prop] + "'");
 					}
-					atWatchHandles[prop] = refs[prop].setParent(parentBinding || this._getParentBindingFromDOM()).bind(this, prop);
+					h = refs[prop].setParent(parentBinding || this._getParentBindingFromDOM()).bind(this, prop);
+					// dojox.mvc.at.handle.bind() returns data binding target, if target property is not specified (for dojox.mvc.Group/dojox.mvc.Repeat)
+					if(h && h.bindsignature == "dojox.mvc.Bind.BindTwo"){
+						atWatchHandles[prop] = h;
+					}
 				}
 				// Then establish wildcard data bindings
 				if((refs["*"] || {}).atsignature == "dojox.mvc.at"){
-					atWatchHandles["*"] = refs["*"].setParent(parentBinding || this._getParentBindingFromDOM()).bind(this, "*");
+					h = refs["*"].setParent(parentBinding || this._getParentBindingFromDOM()).bind(this, "*");
+					// dojox.mvc.at.handle.bind() returns data binding target, if target property is not specified (for dojox.mvc.Group/dojox.mvc.Repeat)
+					if(h && h.bindsignature == "dojox.mvc.Bind.BindTwo"){
+						atWatchHandles["*"] = h;
+					}
 				}
 				return;
 			}
@@ -293,7 +301,11 @@ define([
 
 			if(this._started){
 				// If this widget has started, start data binding with the new dojox.mvc.at handle
-				this._atWatchHandles[name] = value.setParent(this._getParentBindingFromDOM()).bind(this, name);
+				var h = value.setParent(this._getParentBindingFromDOM()).bind(this, name);
+				// dojox.mvc.at.handle.bind() returns data binding target, if target property is not specified (for dojox.mvc.Group/dojox.mvc.Repeat)
+				if(h && h.bindsignature == "dojox.mvc.Bind.BindTwo"){
+					this._atWatchHandles[name] = h;
+				}
 			}else{
 				// Otherwise, queue it up to this._refs so that _dbstartup() can pick it up.
 				this._refs[name] = value;

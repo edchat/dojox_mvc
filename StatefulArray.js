@@ -28,136 +28,6 @@ define([
 		return a; // dojox.mvc.StatefulArray
 	}
 
-	function splice(/*dojox.mvc.StatefulArray*/ a, /*Number*/ idx, /*Number*/ n){
-		// summary:
-		//		Removes and then adds some elements to an array.
-		//		Updates the removed/added elements, as well as the length, as stateful.
-		// a: dojox.mvc.StatefulArray
-		//		The array.
-		// idx: Number
-		//		The index where removal/addition should be done.
-		// n: Number
-		//		How many elements to be removed at idx.
-		// varargs: Anything[]
-		//		The elements to be added to idx.
-		// returns: dojox.mvc.StatefulArray
-		//		The removed elements.
-
-		var l = a.get("length"),
-		 p = Math.min(idx, l),
-		 removals = a.slice(idx, idx + n),
-		 adds = lang._toArray(arguments).slice(3);
-
-		// Do the modification in a native manner except for setting additions
-		[].splice.apply(this, [idx, n].concat(new Array(adds.length)));
-
-		// Set additions in a stateful manner
-		for(var i = 0; i < adds.length; i++){
-			a.set(p + i, adds[i]);
-		}
-
-		// Notify change of elements.
-		if(this._watchElementCallbacks){
-			this._watchElementCallbacks(idx, removals, adds);
-		}
-
-		// Notify change of length.
-		// Not calling the setter for "length" though, given removal/addition of array automatically changes the length.
-		if(this._watchCallbacks){
-			this._watchCallbacks("length", l, l - removals.length + adds.length);
-		}
-
-		return removals; // dojox.mvc.StatefulArray
-	}
-
-	function join(/*dojox.mvc.StatefulArray*/ a, /*String*/ sep){
-		// summary:
-		//		Returns a string joining string elements in a, with a separator.
-		// a: dojox.mvc.StatefulArray
-		//		The array.
-		// sep: String
-		//		The separator.
-
-		var list = [];
-		for(var l = this.get("length"), i = 0; i < l; i++){
-			list.push(a.get(i));
-		}
-		return list.join(sep); // String
-	}
-
-	function slice(/*dojox.mvc.StatefulArray*/ a, /*Number*/ start, /*Number*/ end){
-		// summary:
-		//		Returns partial elements of an array.
-		// a: dojox.mvc.StatefulArray
-		//		The array.
-		// start: Number
-		//		The index to begin with.
-		// end: Number
-		//		The index to end at. (a[end] won't be picked up)
-
-		var slice = [], end = typeof end === "undefined" ? a.get("length") : end;
-		for(var i = start; i < Math.min(end, a.get("length")); i++){
-			slice.push(a.get(i));
-		}
-		return new StatefulArray(slice); // dojox.mvc.StatefuArray
-	}
-
-	function set(/*dojox.mvc.StatefulArray*/ a, /*Number|String*/ name, /*Anything*/ value){
-		// summary:
-		//		Sets a new value to an array.
-		// a: dojox.mvc.StatefulArray
-		//		The array.
-		// name: Number|String
-		//		The property name.
-		// value: Anything
-		//		The new value.
-
-		if(name == "length"){
-			var old = a.get("length");
-			if(old < value){
-				a.splice.apply(a, [old, 0].concat(new Array(value - old)))
-			}else if(value > old){
-				a.splice.apply(a, [value, old - value]);
-			}
-			return this;
-		}else{
-			Stateful.prototype.set.call(this, name, value);
-			return Stateful.prototype.set.call(this, "length", this.length);
-		}
-	}
-
-	function watchElements(/*dojox.mvc.StatefulArray*/ a, /*Function*/ callback){
-		// summary:
-		//		Watch for change in array elements.
-		// a: dojox.mvc.StatefulArray
-		//		The array.
-		// callback: Function
-		//		The callback function, which should take: The array index, the removed elements, and the added elements.
-
-		var callbacks = a._watchElementCallbacks;
-		if(!callbacks){
-			callbacks = a._watchElementCallbacks = function(idx, removals, adds){
-				for(var list = [].concat(callbacks.list), i = 0; i < list.length; i++){
-					list[i].call(a, idx, removals, adds);
-				}
-			};
-			callbacks.list = [];
-		}
-
-		callbacks.list.push(callback);
-
-		return {
-			unwatch: function(){
-				for(var list = callbacks.list, i = 0; i < list.length; i++){
-					if(list[i] == callback){
-						list.splice(i, 1);
-						break;
-					}
-				}
-			}
-		}; // dojox.mvc.StatefulArray.watchElements.handle
-	}
-
 	var StatefulArray = /*===== dojox.mvc.StatefulArray = =====*/ function(/*Anything[]*/ a){
 		// summary:
 		//		An inheritance of native JavaScript array, that adds dojo.Stateful capability.
@@ -199,7 +69,43 @@ define([
 				return update([].sort.apply(this, lang._toArray(arguments)));
 			},
 			splice: function(/*Number*/ idx, /*Number*/ n){
-				return splice.apply(this, [this].concat(lang._toArray(arguments)));
+				// summary:
+				//		Removes and then adds some elements to an array.
+				//		Updates the removed/added elements, as well as the length, as stateful.
+				// idx: Number
+				//		The index where removal/addition should be done.
+				// n: Number
+				//		How many elements to be removed at idx.
+				// varargs: Anything[]
+				//		The elements to be added to idx.
+				// returns: dojox.mvc.StatefulArray
+				//		The removed elements.
+
+				var l = this.get("length"),
+				 p = Math.min(idx, l),
+				 removals = this.slice(idx, idx + n),
+				 adds = lang._toArray(arguments).slice(2);
+
+				// Do the modification in a native manner except for setting additions
+				[].splice.apply(this, [idx, n].concat(new Array(adds.length)));
+
+				// Set additions in a stateful manner
+				for(var i = 0; i < adds.length; i++){
+					this.set(p + i, adds[i]);
+				}
+
+				// Notify change of elements.
+				if(this._watchElementCallbacks){
+					this._watchElementCallbacks(idx, removals, adds);
+				}
+
+				// Notify change of length.
+				// Not calling the setter for "length" though, given removal/addition of array automatically changes the length.
+				if(this._watchCallbacks){
+					this._watchCallbacks("length", l, l - removals.length + adds.length);
+				}
+
+				return removals; // dojox.mvc.StatefulArray
 			},
 			unshift: function(){
 				this.splice.apply(this, [0, 0].concat(lang._toArray(arguments)));
@@ -209,17 +115,81 @@ define([
 				return new StatefulArray([].concat(this).concat(a));
 			},
 			join: function(/*String*/ sep){
-				return join.apply(this, [this].concat(lang._toArray(arguments)));
+				// summary:
+				//		Returns a string joining string elements in a, with a separator.
+				// sep: String
+				//		The separator.
+
+				var list = [];
+				for(var l = this.get("length"), i = 0; i < l; i++){
+					list.push(this.get(i));
+				}
+				return list.join(sep); // String
 			},
 			slice: function(/*Number*/ start, /*Number*/ end){
-				return slice.apply(this, [this].concat(lang._toArray(arguments)));
+				// summary:
+				//		Returns partial elements of an array.
+				// start: Number
+				//		The index to begin with.
+				// end: Number
+				//		The index to end at. (a[end] won't be picked up)
+
+				var slice = [], end = typeof end === "undefined" ? this.get("length") : end;
+				for(var i = start; i < Math.min(end, this.get("length")); i++){
+					slice.push(this.get(i));
+				}
+				return new StatefulArray(slice); // dojox.mvc.StatefuArray
 			},
 			watchElements: function(/*Function*/ callback){
-				return watchElements(this, callback);
+				// summary:
+				//		Watch for change in array elements.
+				// callback: Function
+				//		The callback function, which should take: The array index, the removed elements, and the added elements.
+
+				var callbacks = this._watchElementCallbacks, _self = this;
+				if(!callbacks){
+					callbacks = this._watchElementCallbacks = function(idx, removals, adds){
+						for(var list = [].concat(callbacks.list), i = 0; i < list.length; i++){
+							list[i].call(_self, idx, removals, adds);
+						}
+					};
+					callbacks.list = [];
+				}
+
+				callbacks.list.push(callback);
+
+				return {
+					unwatch: function(){
+						for(var list = callbacks.list, i = 0; i < list.length; i++){
+							if(list[i] == callback){
+								list.splice(i, 1);
+								break;
+							}
+						}
+					}
+				}; // dojox.mvc.StatefulArray.watchElements.handle
 			}
 		}, Stateful.prototype, {
 			set: function(/*Number|String*/ name, /*Anything*/ value){
-				return set.apply(this, [this].concat(lang._toArray(arguments)));
+				// summary:
+				//		Sets a new value to an array.
+				// name: Number|String
+				//		The property name.
+				// value: Anything
+				//		The new value.
+
+				if(name == "length"){
+					var old = this.get("length");
+					if(old < value){
+						this.splice.apply(this, [old, 0].concat(new Array(value - old)))
+					}else if(value > old){
+						this.splice.apply(this, [value, old - value]);
+					}
+					return this;
+				}else{
+					Stateful.prototype.set.call(this, name, value);
+					return Stateful.prototype.set.call(this, "length", this.length);
+				}
 			}
 		});
 	};

@@ -227,7 +227,6 @@ define([
 			//		Object
 			//		The plain JavaScript object representation of the data in this
 			//		model.
-
 			return getPlainValue(this, StatefulModel.getPlainValueOptions);
 		},
 
@@ -478,19 +477,20 @@ define([
 			},
 
 			getPlainArray: function(/*dojox.mvc.StatefulArray*/ a){
-				return array.map(this, function(item){ return getPlainValue(item, this); });
+				return array.map(a, function(item){ return getPlainValue(item, this); }, this);
 			},
 
 			getPlainObject: function(/*dojox.mvc.StatefulModel*/ o){
 				var plain = {};
 				for(var s in o){
+					if(s == "_watchCallbacks" || (s in StatefulModel.prototype)){ continue; }
 					plain[s] = getPlainValue(o[s], this);
 				}
 				return plain;
 			},
 
 			getPlainValue: function(/*Anything*/ v){
-				return (v || {}).set && (v || {}).watch ? v.value : v;
+				return (v || {}).set && (v || {}).watch ? getPlainValue(v.value, this) : v;
 			}
 		}
 	});

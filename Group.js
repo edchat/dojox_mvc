@@ -30,9 +30,13 @@ define(["dojo/_base/declare", "dijit/_WidgetBase", 	"dojo/_base/lang"], function
 			// summary:
 			//		Handler for calls to set("target", val).
 			// description:
-			//		Sets "binding" property so that child widgets can refer to.
+			//		Sets "ref" property so that child widgets can refer to.
 
-			this.set("binding", value);
+			if(this.binding != value){
+				// The new value not matching to this.binding means that the change is not initiated by ref change.
+				this.set("ref", value);
+			}
+			this._set("target", value);
 		}
 	});
 });

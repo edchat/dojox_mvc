@@ -62,7 +62,34 @@ define([
 		//		Synchronize attrbinwidget attribute in my.widget with propertyname in stateful.
 		// |		<div data-dojo-type="my.widget" data-dojo-props="ref: {attribinwidget: dojox.mvc.at(stateful, 'propertyname')}"></div>
 
-		var _parent = null, _direction = Bind.both, _converter = null;
+		var _parent = null, _direction = Bind.both, _converter = null, _handles = {};
+
+		function bind(/*dojo.Stateful|String*/ source, /*String*/ sourceProp){
+			_handles["Two"] && _handles["Two"].unwatch();
+			_handles["Two"] = null;
+
+			var resolvedTarget = resolve(target, _parent && _parent.get("target")) || {};
+			if(!resolvedTarget.set || !resolvedTarget.watch){
+				logResolveFailure(target, targetProp);
+			}
+
+			var resolvedSource = resolve(source, _parent && _parent.get("target")) || {};
+			if(!resolvedSource.set || !resolvedTarget.watch){
+				logResolveFailure(source, sourceProp);
+			}
+
+			if(!resolvedTarget.set || !resolvedTarget.watch || !resolvedSource.set || !resolvedTarget.watch){ return; }
+
+			if(!targetProp){
+				// If target property is not specified, it means this handle is just for resolving data binding target.
+				// (For dojox.mvc.Group and dojox.mvc.Repeat)
+				// Do not perform data binding synchronization in such case.
+				resolvedSource.set(sourceProp, resolvedTarget);
+			}else{
+				// Start data binding
+				_handles["Two"] = Bind.bindTwo(resolvedTarget, targetProp, resolvedSource, sourceProp, {direction: _direction, converter: _converter}); // dojox.mvc.Bind.handle
+			}
+		}
 
 		return {
 			atsignature: "dojox.mvc.at",
@@ -83,27 +110,22 @@ define([
 			},
 
 			bind: function(/*dojo.Stateful|String*/ source, /*String*/ sourceProp){
-				var resolvedTarget = resolve(target, _parent) || {};
-				if(!resolvedTarget.set || !resolvedTarget.watch){
-					logResolveFailure(target, targetProp);
+				bind(source, sourceProp);
+				if(/^rel:/.test(target) || /^rel:/.test(source)){
+					_handles["rel"] = _parent.watch("target", function(name, old, current){
+						if(old !== current){
+							bind(source, sourceProp);
+						}
+					});
 				}
-
-				var resolvedSource = resolve(source, _parent) || {};
-				if(!resolvedSource.set || !resolvedTarget.watch){
-					logResolveFailure(source, sourceProp);
-				}
-
-				if(!resolvedTarget.set || !resolvedTarget.watch || !resolvedSource.set || !resolvedTarget.watch){ return; }
-
-				// If target property is not specified, it means this handle is just for resolving data binding target.
-				// (For dojox.mvc.Group and dojox.mvc.Repeat)
-				// Do not perform data binding synchronization in such case.
-				if(!targetProp){
-					resolvedSource.set(sourceProp, resolvedTarget);
-					return resolvedTarget;
-				}
-
-				return Bind.bindTwo(resolvedTarget, targetProp, resolvedSource, sourceProp, {direction: _direction, converter: _converter}); // dojox.mvc.Bind.handle
+				return {
+					unwatch: function(){
+						for(var s in _handles){
+							_handles[s] && _handles[s].unwatch();
+							_handles[s] = null;
+						}
+					}
+				};
 			}
 		}; // dojox.mvc.at.handle
 	};

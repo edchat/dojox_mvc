@@ -10,6 +10,26 @@ define([
 	registry = dijit.registry;
 	=====*/
 
+	function getParent(/*dijit._WidgetBase*/ w){
+		// summary:
+		//		Returns parent widget having data binding target for relative data binding.
+		// w: dijit._WidgetBase
+		//		The widget.
+
+		var pn = w.domNode.parentNode, pw, pb;
+		while(pn){
+			pw = registry.getEnclosingWidget(pn);
+			if(pw){
+				var pt = pw.get("target");
+				if(pt && lang.isFunction(pt.set) && lang.isFunction(pt.watch)){
+					break;
+				}
+			}
+			pn = pw && pw.domNode.parentNode;
+		}
+		return pw; // dijit._WidgetBase
+	}
+
 	return declare("dojox.mvc._DataBindingMixin", null, {
 		// summary:
 		//		Provides the ability for dijits or custom view components to become
@@ -70,6 +90,10 @@ define([
 		binding: null,
 =====*/
 
+		// target: dojo.Stateful
+		//		The data binding target, referrenced by relative data binding by child widgets.
+		target: null,
+
 		//////////////////////// PUBLIC METHODS ////////////////////////
 	
 		isValid: function(){
@@ -109,7 +133,7 @@ define([
 			this._viewWatchHandles = [
 				// 1. data binding refs
 				this.watch("ref", function(name, old, current){
-					if(this._databound){
+					if(this._databound && old !== current){
 						this._setupBinding();
 					}
 				}),
@@ -127,12 +151,38 @@ define([
 				})
 			];
 			this._beingBound = true;
+			this._bindAtWatchHandles();
 			this._setupBinding();
 			delete this._beingBound;
 			this._databound = true;
 		},
 
 		//////////////////////// PRIVATE METHODS ////////////////////////
+
+		_bindAtWatchHandles: function(){
+			// summary:
+			//		Establish data bindings based on dojox.mvc.at watch handles.
+
+			var refs = this._refs;
+			if(!refs){ return; }
+
+			var atWatchHandles = this._atWatchHandles = this._atWatchHandles || {};
+			// Clear the cache of properties that data binding is established with
+			this._excludes = null;
+			// First, establish non-wildcard data bindings
+			for(var prop in refs){
+				if(!refs[prop] || prop == "*"){ continue; }
+				if(refs[prop].atsignature != "dojox.mvc.at"){
+					throw new Error("dojox.mvc._DataBindingMixin: '" + this.domNode +
+						"' widget with illegal ref['" + prop + "'] not evaluating to a dojox.mvc.at: '" + refs[prop] + "'");
+				}
+				atWatchHandles[prop] = refs[prop].setParent(getParent(this)).bind(this, prop);
+			}
+			// Then establish wildcard data bindings
+			if((refs["*"] || {}).atsignature == "dojox.mvc.at"){
+				atWatchHandles["*"] = refs["*"].setParent(getParent(this)).bind(this, "*");
+			}
+		},
 
 		_setupBinding: function(parentBinding){
 			// summary:
@@ -176,42 +226,11 @@ define([
 			// tags:
 			//		private
 
-			var ref = this.ref, refs = this._refs, h, pw, pb, binding;
-			if(refs){ // hash table of ref handles (dojox.mvc.at)
-				var atWatchHandles = this._atWatchHandles = this._atWatchHandles || {};
-				// When this widget starts up, or there is a change in ref attribute, stop and clean up all active data binding created with dojox.mvc.at
-				for(var s in this._atWatchHandles){
-					this._atWatchHandles[s].unwatch();
-					delete this._atWatchHandles[s];
-				}
-				// Clear the cache of properties that data binding is established with
-				this._excludes = null;
-				// First, establish non-wildcard data bindings
-				for(var prop in refs){
-					if(prop == "*"){ continue; }
-					if((refs[prop] || {}).atsignature != "dojox.mvc.at"){
-						throw new Error("dojox.mvc._DataBindingMixin: '" + this.domNode +
-							"' widget with illegal ref['" + prop + "'] not evaluating to a dojox.mvc.at: '" + refs[prop] + "'");
-					}
-					h = refs[prop].setParent(parentBinding || this._getParentBindingFromDOM()).bind(this, prop);
-					// dojox.mvc.at.handle.bind() returns data binding target, if target property is not specified (for dojox.mvc.Group/dojox.mvc.Repeat)
-					if(h && h.bindsignature == "dojox.mvc.Bind.BindTwo"){
-						atWatchHandles[prop] = h;
-					}
-				}
-				// Then establish wildcard data bindings
-				if((refs["*"] || {}).atsignature == "dojox.mvc.at"){
-					h = refs["*"].setParent(parentBinding || this._getParentBindingFromDOM()).bind(this, "*");
-					// dojox.mvc.at.handle.bind() returns data binding target, if target property is not specified (for dojox.mvc.Group/dojox.mvc.Repeat)
-					if(h && h.bindsignature == "dojox.mvc.Bind.BindTwo"){
-						atWatchHandles["*"] = h;
-					}
-				}
-			}
-			// Now compute the model node to bind to
 			if(!this.ref){
 				return; // nothing to do here
 			}
+			var ref = this.ref, pw, pb, binding;
+			// Now compute the model node to bind to
 			if(ref && lang.isFunction(ref.toPlainObject)){ // programmatic instantiation or direct ref
 				binding = ref;
 			}else if(/^\s*expr\s*:\s*/.test(ref)){ // declarative: refs as dot-separated expressions
@@ -253,6 +272,7 @@ define([
 			if(binding){
 				if(lang.isFunction(binding.toPlainObject)){
 					this.binding = binding;
+					this.set("target", binding);
 					this._updateBinding("binding", null, binding);
 				}else{
 					console.warn("dojox.mvc._DataBindingMixin: '" + this.domNode +
@@ -283,9 +303,10 @@ define([
 			//		Otherwise, queue it up to this._refs so that _dbstartup() can pick it up.
 
 			// Claen up older data binding
-			if((this._atWatchHandles || {})[name]){
-				this._atWatchHandles[name].unwatch();
-				delete this._atWatchHandles[name];
+			var atWatchHandles = this._atWatchHandles = this._atWatchHandles || {};
+			if(atWatchHandles[name]){
+				atWatchHandles[name].unwatch();
+				delete atWatchHandles[name];
 			}
 
 			// Claar the value
@@ -295,12 +316,8 @@ define([
 			this._excludes = null;
 
 			if(this._started){
-				// If this widget has started, start data binding with the new dojox.mvc.at handle
-				var h = value.setParent(this._getParentBindingFromDOM()).bind(this, name);
-				// dojox.mvc.at.handle.bind() returns data binding target, if target property is not specified (for dojox.mvc.Group/dojox.mvc.Repeat)
-				if(h && h.bindsignature == "dojox.mvc.Bind.BindTwo"){
-					this._atWatchHandles[name] = h;
-				}
+				// If this widget has been started already, establish data binding immediately.
+				atWatchHandles[name] = value.setParent(getParent(this)).bind(this, name);
 			}else{
 				// Otherwise, queue it up to this._refs so that _dbstartup() can pick it up.
 				this._refs[name] = value;
@@ -329,7 +346,7 @@ define([
 				return this.constructor._attribs;
 			}
 			var list = [].concat(this.constructor._setterAttrs);
-			array.forEach(["id", "excludes", "properties"], function(s){
+			array.forEach(["id", "excludes", "properties", "ref", "binding"], function(s){
 				var index = array.indexOf(list, s);
 				if (index >= 0){ list.splice(index, 1); }
 			});

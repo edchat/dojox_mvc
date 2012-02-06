@@ -68,8 +68,6 @@ define([
 				}			
 			}
 
-			this._buildRepeatReady = true;
-			if(!this._started){ this._setChildrenAttr(this.children); }
 			this.inherited(arguments);			
 		},
 
@@ -98,6 +96,7 @@ define([
 			//		Rebuild repeating UI if data binding changes.
 			// tags:
 			//		private
+
 			this.inherited(arguments);
 			this._buildContained();
 		},
@@ -106,11 +105,11 @@ define([
 			// summary:
 			//		Handler for calls to set("children", val).
 			// description:
-			//		Sets "binding" property so that child widgets can refer to, and then rebuilds the children.
+			//		Sets "ref" property so that child widgets can refer to, and then rebuilds the children.
 
-			if(value && this._buildRepeatReady){
-				this.set("binding", value);
-				this._buildContained(value);
+			if(this.binding != value){
+				// The new value not matching to this.binding means that the change is not initiated by ref change.
+				this.set("ref", value);
 			}
 			this._set("children", value);
 		},

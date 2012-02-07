@@ -302,13 +302,6 @@ define([
 			//		If this widget has started, start data binding with the new dojox.mvc.at handle.
 			//		Otherwise, queue it up to this._refs so that _dbstartup() can pick it up.
 
-			// Claen up older data binding
-			var atWatchHandles = this._atWatchHandles = this._atWatchHandles || {};
-			if(atWatchHandles[name]){
-				atWatchHandles[name].unwatch();
-				delete atWatchHandles[name];
-			}
-
 			// Claar the value
 			this[name] = null;
 
@@ -317,7 +310,7 @@ define([
 
 			if(this._started){
 				// If this widget has been started already, establish data binding immediately.
-				atWatchHandles[name] = value.setParent(getParent(this)).bind(this, name);
+				(this._atWatchHandles = this._atWatchHandles || {})[name] = value.setParent(getParent(this)).bind(this, name);
 			}else{
 				// Otherwise, queue it up to this._refs so that _dbstartup() can pick it up.
 				this._refs[name] = value;

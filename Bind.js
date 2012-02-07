@@ -99,7 +99,7 @@ define([
 		}
 
 		// Copy the new value to target
-		target.set(targetProp == "*" ? sourceProp : targetProp, current);
+		target[target._dbSet ? "_dbSet" : "set"](targetProp == "*" ? sourceProp : targetProp, current);
 	}
 
 	return lang.mixin(mvc, {

@@ -231,7 +231,7 @@ define([
 			}
 			var ref = this.ref, pw, pb, binding;
 			// Now compute the model node to bind to
-			if(ref && lang.isFunction(ref.toPlainObject)){ // programmatic instantiation or direct ref
+			if(ref && lang.isFunction(ref.set) && lang.isFunction(ref.watch)){ // programmatic instantiation or direct ref
 				binding = ref;
 			}else if(/^\s*expr\s*:\s*/.test(ref)){ // declarative: refs as dot-separated expressions
 				ref = ref.replace(/^\s*expr\s*:\s*/, "");
@@ -270,7 +270,7 @@ define([
 				}
 			}
 			if(binding){
-				if(lang.isFunction(binding.toPlainObject)){
+				if(lang.isFunction(binding.set) && lang.isFunction(binding.watch)){
 					this.binding = binding;
 					this.set("target", binding);
 					this._updateBinding("binding", null, binding);
@@ -345,7 +345,7 @@ define([
 			if(this.constructor._attribs){
 				return this.constructor._attribs;
 			}
-			var list = [].concat(this.constructor._setterAttrs);
+			var list = ["onClick"].concat(this.constructor._setterAttrs);
 			array.forEach(["id", "excludes", "properties", "ref", "binding"], function(s){
 				var index = array.indexOf(list, s);
 				if (index >= 0){ list.splice(index, 1); }
@@ -494,7 +494,7 @@ define([
 				pw = registry.getEnclosingWidget(pn);
 				if(pw){
 					pb = pw.get("binding");
-					if(pb && lang.isFunction(pb.toPlainObject)){
+					if(pb && lang.isFunction(pb.set) && lang.isFunction(pb.watch)){
 						break;
 					}
 				}

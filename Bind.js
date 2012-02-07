@@ -92,7 +92,14 @@ define([
 		 || targetProp == "*" && array.indexOf(target.get("properties") || [sourceProp], sourceProp) < 0
 		 || targetProp == "*" && sourceProp in (excludes || {})){ return; }
 
-		current = convertFunc ? convertFunc(current) : current;
+		try {
+			current = convertFunc ? convertFunc(current) : current;
+		}catch(e){
+			if(dojox.debugDataBinding){
+				console.log("Copy from" + getLogContent(target, targetProp == "*" ? sourceProp : targetProp, source, sourceProp).join(" to ") + " was not done as an error is thrown in the converter.");
+			}
+			return;
+		}
 
 		if(dojox.debugDataBinding){
 			console.log(getLogContent(target, targetProp == "*" ? sourceProp : targetProp, source, sourceProp).join(" is being copied to: ") + " (Value: " + current + " from " + old + ")");

@@ -81,8 +81,9 @@ define([
 				this.srcNodeRef = dom.byId(srcNodeRef);
 			}
 			if(this.srcNodeRef){
-				if(this.templateString == ""){ // only overwrite templateString if it has not been set
-					this.templateString = this.srcNodeRef.innerHTML;
+				var prop = this._attachTemplateNodes ? "inlineTemplateString" : "templateString";
+				if(this[prop] == ""){ // only overwrite templateString if it has not been set
+					this[prop] = this.srcNodeRef.innerHTML;
 				}
 				this.srcNodeRef.innerHTML = "";
 			}
@@ -131,11 +132,11 @@ define([
 			this._destroyBody();
 			this._updateAddRemoveWatch(children);
 
-			var insert = "";
+			var insert = "", prop = this._attachTemplateNodes ? "inlineTemplateString" : "templateString";
 			for(this.index = 0; (children || this.get("binding")).get(this.index); this.index++){
-				insert += this._exprRepl(this.templateString);
+				insert += this._exprRepl(this[prop]);
 			}
-			var repeatNode = this.srcNodeRef || this.domNode;
+			var repeatNode = this.containerNode || this.srcNodeRef || this.domNode;
 			repeatNode.innerHTML = insert;
 
 			// srcNodeRef is used in _createBody, so in the programmatic create case where repeatNode was set  

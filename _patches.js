@@ -37,6 +37,7 @@ define([
 			atWatchHandles[name].unwatch();
 			delete atWatchHandles[name];
 		}
+
 		if((value || {}).atsignature == "dojox.mvc.at"){
 			return this._setAtWatchHandle(name, value);
 		}

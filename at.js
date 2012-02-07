@@ -43,6 +43,10 @@ define([
 	};
 	=====*/
 
+	function getLogContent(/*dojo.Stateful*/ target, /*String*/ targetProp){
+		return target._setIdAttr ? target : (target.id ? [target.id] : []).concat([target.declaredClass, targetProp]).join(":")
+	}
+
 	function logResolveFailure(target, targetProp){
 		console.warn(targetProp + " could not be resolved" + (typeof target == "string" ? (" with " + target) : "") + ".");
 	}
@@ -69,22 +73,34 @@ define([
 			_handles["Two"] = null;
 
 			var resolvedTarget = resolve(target, _parent && _parent.get("target")) || {};
-			if(!resolvedTarget.set || !resolvedTarget.watch){
-				logResolveFailure(target, targetProp);
-			}
-
 			var resolvedSource = resolve(source, _parent && _parent.get("target")) || {};
 			if(!resolvedSource.set || !resolvedTarget.watch){
 				logResolveFailure(source, sourceProp);
+				return;
 			}
-
-			if(!resolvedTarget.set || !resolvedTarget.watch || !resolvedSource.set || !resolvedTarget.watch){ return; }
 
 			if(!targetProp){
 				// If target property is not specified, it means this handle is just for resolving data binding target.
 				// (For dojox.mvc.Group and dojox.mvc.Repeat)
 				// Do not perform data binding synchronization in such case.
-				resolvedSource.set(sourceProp, resolvedTarget);
+
+				resolvedSource[resolvedSource._dbSet ? "_dbSet" : "set"](sourceProp, resolvedTarget);
+				if(dojox.debugDataBinding){
+					console.log("dojox.mvc.at set " + resolvedTarget + " to: " + getLogContent(resolvedSource, sourceProp));
+				}
+			}else if(!resolvedTarget.set || !resolvedTarget.watch){
+				if(targetProp == "*"){
+					logResolveFailure(target, targetProp);
+					return;
+				}
+
+				// If target object is not a stateful object (and the property is not wildcarded), it means this handle is just for resolving data binding target.
+				// (For dojox.mvc.Group and dojox.mvc.Repeat)
+				// Do not perform data binding synchronization in such case.
+				resolvedSource[resolvedSource._dbSet ? "_dbSet" : "set"](sourceProp, resolvedTarget[targetProp]);
+				if(dojox.debugDataBinding){
+					console.log("dojox.mvc.at set " + resolvedTarget[targetProp] + " to: " + getLogContent(resolvedSource, sourceProp));
+				}
 			}else{
 				// Start data binding
 				_handles["Two"] = Bind.bindTwo(resolvedTarget, targetProp, resolvedSource, sourceProp, {direction: _direction, converter: _converter}); // dojox.mvc.Bind.handle
@@ -114,6 +130,7 @@ define([
 				if(/^rel:/.test(target) || /^rel:/.test(source)){
 					_handles["rel"] = _parent.watch("target", function(name, old, current){
 						if(old !== current){
+							if(dojox.debugDataBinding){ console.log("Change in relative data binding target: " + _parent); }
 							bind(source, sourceProp);
 						}
 					});

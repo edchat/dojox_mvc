@@ -272,7 +272,9 @@ define([
 			if(binding){
 				if(lang.isFunction(binding.toPlainObject)){
 					this.binding = binding;
-					this.set("target", binding);
+					if(this.target !== binding){
+						this.set("target", binding);
+					}
 					this._updateBinding("binding", null, binding);
 				}else{
 					console.warn("dojox.mvc._DataBindingMixin: '" + this.domNode +

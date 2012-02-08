@@ -57,8 +57,8 @@ define([
 
 	function getLogContent(/*dojo.Stateful*/ target, /*String*/ targetProp, /*dojo.Stateful*/ source, /*String*/ sourceProp){
 		return [
-			(source.id ? [source.id] : []).concat([source.declaredClass, sourceProp]).join(":"),
-			(target.id ? [target.id] : []).concat([target.declaredClass, targetProp]).join(":")
+			[source._setIdAttr ? source : source.declaredClass, sourceProp].join(":"),
+			[target._setIdAttr ? target : target.declaredClass, targetProp].join(":")
 		];
 	}
 
@@ -102,7 +102,7 @@ define([
 		}
 
 		if(dojox.debugDataBinding){
-			console.log(getLogContent(target, targetProp == "*" ? sourceProp : targetProp, source, sourceProp).join(" is being copied to: ") + " (Value: " + current + " from " + old + ")");
+			console.log(getLogContent(source, sourceProp, target, targetProp == "*" ? sourceProp : targetProp).join(" is being copied from: ") + " (Value: " + current + " from " + old + ")");
 		}
 
 		// Copy the new value to target

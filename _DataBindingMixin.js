@@ -272,7 +272,9 @@ define([
 			if(binding){
 				if(lang.isFunction(binding.set) && lang.isFunction(binding.watch)){
 					this.binding = binding;
-					this.set("target", binding);
+					if(this.target !== binding){
+						this.set("target", binding);
+					}
 					this._updateBinding("binding", null, binding);
 				}else{
 					console.warn("dojox.mvc._DataBindingMixin: '" + this.domNode +
@@ -301,6 +303,10 @@ define([
 			//		Called if the value is a dojox.mvc.at handle.
 			//		If this widget has started, start data binding with the new dojox.mvc.at handle.
 			//		Otherwise, queue it up to this._refs so that _dbstartup() can pick it up.
+
+			if(name == "ref"){
+				throw new Error("dojox.mvc._DataBindingMixin: 1.7 ref syntax used in conjuction with 1.8 dojox.mvc.at() syntax, which is not supported.");
+			}
 
 			// Claen up older data binding
 			var atWatchHandles = this._atWatchHandles = this._atWatchHandles || {};

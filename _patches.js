@@ -29,15 +29,8 @@ define([
 		oldWidgetBasePostScript.apply(this, lang._toArray(arguments));
 	};
 
-	var oldWidgetBaseSet = wb.prototype._dbSet = wb.prototype.set;
+	var oldWidgetBaseSet = wb.prototype.set;
 	wb.prototype.set = function(/*String*/ name, /*Anything*/ value){
-		// Claen up older data binding
-		var atWatchHandles = this._atWatchHandles = this._atWatchHandles || {};
-		if(atWatchHandles[name]){
-			atWatchHandles[name].unwatch();
-			delete atWatchHandles[name];
-		}
-
 		if((value || {}).atsignature == "dojox.mvc.at"){
 			return this._setAtWatchHandle(name, value);
 		}

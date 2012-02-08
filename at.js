@@ -44,7 +44,7 @@ define([
 	=====*/
 
 	function getLogContent(/*dojo.Stateful*/ target, /*String*/ targetProp){
-		return target._setIdAttr ? target : (target.id ? [target.id] : []).concat([target.declaredClass, targetProp]).join(":")
+		return [target._setIdAttr ? target : target.declaredClass, targetProp].join(":")
 	}
 
 	function logResolveFailure(target, targetProp){
@@ -84,7 +84,7 @@ define([
 				// (For dojox.mvc.Group and dojox.mvc.Repeat)
 				// Do not perform data binding synchronization in such case.
 
-				resolvedSource[resolvedSource._dbSet ? "_dbSet" : "set"](sourceProp, resolvedTarget);
+				resolvedSource.set(sourceProp, resolvedTarget);
 				if(dojox.debugDataBinding){
 					console.log("dojox.mvc.at set " + resolvedTarget + " to: " + getLogContent(resolvedSource, sourceProp));
 				}
@@ -97,7 +97,7 @@ define([
 				// If target object is not a stateful object (and the property is not wildcarded), it means this handle is just for resolving data binding target.
 				// (For dojox.mvc.Group and dojox.mvc.Repeat)
 				// Do not perform data binding synchronization in such case.
-				resolvedSource[resolvedSource._dbSet ? "_dbSet" : "set"](sourceProp, resolvedTarget[targetProp]);
+				resolvedSource.set(sourceProp, resolvedTarget[targetProp]);
 				if(dojox.debugDataBinding){
 					console.log("dojox.mvc.at set " + resolvedTarget[targetProp] + " to: " + getLogContent(resolvedSource, sourceProp));
 				}

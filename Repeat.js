@@ -54,6 +54,10 @@ define([
 		//		a Repeat inside of a dojox.mobile list.		
 		removeRepeatNode : false,
 
+		// _relTargetProp: String
+		//		The name of the property that is used by child widgets for relative data binding.
+		_relTargetProp : "children",
+
 		startup: function(){
 			// This code needed for ticket 14423 is using removeRepeatNode to work with mobile.lists
 			// this.select and this.onCheckStateChanged are called by ListItem so they need to be set
@@ -91,27 +95,21 @@ define([
 
 		////////////////////// PRIVATE METHODS ////////////////////////
 
-		_updateBinding: function(name, old, current){
-			// summary:
-			//		Rebuild repeating UI if data binding changes.
-			// tags:
-			//		private
-
-			this.inherited(arguments);
-			this._buildContained();
-		},
-
 		_setChildrenAttr: function(/*dojo.Stateful*/ value){
 			// summary:
 			//		Handler for calls to set("children", val).
 			// description:
 			//		Sets "ref" property so that child widgets can refer to, and then rebuilds the children.
 
+			var children = this.children;
+			this._set("children", value);
+			// this.binding is the resolved ref, so not matching with the new value means change in repeat target.
 			if(this.binding != value){
-				// The new value not matching to this.binding means that the change is not initiated by ref change.
 				this.set("ref", value);
 			}
-			this._set("children", value);
+			if(children != value){
+				this._buildContained(value);
+			}
 		},
 
 		_buildContained: function(/*dojo.Stateful*/ children){
@@ -132,7 +130,7 @@ define([
 			this._updateAddRemoveWatch(children);
 
 			var insert = "";
-			for(this.index = 0; (children || this.get("binding")).get(this.index); this.index++){
+			for(this.index = 0; children.get(this.index); this.index++){
 				insert += this._exprRepl(this.templateString);
 			}
 			var repeatNode = this.srcNodeRef || this.domNode;
@@ -181,9 +179,9 @@ define([
 				this._addRemoveWatch.unwatch();
 			}
 			var pThis = this;
-			this._addRemoveWatch = this.get("binding").watchElements(function(idx, removals, adds){
+			this._addRemoveWatch = children.watchElements(function(idx, removals, adds){
 				if(!removals || !adds || removals.length || adds.length){
-					pThis._buildContained();
+					pThis._buildContained(pThis.children);
 				}
 			});
 		}

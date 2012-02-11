@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<title>MVC DOH Test</title>
+		<style>
+			@import "../../../dojo/resources/dojo.css";
+			@import "../../../dijit/tests/css/dijitTests.css";
+			@import "css/app-format.css";
+		</style>
+		<link id="themeStyles" rel="stylesheet" href="../../../dijit/themes/claro/claro.css"/>
+		<script src="../../../dojo/dojo.js" type="text/javascript" djConfig="isDebug: true"></script>
+		<script type="text/javascript" src="./helpers.js"></script>
+		<script type="text/javascript">
+			var model1, model2, model3;
+
+			require([
+				"doh/runner",
+				"dojo/_base/array",
+				"dojo/_base/lang",
+				"dojo/_base/Deferred",
+				"dojo/parser",
+				"dojo/store/Memory",
+				"dojo/Stateful",
+				"dijit/registry",
+				"dojox/mvc/getStateful",
+				"dojox/mvc/StatefulArray",
+				"dijit/form/TextBox",
+				"dijit/form/Button",
+				"dojox/mvc/at",
+				"dojox/mvc/Group",
+				"dojox/mvc/Output",
+				"dojox/mvc/Repeat",
+				"dojo/domReady!"
+			], function(doh, array, lang, Deferred, parser, MemoryStore, Stateful, registry, getStateful, StatefulArray){
+				function getModel(store){
+					return Deferred.when(store.query(), function(data){
+						return getStateful(data, {
+							getType: function(v){
+								return lang.isArray(v) ? "array" : {}.toString.call(v) == "[object Object]" ? "object" : "value";
+							},
+							getStatefulArray: function(a){
+								return new StatefulArray(array.map(a, function(item){ return getStateful(item, this); }, this));
+							},
+							getStatefulObject: function(o){
+								var stateful = new Stateful();
+								for(var s in o){
+									stateful[s] = getStateful(o[s], this);
+								}
+								return stateful;
+							},
+							getStatefulValue: function(v){
+								return v;
+							}
+						});
+					});
+				}
+
+				function runTests(){
+					parser.parse();
+
+					doh.register("Tests", [
+						{
+							name : "initial",
+							runTest : function() {
+								doh.is("Anne1", registry.byId("nameInput0").get("value"), "nameInput0 should be Anne1");
+								doh.is("Ben1", registry.byId("nameInput1").get("value"), "nameInput1 should be Ben1 ");
+								doh.is("Chad1", registry.byId("nameInput2").get("value"), "nameInput2 should be Chad1");
+								doh.is("Anne1", registry.byId("firstnameOutput10").get("value"), "firstnameOutput10 should be Anne1");
+								doh.is("Ben1", registry.byId("firstnameOutput11").get("value"), "firstnameOutput11 should be Ben1 ");
+								doh.is("Chad1", registry.byId("firstnameOutput12").get("value"), "firstnameOutput12 should be Chad1");
+								doh.is("Anne2", registry.byId("firstnameOutput20").get("value"), "firstnameOutput20 should be Anne2");
+								doh.is("Ben2", registry.byId("firstnameOutput21").get("value"), "firstnameOutput21 should be Ben2 ");
+								doh.is("", registry.byId("firstnameOutput30").get("value"), "firstnameOutput30 should be blank");
+							}
+						}, {
+							name : "SelectModel2",
+							runTest : function() {
+								registry.byId("outergroupId").set("target", model2);
+								doh.is("Anne2", registry.byId("nameInput0").get("value"), "nameInput0 should be Anne2");
+								doh.is("Ben2", registry.byId("nameInput1").get("value"), "nameInput1 should be Ben2 ");
+							}
+						}, {
+							name : "ChangeModel2",
+							runTest : function() {
+								registry.byId("nameInput0").set("value", "Anne2-Update");
+								doh.is("Anne2-Update", registry.byId("nameInput0").get("value"), "nameInput0 should be Anne2-Update");
+								doh.is("Ben2", registry.byId("nameInput1").get("value"), "nameInput1 should be Ben2 ");
+								doh.is("Anne2-Update", registry.byId("firstnameOutput20").get("value"), "firstnameOutput20 should be Anne2-Update");
+								doh.is("Ben2",  registry.byId("firstnameOutput21").get("value"), "firstnameOutput21 should be Ben2 ");
+							}
+						}, {
+							name : "SelectModel3",
+							runTest : function() {
+								registry.byId("outergroupId").set("target", model3);
+								doh.is("", registry.byId("nameInput0").get("value"), "nameInput0 should be blank");
+							}
+						}, {
+							name : "ChangeModel3",
+							runTest : function() {
+								registry.byId("nameInput0").set("value", "Anne3-Update");
+								doh.is("Anne3-Update", registry.byId("nameInput0").get("value"), "nameInput0 should be Anne3-Update");
+								doh.is("Anne3-Update", registry.byId("firstnameOutput30").get("value"), "firstnameOutput30 should be Anne3-Update");
+							}
+						}
+					]);
+
+					doh.run();
+				}
+
+				dojox.debugDataBinding = true;
+
+				Deferred.when(getModel(new dojo.store.Memory({data: [
+					{
+						"Query": "Engineers1",
+						"Results": [
+							{
+								"First": "Anne1",
+								"Last": "Ackerman1"
+							},
+							{
+								"First": "Ben1",
+								"Last": "Beckham1"
+							},
+							{
+								"First": "Chad1",
+								"Last": "Chapman1"
+							}
+						]
+					}
+				]})), function(data){
+					model1 = data[0];
+					if(model1 && model2 && model3){ runTests(); }
+				});
+
+				Deferred.when(getModel(new dojo.store.Memory({data: [
+					{
+						"Query": "Engineers2",
+						"Results": [
+							{
+								"First": "Anne2",
+								"Last": "Ackerman2"
+							},
+							{
+								"First": "Ben2",
+								"Last": "Beckham2"
+							}
+						]
+					}
+				]})), function(data){
+					model2 = data[0];
+					if(model1 && model2 && model3){ runTests(); }
+				});
+
+				Deferred.when(getModel(new dojo.store.Memory({data: [
+					{
+						"Query": "Engineers3",
+						"Results": [
+							{
+								"First": "",
+								"Last": ""
+							}
+						]
+					}
+				]})), function(data){
+					model3 = data[0];
+					if(model1 && model2 && model3){ runTests(); }
+				});
+			});
+		</script>
+	</head>
+	<body class="claro">
+		<div id="wrapper">
+			<div id="header">
+				<div id="navigation"></div>
+				<div id="headerInsert">
+					<h1>Input Ouput Sync</h1>
+					<h2>Data Binding Example</h2>
+				</div>
+			</div>
+			<div id="main">
+				<div id="leftNav"></div>
+				<div id="mainContent">
+					<div id="outergroupId"	 data-dojo-type="dojox.mvc.Group" data-dojo-props="target: model1">
+							<div id="repeatId" data-dojo-type="dojox.mvc.Repeat" data-dojo-props="children: dojox.mvc.at('rel:', 'Results')">
+								<div class="row" data-dojo-type="dojox.mvc.Group" data-dojo-props="target: dojox.mvc.at('rel:${this.index}')">
+									<label class="cell" for="nameInput${this.index}">Name:</label>
+									<input class="cell" data-dojo-type="dijit.form.TextBox" id="nameInput${this.index}" data-dojo-props="value: dojox.mvc.at('rel:', 'First')"/>
+								</div>
+							</div>
+					</div>
+					<div class="row">
+							<span>
+								Model1 Output is ==> 
+							</span>
+							<span id="firstnameOutput10" data-dojo-type="dojox.mvc.Output" data-dojo-props="value: dojox.mvc.at(model1.Results[0], 'First')">
+								Name1 is "${this.value}" : 
+							</span>
+							<span id="firstnameOutput11" data-dojo-type="dojox.mvc.Output" data-dojo-props="value: dojox.mvc.at(model1.Results[1], 'First')">
+								Name2 is "${this.value}" : 
+							</span>
+							<span id="firstnameOutput12" data-dojo-type="dojox.mvc.Output" data-dojo-props="value: dojox.mvc.at(model1.Results[2], 'First')">
+								Name3 is "${this.value}"
+							</span>
+					</div>
+					<div class="row">
+							<span>
+								Model2 Output is ==>
+							</span>
+							<span id="firstnameOutput20" data-dojo-type="dojox.mvc.Output" data-dojo-props="value: dojox.mvc.at(model2.Results[0], 'First')">
+								Name1 is "${this.value}" : 
+							</span>
+							<span id="firstnameOutput21" data-dojo-type="dojox.mvc.Output" data-dojo-props="value: dojox.mvc.at(model2.Results[1], 'First')">
+								Name2 is "${this.value}"
+							</span>
+					</div>
+					<div class="row">
+							<span>
+								Model3 Output is ==>
+							</span>
+							<span id="firstnameOutput30" data-dojo-type="dojox.mvc.Output" data-dojo-props="value: dojox.mvc.at(model3.Results[0], 'First')">
+								Name1 is "${this.value}"
+							</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,55 +1,44 @@
 define([
 	"dojo/_base/lang",
-	"./resolve",
-	"./Bind"
-], function(lang, resolve, Bind){
+	"./BindTwo",
+	"./_atBindingExtension"
+], function(lang, BindTwo){
 	/*=====
 	dojox.mvc.at.handle = {
 		// summary:
 		//		A handle of data binding target (a dojo.Stateful property), which is used for start synchronization with data binding source (another dojo.Stateful property).
 
-		setParent: function(parent){
-			// summary:
-			//		Set parent binding.
-			// parent: dojo.Stateful
-			//		The parent binding to set.
-		},
+		// target: dojo.Stateful|String
+		//		The data binding literal or dojo.Stateful to be synchronized.
+		target: new dojo.Stateful(),
+
+		// targetProp: String
+		//		The property name in target to be synchronized.
+		targetProp: "",
+
+		// direction: Number
+		//		The data binding direction, choose from: dojox.mvc.BindTwo.from, dojox.mvc.BindTwo.to or dojox.mvc.BindTwo.both.
+		direction: dojox.mvc.BindTwo.both,
+
+		// converter: dojox.mvc.BindTwo.converter
+		//		Class/object containing the converter functions used when the data goes between data binding target (e.g. data model or controller) to data binding origin (e.g. widget).
+		converter: null,
 
 		direct: function(direction){
 			// summary:
 			//		Sets data binding direction.
 			// direction: Number
-			//		The data binding direction, choose from: dojox.mvc.Bind.from, dojox.mvc.Bind.to or dojox.mvc.Bind.both.
+			//		The data binding direction, choose from: dojox.mvc.BindTwo.from, dojox.mvc.BindTwo.to or dojox.mvc.BindTwo.both.
 		},
 
 		attach: function(converter){
 			// summary:
 			//		Attach a data converter.
-			// converter: dojox.mvc.Bind.converter
+			// converter: dojox.mvc.BindTwo.converter
 			//		Class/object containing the converter functions used when the data goes between data binding target (e.g. data model or controller) to data binding origin (e.g. widget).
-		},
-
-		bind: function(source, sourceProp){
-			// summary:
-			//		Start data binding synchronization with specified data binding source, with the data binding target defined in this handle.
-			// source: dojo.Stateful|String
-			//		The dojo.Stateful of data binding source.
-			// sourceProp: String
-			//		The property name in dojo.Stateful of data binding source.
-			// example:
-			//		Start synchronizing dojo.Stateful property with another dojo.Stateful property:
-			// |		dojox.mvc.at(stateful, "propertyname").bind(anotherstateful, "propertynameinanotherstateful") 
 		}
 	};
 	=====*/
-
-	function getLogContent(/*dojo.Stateful*/ target, /*String*/ targetProp){
-		return [target._setIdAttr ? target : target.declaredClass, targetProp].join(":")
-	}
-
-	function logResolveFailure(target, targetProp){
-		console.warn(targetProp + " could not be resolved" + (typeof target == "string" ? (" with " + target) : "") + ".");
-	}
 
 	var at = /*===== dojox.mvc.at = =====*/ function(/*dojo.Stateful|String*/ target, /*String*/ targetProp){
 		// summary:
@@ -64,85 +53,20 @@ define([
 		//		A handle of data binding target (a dojo.Stateful property), which is used for start synchronization with data binding source (another dojo.Stateful property).
 		// example:
 		//		Synchronize attrbinwidget attribute in my.widget with propertyname in stateful.
-		// |		<div data-dojo-type="my.widget" data-dojo-props="ref: {attribinwidget: dojox.mvc.at(stateful, 'propertyname')}"></div>
-
-		var _parent = null, _direction = Bind.both, _converter = null, _handles = {};
-
-		function bind(/*dojo.Stateful|String*/ source, /*String*/ sourceProp){
-			_handles["Two"] && _handles["Two"].unwatch();
-			_handles["Two"] = null;
-
-			var resolvedTarget = resolve(target, _parent && _parent.get("target")) || {};
-			var resolvedSource = resolve(source, _parent && _parent.get("target")) || {};
-			if(!resolvedSource.set || !resolvedTarget.watch){
-				logResolveFailure(source, sourceProp);
-				return;
-			}
-
-			if(!targetProp){
-				// If target property is not specified, it means this handle is just for resolving data binding target.
-				// (For dojox.mvc.Group and dojox.mvc.Repeat)
-				// Do not perform data binding synchronization in such case.
-
-				resolvedSource.set(sourceProp, resolvedTarget);
-				if(dojox.debugDataBinding){
-					console.log("dojox.mvc.at set " + resolvedTarget + " to: " + getLogContent(resolvedSource, sourceProp));
-				}
-			}else if(!resolvedTarget.set || !resolvedTarget.watch){
-				if(targetProp == "*"){
-					logResolveFailure(target, targetProp);
-					return;
-				}
-
-				// If target object is not a stateful object (and the property is not wildcarded), it means this handle is just for resolving data binding target.
-				// (For dojox.mvc.Group and dojox.mvc.Repeat)
-				// Do not perform data binding synchronization in such case.
-				resolvedSource.set(sourceProp, resolvedTarget[targetProp]);
-				if(dojox.debugDataBinding){
-					console.log("dojox.mvc.at set " + resolvedTarget[targetProp] + " to: " + getLogContent(resolvedSource, sourceProp));
-				}
-			}else{
-				// Start data binding
-				_handles["Two"] = Bind.bindTwo(resolvedTarget, targetProp, resolvedSource, sourceProp, {direction: _direction, converter: _converter}); // dojox.mvc.Bind.handle
-			}
-		}
+		// |		<div data-dojo-type="my.widget" data-dojo-props="attribinwidget: dojox.mvc.at(stateful, 'propertyname')"></div>
 
 		return {
 			atsignature: "dojox.mvc.at",
-
-			setParent: function(/*dojo.Stateful*/ parent){
-				_parent = parent;
-				return this; // dojox.mvc.at.handle
-			},
-
+			target: target,
+			targetProp: targetProp,
+			direction: BindTwo.both,
 			direct: function(/*Number*/ direction){
-				_direction = direction;
+				this.direction = direction;
 				return this;
 			},
-
-			attach: function(/*dojox.mvc.Bind.converter*/ converter){
-				_converter = converter;
+			attach: function(/*dojox.mvc.BindTwo.converter*/ converter){
+				this.converter = converter;
 				return this;
-			},
-
-			bind: function(/*dojo.Stateful|String*/ source, /*String*/ sourceProp){
-				bind(source, sourceProp);
-				if(/^rel:/.test(target) || /^rel:/.test(source)){
-					_handles["rel"] = _parent.watch("target", function(name, old, current){
-						if(old !== current){
-							if(dojox.debugDataBinding){ console.log("Change in relative data binding target: " + _parent); }
-							bind(source, sourceProp);
-						}
-					});
-				}
-				return {
-					unwatch: function(){
-						for(var s in _handles){
-							_handles[s] && _handles[s].unwatch();
-							_handles[s] = null;
-						}
-					}
-				};
 			}
 		}; // dojox.mvc.at.handle
 	};

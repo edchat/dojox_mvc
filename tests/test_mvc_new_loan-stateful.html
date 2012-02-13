@@ -27,18 +27,19 @@
 				"dojo/parser",
 				"dojox/charting/Chart",
 				"dojox/charting/themes/PlotKit/blue",
+				"dojox/mvc/at",
 				"dojox/mvc/Stateful",
+				"dojox/mvc/StatefulSeries",
 				"dijit/form/TextBox",
 				"dijit/form/Button",
 				"dijit/form/ValidationTextBox",
 				"dijit/form/NumberTextBox",
 				"dojox/charting/plot2d/Pie",
 				"dojox/mvc/_TextBoxExtensions",
-				"dojox/mvc/at",
 				"dojox/mvc/Group",
 				"dojox/mvc/Output",
 				"dojo/domReady!"
-			], function(array, declare, lang, dxhr, parser, Chart, blue, Stateful){
+			], function(array, declare, lang, dxhr, parser, Chart, blue, at, Stateful, StatefulSeries){
 				dojox.debugDataBinding = true;
 
 				function getNewValue(model, prop, name, value){
@@ -61,7 +62,7 @@
 					model.set("TotalHousing", totalHousing);
 					model.set("TotalIncome", totalIncome);
 			
-					model[name] = value;
+					model._set(name, value);
 				}
 
 				loanModel = new Stateful({
@@ -80,56 +81,27 @@
 					Mortgage: 1000,
 					Taxes: 500,
 					OtherHousing: 1200,
-					_setMortgageProp: function(value){
+					_setMortgageAttr: function(value){
 						recomputeTotalAndPercentages(this, "Mortgage", value);
 					},
-					_setTaxesProp: function(value){
+					_setTaxesAttr: function(value){
 						recomputeTotalAndPercentages(this, "Taxes", value);
 					},
-					_setOtherHousingProp: function(value){
+					_setOtherHousingAttr: function(value){
 						recomputeTotalAndPercentages(this, "OtherHousing", value);
 					},
-					_setBaseIncomeProp: function(value){
+					_setBaseIncomeAttr: function(value){
 						recomputeTotalAndPercentages(this, "BaseIncome", value);
 					},
-					_setBonusIncomeProp: function(value){
+					_setBonusIncomeAttr: function(value){
 						recomputeTotalAndPercentages(this, "BonusIncome", value);
-					}
-				});
-
-				var StatefulSeries = declare(null, {
-					// summary:
-					//		Chart data plugin ("series") that watches for stateful properties of the given list.
-					//		At initialization, and when the properties are updated, creates the data from the properties given and updates the chart.
-
-					constructor: function(data, props){
-						var _self = this;
-						function pushDataChanges(){
-							_self.data = array.map(props, function(item){ return data[item]; });
-							if(_self.series){
-								_self.series.chart.updateSeries(_self.series.name, _self);
-								_self.series.chart.delayedRender();
-							}
-						}
-						this._handle = data.watch(function(name, old, current){
-							pushDataChanges();
-						});
-						pushDataChanges();
-					},
-					destroy: function(){
-						if(this._handle){
-							this._handle.unwatch();
-						}
-					},
-					setSeriesObject: function(series){
-						this.series = series;
 					}
 				});
 
 				chart = new Chart("expenseChart")
 				 .setTheme(blue)
 				 .addPlot("default", {type: "Pie"})
-				 .addSeries("default", new StatefulSeries(loanModel, ["Mortgage", "Taxes", "OtherHousing"])).render();
+				 .addSeries("default", new StatefulSeries([at(loanModel, "Mortgage"), at(loanModel, "Taxes"), at(loanModel, "OtherHousing")])).render();
 
 				function lookup(model){
 					if(isNaN(model.get("Zip"))){ return; }

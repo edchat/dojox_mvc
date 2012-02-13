@@ -7,7 +7,7 @@ define([
 	"./BindTwo"
 ], function(array, lang, declare, registry, resolve, BindTwo){
 	function getLogContent(/*dojo.Stateful*/ target, /*String*/ targetProp){
-		return [target._setIdAttr ? target : target.declaredClass, targetProp].join(":")
+		return [target._setIdAttr || !target.declaredClass ? target : target.declaredClass, targetProp].join(":")
 	}
 
 	function logResolveFailure(target, targetProp){
@@ -24,14 +24,13 @@ define([
 		while(pn){
 			pw = registry.getEnclosingWidget(pn);
 			if(pw){
-				var pt = pw.get(pw._relTargetProp || "target");
-				if(pt && lang.isFunction(pt.set) && lang.isFunction(pt.watch)){
-					break;
+				var relTargetProp = pw._relTargetProp || "target", pt = lang.isFunction(pw.get) ? pw.get(relTargetProp) : pw[relTargetProp];
+				if(pt){
+					return pw; // dijit._WidgetBase
 				}
 			}
 			pn = pw && pw.domNode.parentNode;
 		}
-		return pw; // dijit._WidgetBase
 	}
 
 	function bind(/*dojo.Stateful|String*/ target, /*String*/ targetProp, /*dijit._WidgetBase*/ source, /*String*/ sourceProp, /*dojox.mvc.BindTwo.options*/ options){
@@ -48,42 +47,27 @@ define([
 		// options: dojox.mvc.BindTwo.options
 		//		Data binding options.
 
-		var _handles = {}, parent = getParent(source);
+		var _handles = {}, parent = getParent(source), relTargetProp = parent && parent._relTargetProp || "target";
 
 		function resolveAndBind(){
 			_handles["Two"] && _handles["Two"].unwatch();
 			delete _handles["Two"];
-	
-			var relTarget = parent && parent.get(parent._relTargetProp || "target");
-			var resolvedTarget = resolve(target, relTarget) || {};
-			var resolvedSource = resolve(source, relTarget) || {};
-			if(!resolvedSource.set || !resolvedTarget.watch){
-				logResolveFailure(source, sourceProp);
-				return;
-			}
-	
+
+			var relTarget = parent && (lang.isFunction(parent.get) ? parent.get(relTargetProp) : parent[relTargetProp]),
+			 resolvedTarget = resolve(target, relTarget) || {},
+			 resolvedSource = resolve(source, relTarget) || {};
+
 			if(!targetProp){
 				// If target property is not specified, it means this handle is just for resolving data binding target.
 				// (For dojox.mvc.Group and dojox.mvc.Repeat)
 				// Do not perform data binding synchronization in such case.
-	
-				resolvedSource.set(sourceProp, resolvedTarget);
+				lang.isFunction(resolvedSource.set) ? resolvedSource.set(sourceProp, resolvedTarget) : resolvedSource[sourceProp] = resolvedTarget;
 				if(dojox.debugDataBinding){
 					console.log("dojox.mvc._atBindingMixin set " + resolvedTarget + " to: " + getLogContent(resolvedSource, sourceProp));
 				}
-			}else if(!resolvedTarget.set || !resolvedTarget.watch){
-				if(targetProp == "*"){
-					logResolveFailure(target, targetProp);
-					return;
-				}
-	
-				// If target object is not a stateful object (and the property is not wildcarded), it means this handle is just for resolving data binding target.
-				// (For dojox.mvc.Group and dojox.mvc.Repeat)
-				// Do not perform data binding synchronization in such case.
-				resolvedSource.set(sourceProp, resolvedTarget[targetProp]);
-				if(dojox.debugDataBinding){
-					console.log("dojox.mvc._atBindingMixin set " + resolvedTarget[targetProp] + " to: " + getLogContent(resolvedSource, sourceProp));
-				}
+			}else if((!resolvedTarget.set || !resolvedTarget.watch) && targetProp == "*"){
+				logResolveFailure(target, targetProp);
+				return;
 			}else{
 				// Start data binding
 				_handles["Two"] = BindTwo(resolvedTarget, targetProp, resolvedSource, sourceProp, options); // dojox.mvc.BindTwo.handle
@@ -91,8 +75,8 @@ define([
 		}
 
 		resolveAndBind();
-		if(/^rel:/.test(target) || /^rel:/.test(source)){
-			_handles["rel"] = parent.watch(parent._relTargetProp || "target", function(name, old, current){
+		if(/^rel:/.test(target) || /^rel:/.test(source) && lang.isFunction(parent.set) && lang.isFunction(parent.watch)){
+			_handles["rel"] = parent.watch(relTargetProp, function(name, old, current){
 				if(old !== current){
 					if(dojox.debugDataBinding){ console.log("Change in relative data binding target: " + parent); }
 					resolveAndBind();

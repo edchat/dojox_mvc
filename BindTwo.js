@@ -57,8 +57,8 @@ define([
 
 	function getLogContent(/*dojo.Stateful*/ target, /*String*/ targetProp, /*dojo.Stateful*/ source, /*String*/ sourceProp){
 		return [
-			[source._setIdAttr ? source : source.declaredClass, sourceProp].join(":"),
-			[target._setIdAttr ? target : target.declaredClass, targetProp].join(":")
+			[source._setIdAttr || !source.declaredClass ? source : source.declaredClass, sourceProp].join(":"),
+			[target._setIdAttr || !target.declaredClass ? target : target.declaredClass, targetProp].join(":")
 		];
 	}
 
@@ -92,21 +92,23 @@ define([
 		 || targetProp == "*" && array.indexOf(target.get("properties") || [sourceProp], sourceProp) < 0
 		 || targetProp == "*" && sourceProp in (excludes || {})){ return; }
 
+		var prop = targetProp == "*" ? sourceProp : targetProp, logContent = getLogContent(target, prop, source, sourceProp);
+
 		try {
 			current = convertFunc ? convertFunc(current) : current;
 		}catch(e){
 			if(dojox.debugDataBinding){
-				console.log("Copy from" + getLogContent(target, targetProp == "*" ? sourceProp : targetProp, source, sourceProp).join(" to ") + " was not done as an error is thrown in the converter.");
+				console.log("Copy from" + logContent.join(" to ") + " was not done as an error is thrown in the converter.");
 			}
 			return;
 		}
 
 		if(dojox.debugDataBinding){
-			console.log(getLogContent(source, sourceProp, target, targetProp == "*" ? sourceProp : targetProp).join(" is being copied from: ") + " (Value: " + current + " from " + old + ")");
+			console.log(logContent.reverse().join(" is being copied from: ") + " (Value: " + current + " from " + old + ")");
 		}
 
 		// Copy the new value to target
-		target.set(targetProp == "*" ? sourceProp : targetProp, current);
+		lang.isFunction(target.set) ? target.set(prop, current) : (target[prop] = current);
 	}
 
 	var directions = {
@@ -138,41 +140,42 @@ define([
 		// returns:
 		//		The handle of data binding synchronization.
 
-		var converter = (options || {}).converter, converterInstance, formatFunc, parseFunc;
+		var converter = (options || {}).converter, converterInstance, formatFunc, parseFunc, debugDataBinding = dojox.debugDataBinding;
 		if(converter){
 			converterInstance = {target: target, source: source};
-			formatFunc = lang.hitch(converterInstance, converter.format);
-			parseFunc = lang.hitch(converterInstance, converter.parse);
+			formatFunc = converter.format && lang.hitch(converterInstance, converter.format);
+			parseFunc = converter.parse && lang.hitch(converterInstance, converter.parse);
 		}
 
-		direction = (options || {}).direction || mvc.both;
-
-		var _watchHandles = [], list;
+		var _watchHandles = [], direction = (options || {}).direction || mvc.both, excludes = [], list, logContent = getLogContent(target, targetProp, source, sourceProp);
 
 		if(sourceProp == "*"){
-			if(targetProp != "*"){ throw Exception("Unmatched wildcard is specified between target and source."); }
+			if(targetProp != "*"){ throw new Error("Unmatched wildcard is specified between target and source."); }
 			list = source.get("properties");
 			if(!list){
 				list = [];
 				for(var s in source){ if(source.hasOwnProperty(s)){ list.push(s); } }
 			}
+			excludes = source.get("excludes");
 		}else{
 			list = [targetProp];
 		}
 
-		var excludes = source.get("excludes");
-
 		if(direction & mvc.from){
 			// Start synchronization from target to source (e.g. from model to widget). For wildcard mode (targetProp == sourceProp == "*"), the 1st argument of watch() is omitted
-			_watchHandles.push(target.watch.apply(target, ((targetProp != "*") ? [targetProp] : []).concat([function(name, old, current){
-				copy(formatFunc, source, sourceProp, target, name, old, current, excludes);
-			}])));
+			if(lang.isFunction(target.set) && lang.isFunction(target.watch)){
+				_watchHandles.push(target.watch.apply(target, ((targetProp != "*") ? [targetProp] : []).concat([function(name, old, current){
+					copy(formatFunc, source, sourceProp, target, name, old, current, excludes);
+				}])));
+			}else if(debugDataBinding){
+				console.log(logContent.reverse().join(" is not a stateful property. Its change is not reflected to ") + ".");
+			}
 
 			// Initial copy from target to source (e.g. from model to widget)
 			array.forEach(list, function(prop){
 				// In "all properties synchronization" case, copy is not done for properties in "exclude" list
 				if(sourceProp != "*" || !(prop in (excludes || {}))){
-					var value = target.get(prop);
+					var value = lang.isFunction(target.get) ? target.get(prop) : target[prop];
 					// There are cases where model only provides "partial" set of properties for widgets.
 					// Copying non-null properties from data model to widget, for example, will erase widget properties that are defined by default.
 					if(value != null){
@@ -189,7 +192,7 @@ define([
 					// In "all properties synchronization" case, copy is not done for properties in "exclude" list
 					if(sourceProp != "*" || !(prop in (excludes || {}))){
 						// Initial copy from source to target (e.g. from widget to model), only done for one-way binding from widget to model
-						var value = source.get(sourceProp);
+						var value = lang.isFunction(source.get) ? source.get(sourceProp) : source[sourceProp];
 						// Follow the practice of model->view initial copy, not copying null value
 						if(value != null){
 							copy(parseFunc, target, prop, source, sourceProp == "*" ? prop : sourceProp, null, value);
@@ -199,21 +202,25 @@ define([
 			}
 
 			// Start synchronization from source to target (e.g. from widget to model). For wildcard mode (targetProp == sourceProp == "*"), the 1st argument of watch() is omitted
-			_watchHandles.push(source.watch.apply(source, ((sourceProp != "*") ? [sourceProp] : []).concat([function(name, old, current){
-				copy(parseFunc, target, targetProp, source, name, old, current, excludes);
-			}])));
+			if(lang.isFunction(source.set) && lang.isFunction(source.watch)){
+				_watchHandles.push(source.watch.apply(source, ((sourceProp != "*") ? [sourceProp] : []).concat([function(name, old, current){
+					copy(parseFunc, target, targetProp, source, name, old, current, excludes);
+				}])));
+			}else if (debugDataBinding){
+				console.log(logContent.join(" is not a stateful property. Its change is not reflected to ") + ".");
+			}
 		}
 
-		if(dojox.debugDataBinding){
-			console.log(getLogContent(target, targetProp, source, sourceProp).join(" is bound to: "));
+		if(debugDataBinding){
+			console.log(logContent.join(" is bound to: "));
 		}
 
 		return {
 			unwatch: function(){
 				for(var h = null; h = _watchHandles.pop();){
 					h.unwatch();
-					if(dojox.debugDataBinding){
-						console.log(getLogContent(target, targetProp, source, sourceProp).join(" is unbound from: "));
+					if(debugDataBinding){
+						console.log(logContent.join(" is unbound from: "));
 					}
 				}
 			}

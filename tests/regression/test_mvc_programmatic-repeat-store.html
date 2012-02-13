@@ -4,13 +4,13 @@
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 		<title>Programmatic Repeat example, using a store with save, commit and reset</title>
 
-		<script src="../../../dojo/dojo.js"
+		<script src="../../../../dojo/dojo.js"
 			type="text/javascript"
 			djConfig="parseOnLoad: false, isDebug: true">
 		</script>
 		<style type="text/css">
 			@import "css/app-format.css";
-			@import "../../../dijit/themes/claro/claro.css";
+			@import "../../../../dijit/themes/claro/claro.css";
 		</style>
 		<script type="text/javascript" >
 			dojo.require("dojox.mvc");
@@ -31,7 +31,7 @@
 						'</div>';
 
 			function setup() {
-				var writeStore = new dojo.data.ItemFileWriteStore({url: dojo.moduleUrl("dojox.mvc.tests._data", "mvcRepeatData.json")});
+				var writeStore = new dojo.data.ItemFileWriteStore({url: dojo.moduleUrl("dojox.mvc.tests.regression._data", "mvcRepeatData.json")});
 				var modelPromise = dojox.mvc.newStatefulModel({store: new dojo.store.DataStore({store: writeStore})}); 
 				modelPromise.then(function(model){ 
 					results = model;

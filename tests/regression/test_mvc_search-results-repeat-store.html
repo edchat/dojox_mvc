@@ -6,9 +6,9 @@
 
 		<style type="text/css">
 			@import "css/app-format.css";
-			@import "../../../dijit/themes/claro/claro.css";
+			@import "../../../../dijit/themes/claro/claro.css";
 		</style>
-		<script type="text/javascript" djConfig="parseOnLoad:0,isDebug:1,async:1" src="../../../dojo/dojo.js"></script>
+		<script type="text/javascript" djConfig="parseOnLoad:0,isDebug:1,async:1" src="../../../../dojo/dojo.js"></script>
 		<script type="text/javascript">
 		var results, selectedIndex = 0;
  
@@ -24,7 +24,7 @@
 			'dojox/mvc/Group',
 			'dojox/mvc/Output'
 			], function(kernel, parser, mvc, ItemFileWriteStore, DataStore){
-				var writeStore = new ItemFileWriteStore({url: kernel.moduleUrl("dojox.mvc.tests._data", "mvcRepeatData.json")});
+				var writeStore = new ItemFileWriteStore({url: kernel.moduleUrl("dojox.mvc.tests.regression._data", "mvcRepeatData.json")});
 				var modelPromise = mvc.newStatefulModel({store: new DataStore({store: writeStore})}); 
 				modelPromise.then(function(model){ 
 					results = model;

@@ -4,13 +4,13 @@
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 		<title>View generation -- Model-bound generation example with a store, commit and reset</title>
 
-		<script src="../../../dojo/dojo.js"
+		<script src="../../../../dojo/dojo.js"
 				type="text/javascript"
 				djConfig="isDebug: true, parseOnLoad: true">
 		</script>
 		<style type="text/css">
 			@import "css/app-format.css";
-			@import "../../../dijit/themes/claro/claro.css";			
+			@import "../../../../dijit/themes/claro/claro.css";			
 		</style>
 		<script type="text/javascript" >
 			dojo.require("dojox.mvc");
@@ -25,7 +25,7 @@
 			var model;
 
 			function setup(){
-				var theWriteStore = new dojo.data.ItemFileWriteStore({url: dojo.moduleUrl("dojox.mvc.tests._data", "mvcGenerateData.json")});
+				var theWriteStore = new dojo.data.ItemFileWriteStore({url: dojo.moduleUrl("dojox.mvc.tests.regression._data", "mvcGenerateData.json")});
 				// this is used to see what would have been written out if we were using a real service
 				theWriteStore._saveEverything = function(c, e, n){
 					console.log(n);

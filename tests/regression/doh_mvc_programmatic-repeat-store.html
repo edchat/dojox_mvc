@@ -5,16 +5,16 @@
 	<title>MVC DOH Test</title>
 
 	<style>
-		@import "../../../dojo/resources/dojo.css";
-		@import "../../../dijit/tests/css/dijitTests.css";
+		@import "../../../../dojo/resources/dojo.css";
+		@import "../../../../dijit/tests/css/dijitTests.css";
 		@import "css/app-format.css";
 	</style>
 
 	<!-- required: the default dijit theme: -->
-	<link id="themeStyles" rel="stylesheet" href="../../../dijit/themes/claro/claro.css"/>
+	<link id="themeStyles" rel="stylesheet" href="../../../../dijit/themes/claro/claro.css"/>
 
 	<!-- required: dojo.js -->
-	<script src="../../../dojo/dojo.js" type="text/javascript"
+	<script src="../../../../dojo/dojo.js" type="text/javascript"
 		djConfig="parseOnLoad: false, isDebug: true">
 	</script>
 	<script type="text/javascript" src="./helpers.js"></script>
@@ -38,7 +38,7 @@
 						'</div>';
 
 			function setup() {
-				var writeStore = new dojo.data.ItemFileWriteStore({url: dojo.moduleUrl("dojox.mvc.tests._data", "mvcRepeatData.json")});
+				var writeStore = new dojo.data.ItemFileWriteStore({url: dojo.moduleUrl("dojox.mvc.tests.regression._data", "mvcRepeatData.json")});
 				var modelPromise = dojox.mvc.newStatefulModel({store: new dojo.store.DataStore({store: writeStore})}); 
 				modelPromise.then(function(model){ 
 					results = model;

@@ -4,13 +4,13 @@
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 		<title>Static Master/Detail Pattern -- Search Results example, using a store with save, commit and reset</title>
 
-		<script src="../../../dojo/dojo.js"
+		<script src="../../../../dojo/dojo.js"
 			type="text/javascript"
 			djConfig="parseOnLoad: false, isDebug: true">
 		</script>
 		<style type="text/css">
 			@import "css/app-format.css";
-			@import "../../../dijit/themes/claro/claro.css";
+			@import "../../../../dijit/themes/claro/claro.css";
 		</style>
 		<script type="text/javascript" >
 			dojo.require("dojox.mvc");
@@ -42,8 +42,8 @@
 	</head>
 	<body class="claro" style="background-image: url(images/master_detail.png)">
         <div id="storeNodes">
-			<div data-dojo-id="theWriteStore" data-dojo-type="dojo.data.ItemFileWriteStore" data-dojo-props="url: '../../../dojox/mvc/tests/_data/mvcRepeatData.json'"></div>	
-			<div data-dojo-id="theDataStore" data-dojo-type="dojo.store.DataStore" data-dojo-props="store: writeStore"></div>
+			<div data-dojo-id="theWriteStore" data-dojo-type="dojo.data.ItemFileWriteStore" data-dojo-props="url: '../../../../dojox/mvc/tests/regression/_data/mvcRepeatData.json'"></div>	
+			<div data-dojo-id="theDataStore" data-dojo-type="dojo.store.DataStore" data-dojo-props="store: theWriteStore"></div>
         </div>
 		<div id="wrapper">
 			<div id="header">

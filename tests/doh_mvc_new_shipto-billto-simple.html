@@ -16,13 +16,14 @@
 				"dojo/parser",
 				"dojo/Stateful",
 				"dijit/registry",
-				"dojox/mvc",
 				"dojox/mvc/at",
+				"dojox/mvc/getStateful",
+				"dojox/mvc/getStatefulOptions",
 				"dijit/form/TextBox",
 				"dijit/form/Button",
 				"dojox/mvc/Group",
 				"dojox/mvc/Output"
-			], function(doh, parser, Stateful, registry, mvc, at){
+			], function(doh, parser, Stateful, registry, at, getStateful, getStatefulOptions){
 				dojox.debugDataBinding = true;
 
 				data = {
@@ -44,14 +45,14 @@
 					}
 				};
 
-				model = mvc.newStatefulModel({data: data});
+				model = getStateful(data, getStatefulOptions);
 
 				parser.parse();
 
 				doh.register("Switch between ShipTo and BillTo", [{
 					name: "Switch-to-BillTo",
 					runTest: function(){
-						registry.byId("addrGroup").set("ref", model.BillTo);
+						registry.byId("addrGroup").set("target", model.BillTo);
 						doh.is("17 Skyline Dr-BillTo", registry.byId("streetInput").get("value"), "Street should be of BillTo");
 						doh.is("Hawthorne", registry.byId("cityInput").get("value"), "City should be of BillTo");
 					}
@@ -159,34 +160,28 @@
 			of the parent binding context.
 			The ref attribute may support more advanced constructs, such as queries
 			over the parent widget's or other application specified binding context.
-
-			Old syntax:
-				data-dojo-props="ref: 'model.ShipTo'">
-				data-dojo-props="ref: 'Street'"/>
-				data-dojo-props="ref: 'City'"/>
-				data-dojo-props="ref: 'State'"/>
 		-->
 		<div class="row" id="addrGroup" data-dojo-type="dojox.mvc.Group" 
 							data-dojo-props="target: model.ShipTo">
 			<div class="row">
 				<label class="cell" for="streetInput">Street:</label>
 				<input class="cell" id="streetInput" data-dojo-type="dijit.form.TextBox" 
-					data-dojo-props="value: dojox.mvc.at('rel:Street', 'value')">
+					data-dojo-props="value: dojox.mvc.at('rel:', 'Street')">
 			</div>
 			<div class="row">
 				<label class="cell" for="cityInput">City:</label>
 				<input class="cell" id="cityInput" data-dojo-type="dijit.form.TextBox" 
-					data-dojo-props="value: dojox.mvc.at('rel:City', 'value')">
+					data-dojo-props="value: dojox.mvc.at('rel:', 'City')">
 			</div>
 			<div class="row">
 				<label class="cell" for="stateInput">State:</label>
 				<input class="cell" id="stateInput" data-dojo-type="dijit.form.TextBox" 
-					data-dojo-props="value: dojox.mvc.at('rel:State', 'value')">
+					data-dojo-props="value: dojox.mvc.at('rel:', 'State')">
 			</div>
 			<div class="row">
 				<label class="cell" for="zipInput">Zipcode:</label>
 				<input class="cell" id="zipInput" data-dojo-type="dijit.form.TextBox" 
-					data-dojo-props="value: dojox.mvc.at('rel:Zip', 'value')">
+					data-dojo-props="value: dojox.mvc.at('rel:', 'Zip')">
 			</div>
 		</div>
 		</div></div></div>

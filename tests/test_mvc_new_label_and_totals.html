@@ -15,17 +15,18 @@
 		require([
 			'dojo/parser',
 			'dojo/ready',
-			'dojox/mvc',
+			"dojox/mvc/getStateful",
+			"dojox/mvc/getStatefulOptions",
 			'dojox/mvc/at',
 			'dijit/form/TextBox',
 			'dijit/form/Button',
 			'dojox/mvc/Group',
 			'dojox/mvc/Repeat',
 			'dojox/mvc/Output'
-			], function(parser, ready, mvc){
+			], function(parser, ready, getStateful, getStatefulOptions){
 
 			// Order data
-			var order = {
+			orderData = {
 				"Serial" : "111",
 				"First" : "",
 				"Lab" : "TEST",
@@ -35,7 +36,7 @@
 			};
 
 			// Initial sum data
-			var sumData = {
+			sumData = {
 				"one" : 1,
 				"two" : 2,
 				"three" : 3,
@@ -44,7 +45,7 @@
 			};
 
 			// Initial repeat sum data
-			var sumRepeatData = {
+			sumRepeatData = {
 				"list" : [
 				          {"item" : 1},
 				          {"item" : 2},
@@ -101,10 +102,15 @@
 				recomputeTotal();
 			});
 
-			summodel = mvc.newStatefulModel({ data : sumData });
-			sumrepeatmodel = mvc.newStatefulModel({ data : sumRepeatData });
-
-			model = mvc.newStatefulModel({ data : order });
+			// Old api
+			//summodel = mvc.newStatefulModel({ data : sumData });
+			//sumrepeatmodel = mvc.newStatefulModel({ data : sumRepeatData });
+			//model = mvc.newStatefulModel({ data : order });
+			// new Api
+			summodel = getStateful(sumData,getStatefulOptions );
+			sumrepeatmodel = getStateful(sumRepeatData, getStatefulOptions);
+			model = getStateful(orderData, getStatefulOptions);
+			
 
 		});
 
@@ -164,23 +170,23 @@
 			<div class="row">
 				<label class="cell" for="firstInput">Enter first name:</label>
 				<input class="cell" id="firstInput" data-dojo-type="dijit.form.TextBox" 
-					data-dojo-props="value: dojox.mvc.at('rel:First', 'value')">
+					data-dojo-props="value: dojox.mvc.at('rel:', 'First')">
 			</div>
 			<div class="row">
 				<label class="cell" for="lastnameInput">Enter last name:</label>
 				<input class="cell" id="lastnameInput" data-dojo-type="dijit.form.TextBox" 
-					data-dojo-props="value: dojox.mvc.at('rel:Last', 'value')">
+					data-dojo-props="value: dojox.mvc.at('rel:', 'Last')">
 			</div>
 			<div class="row">
 				<label class="cell" for="emailInput">Enter email:</label>
 				<input class="cell" id="emailInput" data-dojo-type="dijit.form.TextBox" 
-					data-dojo-props="value: dojox.mvc.at('rel:Email', 'value')">
+					data-dojo-props="value: dojox.mvc.at('rel:', 'Email')">
 			</div>
 			<div class="row">
 				<label data-dojo-type="dojox.mvc.Output" class="cell" for="ageInput"
-					data-dojo-props="value: dojox.mvc.at('rel:First', 'value').direct(dojox.mvc.from).attach(ageLabelConverter)"></label>
+					data-dojo-props="value: dojox.mvc.at('rel:', 'First').direct(dojox.mvc.from).attach(ageLabelConverter)"></label>
 				<input class="cell" id="ageInput" data-dojo-type="dijit.form.TextBox" 
-					data-dojo-props="value: dojox.mvc.at('rel:Age', 'value')">
+					data-dojo-props="value: dojox.mvc.at('rel:', 'Age')">
 			</div>
 		</div>
 		<br/>
@@ -190,27 +196,27 @@
 		<div class="row">
 			<label class="cell" for="oneInput">Item one:</label>
 			<input class="cell" id="oneInput" data-dojo-type="dijit.form.TextBox" 
-				data-dojo-props="value: dojox.mvc.at('rel:one', 'value').attach(sumValuesConverter)">
+				data-dojo-props="value: dojox.mvc.at('rel:', 'one').attach(sumValuesConverter)">
 		</div>
 		<div class="row">
 			<label class="cell" for="twoInput">Item two:</label>
 			<input class="cell" id="twoInput" data-dojo-type="dijit.form.TextBox" 
-				data-dojo-props="value: dojox.mvc.at('rel:two', 'value').attach(sumValuesConverter)">
+				data-dojo-props="value: dojox.mvc.at('rel:', 'two').attach(sumValuesConverter)">
 		</div>
 		<div class="row">
 		<label class="cell" for="threeInput">Item three:</label>
 		<input class="cell" id="threeInput" data-dojo-type="dijit.form.TextBox" 
-			data-dojo-props="value: dojox.mvc.at('rel:three', 'value').attach(sumValuesConverter)">
+			data-dojo-props="value: dojox.mvc.at('rel:', 'three').attach(sumValuesConverter)">
 	</div>
 	<div class="row">
 		<label class="cell" for="fourInput">Item four:</label>
 		<input class="cell" id="fourInput" data-dojo-type="dijit.form.TextBox" 
-			data-dojo-props="value: dojox.mvc.at('rel:four', 'value').attach(sumValuesConverter)">
+			data-dojo-props="value: dojox.mvc.at('rel:', 'four').attach(sumValuesConverter)">
 	</div>
 		<div class="row">
 			<label class="cell" for="totalOutput">Total:</label>
 			<div class="cell" id="totalOutput" data-dojo-type="dojox.mvc.Output" 
-				data-dojo-props="value: dojox.mvc.at('rel:total', 'value')"></div>
+				data-dojo-props="value: dojox.mvc.at('rel:', 'total')"></div>
 	</div>
 	<br/>
 	<h4>Update total when any of the fields are changed - Using a Repeat.</h4>
@@ -222,21 +228,21 @@
 				<div class="row">
 					<label class="cell" for="input${this.index}">Item ${this.index}:</label>
 					<input class="cell" id="input${this.index}" data-dojo-type="dijit.form.TextBox" 
-						data-dojo-props="value: dojox.mvc.at('rel:item', 'value').attach(sumRepeatValuesConverter)">
+						data-dojo-props="value: dojox.mvc.at('rel:', 'item').attach(sumRepeatValuesConverter)">
 				</div>
 			</div>
 		</div>
 		<div class="row">
 			<label class="cell" for="totalrepeatOutput">Total:</label>
 			<div class="cell" id="totalrepeatOutput" data-dojo-type="dojox.mvc.Output" 
-				data-dojo-props="value: dojox.mvc.at('rel:total', 'value')"></div>
+				data-dojo-props="value: dojox.mvc.at('rel:', 'total')"></div>
 		</div>
 	</div>
 	<br/>
 		<br/>
 		Model:
 		<button id="reset" type="button" data-dojo-type="dijit.form.Button" 
-				data-dojo-props="onClick: function(){model.reset();summodel.reset();sumrepeatmodel.reset();}">Reset</button>
+				data-dojo-props="onClick: function(){model.set(orderData);summodel.set(sumData);sumrepeatmodel.set(sumRepeatData);}">Reset</button>
 		</div></div></div>
 	</body>
 </html>

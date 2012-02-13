@@ -2,10 +2,9 @@ define([
 	"dojo/_base/array",
 	"dojo/_base/lang",
 	"dojo/_base/declare",
-	"dijit/registry",
 	"./resolve",
 	"./BindTwo"
-], function(array, lang, declare, registry, resolve, BindTwo){
+], function(array, lang, declare, resolve, BindTwo){
 	function getLogContent(/*dojo.Stateful*/ target, /*String*/ targetProp){
 		return [target._setIdAttr || !target.declaredClass ? target : target.declaredClass, targetProp].join(":")
 	}
@@ -20,6 +19,13 @@ define([
 		// w: dijit._WidgetBase
 		//		The widget.
 
+		// Usage of dijit/registry module is optional. Return null if it's not already loaded.
+		var registry;
+		try{
+			registry = require("dijit/registry");
+		}catch(e){
+			return;
+		}
 		var pn = w.domNode.parentNode, pw, pb;
 		while(pn){
 			pw = registry.getEnclosingWidget(pn);
@@ -54,8 +60,12 @@ define([
 			delete _handles["Two"];
 
 			var relTarget = parent && (lang.isFunction(parent.get) ? parent.get(relTargetProp) : parent[relTargetProp]),
-			 resolvedTarget = resolve(target, relTarget) || {},
-			 resolvedSource = resolve(source, relTarget) || {};
+			 resolvedTarget = resolve(target, relTarget),
+			 resolvedSource = resolve(source, relTarget);
+
+			if(!resolvedTarget || /^rel:/.test(target) && !parent){ logResolveFailure(target, targetProp); }
+			if(!resolvedSource || /^rel:/.test(source) && !parent){ logResolveFailure(source, sourceProp); }
+			if(!resolvedTarget || !resolvedSource || (/^rel:/.test(target) || /^rel:/.test(source)) && !parent){ return; }
 
 			if(!targetProp){
 				// If target property is not specified, it means this handle is just for resolving data binding target.
@@ -75,7 +85,7 @@ define([
 		}
 
 		resolveAndBind();
-		if(/^rel:/.test(target) || /^rel:/.test(source) && lang.isFunction(parent.set) && lang.isFunction(parent.watch)){
+		if(parent && /^rel:/.test(target) || /^rel:/.test(source) && lang.isFunction(parent.set) && lang.isFunction(parent.watch)){
 			_handles["rel"] = parent.watch(relTargetProp, function(name, old, current){
 				if(old !== current){
 					if(dojox.debugDataBinding){ console.log("Change in relative data binding target: " + parent); }
@@ -194,7 +204,7 @@ define([
 			if(this.constructor._attribs){
 				return this.constructor._attribs;
 			}
-			var list = [].concat(this.constructor._setterAttrs);
+			var list = ["onClick"].concat(this.constructor._setterAttrs);
 			array.forEach(["id", "excludes", "properties", "ref", "binding"], function(s){
 				var index = array.indexOf(list, s);
 				if (index >= 0){ list.splice(index, 1); }

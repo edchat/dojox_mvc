@@ -7,9 +7,9 @@
 			@import "css/app-format.css";
 			@import "../../../dijit/themes/claro/claro.css";
 		</style>
-		<script type="text/javascript" djConfig="parseOnLoad:1,isDebug:1,async:1" src="../../../dojo/dojo.js"></script>
+		<script type="text/javascript" djConfig="parseOnLoad:0,isDebug:1,async:1" src="../../../dojo/dojo.js"></script>
 		<script type="text/javascript">
-			var loanModel, chart, validHousingPercentConverter = {
+			var lookup, loanModel, validHousingPercentConverter = {
 				format: function(value){
 					return value <= 33;
 				}
@@ -17,7 +17,7 @@
 				format: function(value){
 					return value <= 0;
 				}
-			}, AddressLookupController;
+			};
 
 			require([
 				"dojo/_base/array",
@@ -37,10 +37,31 @@
 				"dojox/charting/plot2d/Pie",
 				"dojox/mvc/_TextBoxExtensions",
 				"dojox/mvc/Group",
+				"dojox/mvc/ModelRefController",
 				"dojox/mvc/Output",
 				"dojo/domReady!"
 			], function(array, declare, lang, dxhr, parser, Chart, blue, at, Stateful, StatefulSeries){
 				dojox.debugDataBinding = true;
+
+				lookup = function(model){
+					if(isNaN(model.get("Zip"))){ return; }
+					dxhr.get({
+						url: "zips/" + model.get("Zip") + ".json",
+						content: {postalcode: model.get("Zip"), country: model.get("County")},
+						preventCache: true,
+						handleAs: "json",
+					}).then(function(data){
+						model.set("City", data.postalcodes[0].placeName);
+						model.set("County", data.postalcodes[0].adminName2);
+						model.set("State", data.postalcodes[0].adminCode1);
+						model.set("isZipValid", true);
+					}, function(e){
+						model.set("City", "");
+						model.set("County", "");
+						model.set("State", "");
+						model.set("isZipValid", false);
+					});	
+				}
 
 				function getNewValue(model, prop, name, value){
 					return prop == name ? value : model.get(prop);
@@ -98,62 +119,36 @@
 					}
 				});
 
-				chart = new Chart("expenseChart")
+				parser.parse();
+
+				new Chart("expenseChart")
 				 .setTheme(blue)
 				 .addPlot("default", {type: "Pie"})
 				 .addSeries("default", new StatefulSeries([at(loanModel, "Mortgage"), at(loanModel, "Taxes"), at(loanModel, "OtherHousing")])).render();
-
-				function lookup(model){
-					if(isNaN(model.get("Zip"))){ return; }
-					dxhr.get({
-						url: "zips/" + model.get("Zip") + ".json",
-						content: {postalcode: model.get("Zip"), country: model.get("County")},
-						preventCache: true,
-						handleAs: "json",
-					}).then(function(data){
-						model.set("City", data.postalcodes[0].placeName);
-						model.set("County", data.postalcodes[0].adminName2);
-						model.set("State", data.postalcodes[0].adminCode1);
-						model.set("isZipValid", true);
-					}, function(e){
-						model.set("City", "");
-						model.set("County", "");
-						model.set("State", "");
-						model.set("isZipValid", false);
-					});	
-				}
-
-				var ctrl = declare(Stateful, {
-					model: loanModel,
-					get: function(name){
-						if(name != "model"){
-							return this.model && this.model.get(name);
-						}
-						return this.inherited(arguments);
-					},
-					set: function(name, value){
-						if(name != "model"){
-							var oldValue = this.model[name];
-							this.model && this.model.set(name, value);
-							if(name == "Zip" || name == "County" && oldValue !== value){ lookup(this.model); }
-							return this;
-						}
-						return this.inherited(arguments);
-					},
-					watch: function(name, callback){
-						if(name != "model"){
-							return this.model && this.model.watch(name, callback);
-						}
-						return this.inherited(arguments);
-					}
-				});
-
-				AddressLookupController = new ctrl();
 			});
 		</script>
 	</head>
 	<body class="claro" style="background-image: url(images/validating_form_pattern.png)">
 		<div id="wrapper">
+			<div id="addressLookupController" class="dijitDisplayNone" data-dojo-type="dojox.mvc.ModelRefController"
+			 data-dojo-props="model: loanModel, ownProps: {_setZipAttr: 1, _setCountyAttr: 1}">
+				<script type="dojo/method" event="_setZipAttr" args="value">
+					var changed = this.model.Zip != value;
+					this.model._set("Zip", value);
+					if(changed){
+						lookup(this.model);
+					}
+					return this;
+				</script>
+				<script type="dojo/method" event="_setCountyAttr" args="value">
+					var changed = this.model.County != value;
+					this.model._set("County", value);
+					if(changed){
+						lookup(this.model);
+					}
+					return this;
+				</script>
+			</div>
 			<div id="header">
 				<div id="navigation">
 				</div>
@@ -164,7 +159,7 @@
 			</div>
 			<div id="main">
 				<div id="leftNav"></div>
-				<div id="mainContent" data-dojo-type="dojox.mvc.Group" data-dojo-props="target: AddressLookupController">
+				<div id="mainContent" data-dojo-type="dojox.mvc.Group" data-dojo-props="target: dojox.mvc.at('widget:addressLookupController')">
 					<h3>Borrower information</h3>
 					<hr size="6" class="rule"/>
 					<div class="spacer"></div>

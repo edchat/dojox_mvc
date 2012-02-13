@@ -1,7 +1,8 @@
 define([
 	"dojo/_base/lang",
 	"dijit/_WidgetBase",
-	"./_atBindingMixin"
+	"./_atBindingMixin",
+	"dijit/registry"
 ], function(lang, _WidgetBase, _atBindingMixin){
 	// Apply the at binding mixin to all dijits, see mixin class description for details
 	lang.extend(_WidgetBase, _atBindingMixin.prototype);

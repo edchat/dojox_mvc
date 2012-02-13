@@ -1,21 +1,11 @@
 define([
 	"dojo/_base/array",
 	"dojo/_base/declare",
-	"dijit/_WidgetBase"
-], function(darray, declare, _WidgetBase){
-	return declare("dojox.mvc.ListController", _WidgetBase, {
+	"./ModelRefController"
+], function(darray, declare, ModelRefController){
+	return declare("dojox.mvc.ListController", ModelRefController, {
 		// summary:
 		//		A controller working with array model, managing its cursor.
-
-		// ownProps: Object
-		//		The list of properties owned by this controller instead of the model.
-		ownProps: {
-			cursorId: 1,
-			cursorIndex: 1,
-			cursor: 1,
-			model: 1,
-			ownProps: 1
-		},
 
 		// idProperty: String
 		//		The property name in element in the model array, that works as its identifier.
@@ -41,31 +31,9 @@ define([
 		//		The watch handle of model.
 		_modelWatchHandle: null,
 
-		get: function(/*String*/ name){
-			// summary:
-			//		Returns a property in this controller or in the selected element in the model array.
-			// name: String
-			//		The property name.
-
-			if(this.ownProps[name]){
-				return this.inherited(arguments);
-			}
-			return this.getAtCursor(name);
-		},
-
-		set: function(/*String*/ name, /*Anything*/ value){
-			// summary:
-			//		Sets a property to this controller or to the selected element in the model array.
-			// name: String
-			//		The property name.
-			// value: Anything
-			//		The property value.
-
-			if(this.ownProps[name]){
-				return this.inherited(arguments);
-			}
-			return this.setAtCursor(name, value);
-		},
+		// _refModelProp: String
+		//		The property name for the data model.
+		_refModelProp: "cursor",
 
 		destroy: function(){
 			if(this._modelWatchHandle){
@@ -73,30 +41,6 @@ define([
 				this._modelWatchHandle = null;
 			}
 			this.inherited(arguments);
-		},
-
-		getAtCursor: function(/*String*/ name){
-			// summary:
-			//		Returns a property in the selected element in the model array.
-			// name: String
-			//		The property name.
-
-			if(this.cursor){
-				return this.cursor.get(name);
-			}
-		},
-
-		setAtCursor: function(/*String*/ name, /*Anything*/ value){
-			// summary:
-			//		Sets a property to the selected element in the model array.
-			// name: String
-			//		The property name.
-			// value: Anything
-			//		The property value.
-
-			if(this.cursor){
-				return this.cursor.set(name, value);
-			}
 		},
 
 		_setCursorIdAttr: function(/*String*/ value){

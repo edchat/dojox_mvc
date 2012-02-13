@@ -133,7 +133,7 @@ define([
 			this._updateAddRemoveWatch(children);
 
 			var insert = "", prop = this._attachTemplateNodes ? "inlineTemplateString" : "templateString";
-			for(this.index = 0; children.get(this.index); this.index++){
+			for(this.index = 0; lang.isFunction(children.get) ? children.get(this.index) : children[this.index]; this.index++){
 				insert += this._exprRepl(this[prop]);
 			}
 			var repeatNode = this.containerNode || this.srcNodeRef || this.domNode;
@@ -182,7 +182,7 @@ define([
 				this._addRemoveWatch.unwatch();
 			}
 			var pThis = this;
-			this._addRemoveWatch = children.watchElements(function(idx, removals, adds){
+			this._addRemoveWatch = lang.isFunction(children.watchElements) && children.watchElements(function(idx, removals, adds){
 				if(!removals || !adds || removals.length || adds.length){
 					pThis._buildContained(pThis.children);
 				}

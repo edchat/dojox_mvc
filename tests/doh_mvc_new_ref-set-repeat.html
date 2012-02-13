@@ -12,7 +12,7 @@
 		<script src="../../../dojo/dojo.js" type="text/javascript" djConfig="isDebug: true"></script>
 		<script type="text/javascript" src="./helpers.js"></script>
 		<script type="text/javascript">
-			var model1, model2, model3;
+			var data1, data2, data3, model1, model2, model3;
 
 			require([
 				"doh/runner",
@@ -21,10 +21,9 @@
 				"dojo/_base/Deferred",
 				"dojo/parser",
 				"dojo/store/Memory",
-				"dojo/Stateful",
 				"dijit/registry",
 				"dojox/mvc/getStateful",
-				"dojox/mvc/StatefulArray",
+				"dojox/mvc/getStatefulOptions",
 				"dijit/form/TextBox",
 				"dijit/form/Button",
 				"dojox/mvc/at",
@@ -32,30 +31,7 @@
 				"dojox/mvc/Output",
 				"dojox/mvc/Repeat",
 				"dojo/domReady!"
-			], function(doh, array, lang, Deferred, parser, MemoryStore, Stateful, registry, getStateful, StatefulArray){
-				function getModel(store){
-					return Deferred.when(store.query(), function(data){
-						return getStateful(data, {
-							getType: function(v){
-								return lang.isArray(v) ? "array" : {}.toString.call(v) == "[object Object]" ? "object" : "value";
-							},
-							getStatefulArray: function(a){
-								return new StatefulArray(array.map(a, function(item){ return getStateful(item, this); }, this));
-							},
-							getStatefulObject: function(o){
-								var stateful = new Stateful();
-								for(var s in o){
-									stateful[s] = getStateful(o[s], this);
-								}
-								return stateful;
-							},
-							getStatefulValue: function(v){
-								return v;
-							}
-						});
-					});
-				}
-
+			], function(doh, array, lang, Deferred, parser, MemoryStore, registry, getStateful, getStatefulOptions){
 				function runTests(){
 					parser.parse();
 
@@ -102,6 +78,24 @@
 								doh.is("Anne3-Update", registry.byId("nameInput0").get("value"), "nameInput0 should be Anne3-Update");
 								doh.is("Anne3-Update", registry.byId("firstnameOutput30").get("value"), "firstnameOutput30 should be Anne3-Update");
 							}
+						}, {
+							name : "UpdateData1",
+							runTest : function() {
+								var newdata = {
+									"Results": [
+										{
+											"First": "Anne1x",
+											"Last": "Ackerman1x"
+										},
+										{
+											"First": "Ben1x",
+											"Last": "Beckham1x"
+										}
+									]
+								};
+								registry.byId("outergroupId").set("target", newdata);
+								doh.is("Anne1x", registry.byId("nameInput0").get("value"), "nameInput0 should be Anne1X");
+							}
 						}
 					]);
 
@@ -110,7 +104,7 @@
 
 				dojox.debugDataBinding = true;
 
-				Deferred.when(getModel(new dojo.store.Memory({data: [
+				Deferred.when((new dojo.store.Memory({data: data1 = [
 					{
 						"Query": "Engineers1",
 						"Results": [
@@ -128,12 +122,12 @@
 							}
 						]
 					}
-				]})), function(data){
-					model1 = data[0];
+				]}).query()), function(data){
+					model1 = getStateful(data, getStatefulOptions)[0];
 					if(model1 && model2 && model3){ runTests(); }
 				});
 
-				Deferred.when(getModel(new dojo.store.Memory({data: [
+				Deferred.when((new dojo.store.Memory({data: data2 = [
 					{
 						"Query": "Engineers2",
 						"Results": [
@@ -147,12 +141,12 @@
 							}
 						]
 					}
-				]})), function(data){
-					model2 = data[0];
+				]}).query()), function(data){
+					model2 = getStateful(data, getStatefulOptions)[0];
 					if(model1 && model2 && model3){ runTests(); }
 				});
 
-				Deferred.when(getModel(new dojo.store.Memory({data: [
+				Deferred.when((new dojo.store.Memory({data: data3 = [
 					{
 						"Query": "Engineers3",
 						"Results": [
@@ -162,8 +156,8 @@
 							}
 						]
 					}
-				]})), function(data){
-					model3 = data[0];
+				]}).query()), function(data){
+					model3 = getStateful(data, getStatefulOptions)[0];
 					if(model1 && model2 && model3){ runTests(); }
 				});
 			});

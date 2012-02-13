@@ -7,46 +7,57 @@ define([
 		//		dojo.Stateful extension, supporting pre-defined getters/setters.
 		// description:
 		//		dojo.Stateful extension.
-		//		getXXXProp()/setXXXProp() functions are used for getter/setter if those corresponding to name are defined.
+		//		getXXXAttr()/setXXXAttr() functions are used for getter/setter if those corresponding to name are defined.
 
 		get: function(/*String*/ name){
 			// summary:
 			//		Returns a property in this object.
 			// description:
-			//		Returns a property in this object. If getXXXProp() function corresponding to name is defined, uses it. 
+			//		Returns a property in this object. If getXXXAttr() function corresponding to name is defined, uses it. 
 			// name: String
 			//		The property name.
 
-			var getterName = "_get" + name.replace(/^[a-z]/, function(c){ return c.toUpperCase(); }) + "Prop";
+			var getterName = "_get" + name.replace(/^[a-z]/, function(c){ return c.toUpperCase(); }) + "Attr";
 			if(this[getterName]){
 				return this[name] = this[getterName]();
 			}
 			return this.inherited(arguments);
 		},
 
-		set: function(/*String*/name, value){
+		set: function(/*String*/ name, /*Anything*/ value){
 			// summary:
 			//		Set a property to this.
 			// description:
-			//		Sets a property to this. If setXXXProp() function corresponding to name is defined, uses it. 
+			//		Sets a property to this. If setXXXAttr() function corresponding to name is defined, uses it. 
 			// name: String
 			//		The property to set.
-			// value:
+			// value: Anything
 			//		The value to set in the property.
 
-			var oldValue = this[name];
-
-			var setterName = "_set" + name.replace(/^[a-z]/, function(c){ return c.toUpperCase(); }) + "Prop";
+			var setterName = "_set" + name.replace(/^[a-z]/, function(c){ return c.toUpperCase(); }) + "Attr";
 			if(this[setterName]){
 				this[setterName](value);
 			}else{
-				this[name] = value;
+				this._set(name, value);
 			}
+			return this;
+		},
 
-			if(this._watchCallbacks){
+		_set: function(/*String*/ name, /*Anything*/ value){
+			// summary:
+			//		Internal method to set a property to this.
+			// description:
+			//		Sets a property to this, and the call stateful watch callback.
+			// name: String
+			//		The property to set.
+			// value: Anything
+			//		The value to set in the property.
+
+			var oldValue = this[name];
+			this[name] = value;
+			if(this._watchCallbacks && value !== oldValue){
 				this._watchCallbacks(name, oldValue, value);
 			}
-
 			return this;
 		}
 	});

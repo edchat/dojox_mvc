@@ -77,7 +77,15 @@ define([
 			// description:
 			//		Finds the index associated with the given element, and updates cursorIndex property.
 
-			this.set("cursorIndex", darray.indexOf(this.model, value));
+			var foundIdx = darray.indexOf(this.model, value);
+			if(foundIdx < 0){
+				var targetIdx = this.get("cursorIndex");
+				if(targetIdx >= 0){
+					this.model.set(targetIdx, value);
+				}
+			}else{
+				this.set("cursorIndex", foundIdx);
+			}
 		},
 
 		_setModelAttr: function(/*dojox.mvc.StatefulArray*/ value){

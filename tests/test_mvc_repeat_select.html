@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html style="width:100%;height:100%;">
+<html style="width:100%;height:100%;overflow:hidden;">
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<title>Dojo Repeat Selection Test</title>
@@ -127,7 +127,8 @@
 			"dijit/MenuBar",
 			"dijit/MenuBarItem",
 			"dijit/MenuItem",
-			"dojox/mvc/_patches",
+			"dojox/mvc/_atBindingExtension",
+			"dojox/mvc/_Controller",
 			"dojox/mvc/ListController",
 			"dojox/mvc/StatefulArray",
 			"dojox/mvc/Output",
@@ -203,7 +204,7 @@
 		});
 	</script>
 </head>
-<body class="claro" style="width:100%;height:100%;margin:0;padding:0;">
+<body class="claro" style="width:100%;height:100%;margin:0;padding:0;overflow:hidden;">
 	<table id="loading" style="width:100%;height:100%;" border="0" cellpadding="0" cellspacing="0">
 		<tbody>
 			<tr>
@@ -212,7 +213,7 @@
 		</tbody>
 	</table>
 	<div id="main" class="dijitDisplayNone" style="width:100%;height:100%;">
-		<span id="listCtl" data-dojo-type="dojox.mvc.ListController" data-dojo-props="model: initialRows, cursorIndex: 0"></span>
+		<span id="listCtl" data-dojo-type="dojox.mvc._Controller" data-dojo-mixins="dojox.mvc.ListController" data-dojo-props="model: initialRows, cursorIndex: 0"></span>
 		<div class="bordercontainer-nopadding" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="persist: false, gutters: true, style: 'height: 100%; width: 100%;'">
 			<div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region: 'left', style: 'background-color: white; width: 48ex', splitter: true">
 				<div data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="persist: false, gutters: false">
@@ -222,7 +223,7 @@
 						</div>
 					</div>
 					<div class="view" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region: 'center'">
-						<table border="0" cellspacing="0" cellpadding="0" style="table-layout:fixed">
+						<table border="0" cellspacing="0" cellpadding="0">
 							<tbody data-dojo-type="dojox.mvc.Repeat" data-dojo-props="children: dojox.mvc.at('widget:listCtl', 'model')">
 								<tr>
 									<td class="dijitMenuItemIconCell">
@@ -232,11 +233,11 @@
 									</td>
 									<td class="dijitMenuItemIconCell">
 										<img src="../../../dojo/resources/blank.gif" data-dojo-type="dijit._WidgetBase"
-										 data-dojo-props="class: dojox.mvc.at('rel:${index}', 'Priority').direct(dojox.mvc.from).attach(priorityConverter)">
+										 data-dojo-props="_setDomClassAttr: {node: 'domNode', type: 'class'}, domClass: dojox.mvc.at('rel:${index}', 'Priority').direct(dojox.mvc.from).attach(priorityConverter)">
 									</td>
 									<td data-dojo-type="dijit._WidgetBase"
 									 data-dojo-props="Subject: dojox.mvc.at('rel:${index}', 'Subject').direct(dojox.mvc.from).attach(subjectConverter),
-									                  class: dojox.mvc.at('rel:${index}', 'Completed').direct(dojox.mvc.from).attach(completeConverter),
+									                  _setDomClassAttr: {node: 'domNode', type: 'class'}, domClass: dojox.mvc.at('rel:${index}', 'Completed').direct(dojox.mvc.from).attach(completeConverter),
 									                  _setSubjectAttr: {node: 'domNode', type: 'innerText'}">
 									</td>
 								</tr>

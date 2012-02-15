@@ -5,7 +5,7 @@ define([
 ], function(darray, declare, ModelRefController){
 	return declare("dojox.mvc.ListController", ModelRefController, {
 		// summary:
-		//		A controller working with array model, managing its cursor.
+		//		A controller, used as a mixin to dojox.mvc._Controller or dijit._WidgetBase descendants, working with array model, managing its cursor.
 
 		// idProperty: String
 		//		The property name in element in the model array, that works as its identifier.

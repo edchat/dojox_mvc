@@ -17,7 +17,6 @@ define([
 			// name: String
 			//		The property name.
 
-			if(this._setIdAttr){ return this.inherited(arguments); } // Having _setIdAttr means this object implements dijit._WidgetBase
 			var getterName = "_get" + name.replace(/^[a-z]/, function(c){ return c.toUpperCase(); }) + "Attr";
 			if(this[getterName]){
 				return this[name] = this[getterName]();
@@ -35,7 +34,6 @@ define([
 			// value: Anything
 			//		The value to set in the property.
 
-			if(this._setIdAttr){ return this.inherited(arguments); } // Having _setIdAttr means this object implements dijit._WidgetBase
 			var setterName = "_set" + name.replace(/^[a-z]/, function(c){ return c.toUpperCase(); }) + "Attr";
 			if(this[setterName]){
 				this[setterName](value);
@@ -55,7 +53,6 @@ define([
 			// value: Anything
 			//		The value to set in the property.
 
-			if(this._setIdAttr){ return this.inherited(arguments); } // Having _setIdAttr means this object implements dijit._WidgetBase
 			var oldValue = this[name];
 			this[name] = value;
 			if(this._watchCallbacks && value !== oldValue){

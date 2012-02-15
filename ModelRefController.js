@@ -19,6 +19,10 @@ define([
 		//		The property name for the data model.
 		_refModelProp: "model",
 
+		// model: dojo.Stateful
+		//		The data model.
+		model: null,
+
 		postscript: function(/*Object?*/ params, /*DomNode|String?*/ srcNodeRef){
 			// summary:
 			//		If this object is not called from Dojo parser, starts this up right away.
@@ -137,7 +141,7 @@ define([
 
 			return {
 				unwatch: function(){
-					if(hp){ h.unwatch(); } if(hm){ h.unwatch(); }
+					if(hp){ hp.unwatch(); } if(hm){ hm.unwatch(); }
 				}
 			};
 		}

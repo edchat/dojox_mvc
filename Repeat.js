@@ -1,13 +1,15 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
+	"dojo/_base/sniff",
+	"dojo/_base/window",
 	"dojo/dom",
 	"dojo/dom-construct",
 	"dojo/_base/array",
 	"dojo/query",
 	"dijit/registry",
 	"./_Container"
-], function(declare, lang, dom, domconstruct, array, query, registry, _Container){
+], function(declare, lang, has, win, dom, domconstruct, array, query, registry, _Container){
 	/*=====
 		declare = dojo.declare;
 		dom = dojo.dom;
@@ -90,7 +92,12 @@ define([
 				if(this[prop] == ""){ // only overwrite templateString if it has not been set
 					this[prop] = this.srcNodeRef.innerHTML;
 				}
-				this.srcNodeRef.innerHTML = "";
+				try{
+					this.srcNodeRef.innerHTML = "";
+				}catch(e){
+					while(this.srcNodeRef.firstChild){ this.srcNodeRef.removeChild(this.srcNodeRef.firstChild); }
+				}
+
 			}
 			this.inherited(arguments);
 		},
@@ -124,6 +131,8 @@ define([
 			// tags:
 			//		private
 
+			if(!children){ return; }
+
 			// TODO: Potential optimization: only create new widgets for insert, only destroy for delete.
 			if(this.useParent && dom.byId(this.useParent)){
 				this.srcNodeRef = dom.byId(this.useParent);				
@@ -136,8 +145,23 @@ define([
 			for(this.index = 0; lang.isFunction(children.get) ? children.get(this.index) : children[this.index]; this.index++){
 				insert += this._exprRepl(this[prop]);
 			}
+
 			var repeatNode = this.containerNode || this.srcNodeRef || this.domNode;
-			repeatNode.innerHTML = insert;
+			if(has("ie") && /^(table|tbody)$/i.test(repeatNode.tagName)){
+				var div = win.doc.createElement("div");
+				div.innerHTML = "<table><tbody>" + insert + "</tbody></table>";
+				for(var tbody = div.getElementsByTagName("tbody")[0]; tbody.firstChild;){
+					repeatNode.appendChild(tbody.firstChild)
+				}
+			}else if(has("ie") && /^td$/i.test(repeatNode.tagName)){
+				var div = win.doc.createElement("div");
+				div.innerHTML = "<table><tbody><tr>" + insert + "</tr></tbody></table>";
+				for(var tr = div.getElementsByTagName("tr")[0]; tr.firstChild;){
+					repeatNode.appendChild(tr.firstChild)
+				}
+			}else{
+				repeatNode.innerHTML = insert;
+			}
 
 			// srcNodeRef is used in _createBody, so in the programmatic create case where repeatNode was set  
 			// from this.domNode we need to set srcNodeRef from repeatNode

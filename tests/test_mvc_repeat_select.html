@@ -127,7 +127,8 @@
 			"dijit/MenuBar",
 			"dijit/MenuBarItem",
 			"dijit/MenuItem",
-			"dojox/mvc/_patches",
+			"dojox/mvc/_atBindingExtension",
+			"dojox/mvc/_Controller",
 			"dojox/mvc/ListController",
 			"dojox/mvc/StatefulArray",
 			"dojox/mvc/Output",
@@ -212,7 +213,7 @@
 		</tbody>
 	</table>
 	<div id="main" class="dijitDisplayNone" style="width:100%;height:100%;">
-		<span id="listCtl" data-dojo-type="dojox.mvc.ListController" data-dojo-props="model: initialRows, cursorIndex: 0"></span>
+		<span id="listCtl" data-dojo-type="dojox.mvc._Controller" data-dojo-mixins="dojox.mvc.ListController" data-dojo-props="model: initialRows, cursorIndex: 0"></span>
 		<div class="bordercontainer-nopadding" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="persist: false, gutters: true, style: 'height: 100%; width: 100%;'">
 			<div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region: 'left', style: 'background-color: white; width: 48ex', splitter: true">
 				<div data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="persist: false, gutters: false">

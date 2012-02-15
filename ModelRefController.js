@@ -1,15 +1,11 @@
 define([
 	"dojo/_base/declare",
-	"dojo/_base/lang",
-	"./at",
-	"./Stateful",
-	"./_atBindingMixin"
-], function(declare, lang, at, Stateful, _atBindingMixin){
-	return declare("dojox.mvc.ModelRefController", [Stateful, _atBindingMixin], {
+	"dojo/_base/lang"
+], function(declare, lang){
+	return declare("dojox.mvc.ModelRefController", null, {
 		// summary:
-		//		A controller working with a data model as a reference.
+		//		A controller, used as a mixin to dojox.mvc._Controller or dijit._WidgetBase descendants, working with a data model as a reference.
 		//		Manages change in model as well as change in model properties.
-		//		NOTE - If this class is used with a widget by data-dojo-mixins, make sure putting the widget in data-dojo-type and putting this class to data-dojo-mixins.
 
 		// ownProps: Object
 		//		List of property names owned by this controller, instead of the data model.
@@ -25,43 +21,9 @@ define([
 
 		postscript: function(/*Object?*/ params, /*DomNode|String?*/ srcNodeRef){
 			// summary:
-			//		If this object is not called from Dojo parser, starts this up right away.
-			//		Also, if widget registry is available, register this object.
+			//		Sets _relTargetProp so that the property specified by _refModelProp is used for relative data binding.
 
 			this._relTargetProp = (params || {})._refModelProp || this._refModelProp;
-			if(this._setIdAttr){ return this.inherited(arguments); } // Having _setIdAttr means this object implements dijit._WidgetBase
-			this._dbpostscript(params, srcNodeRef);
-			if(params){
-				this.params = params;
-				for(var s in params){
-					this.set(s, params[s]);
-				}
-			}
-			var registry;
-			try{
-				// Usage of dijit/registry module is optional. Do not use it if it's not already loaded.
-				registry = require("dijit/registry");
-				this.id = this.id || (srcNodeRef || {}).id || registry.getUniqueId(this.declaredClass.replace(/\./g, "_"));
-				registry.add(this);
-			}catch(e){}
-			if(!srcNodeRef){
-				this.startup();
-			}
-		},
-
-		startup: function(){
-			// summary:
-			//		Starts up data binding as this object starts up.
-
-			this._startAtWatchHandles();
-			this.inherited(arguments);
-		},
-
-		destroy: function(){
-			// summary:
-			//		Stops data binding as this object is destroyed.
-
-			this._stopAtWatchHandles();
 			this.inherited(arguments);
 		},
 
@@ -75,22 +37,6 @@ define([
 			if(!this[getterName] && name != this._refModelProp && !(name in (this.ownProps || {})) && !(name in this.constructor.prototype)){
 				var model = this[this._refModelProp];
 				return model && model.get(name);
-			}
-			return this.inherited(arguments);
-		},
-
-		set: function(/*String*/ name, /*Anything*/ value){
-			// summary:
-			//		If the value given is dojox.mvc.at handle, use it for data binding.
-			//		Otherwise, if setter function is there, use it.
-			//		Otherwise, set the value to the data model or to this object.
-			// name: String
-			//		The property name.
-			// value: Anything
-			//		The property value.
-
-			if((value || {}).atsignature == "dojox.mvc.at"){
-				return this._setAtWatchHandle(name, value);
 			}
 			return this.inherited(arguments);
 		},

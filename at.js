@@ -1,8 +1,9 @@
 define([
+	"dojo/_base/kernel",
 	"dojo/_base/lang",
 	"./BindTwo",
 	"./_atBindingExtension"
-], function(lang, BindTwo){
+], function(kernel, lang, BindTwo){
 	/*=====
 	dojox.mvc.at.handle = {
 		// summary:
@@ -39,6 +40,7 @@ define([
 		}
 	};
 	=====*/
+	kernel.experimental("dojox.mvc");
 
 	var at = /*===== dojox.mvc.at = =====*/ function(/*dojo.Stateful|String*/ target, /*String*/ targetProp){
 		// summary:

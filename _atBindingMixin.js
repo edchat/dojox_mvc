@@ -6,7 +6,7 @@ define([
 	"./BindTwo"
 ], function(array, lang, declare, resolve, BindTwo){
 	function getLogContent(/*dojo.Stateful*/ target, /*String*/ targetProp){
-		return [target._setIdAttr || !target.declaredClass ? target : target.declaredClass, targetProp].join(":")
+		return [target._setIdAttr || !target.declaredClass ? target : target.declaredClass, targetProp].join(":");
 	}
 
 	function logResolveFailure(target, targetProp){
@@ -207,7 +207,7 @@ define([
 			var list = ["onClick"].concat(this.constructor._setterAttrs);
 			array.forEach(["id", "excludes", "properties", "ref", "binding"], function(s){
 				var index = array.indexOf(list, s);
-				if (index >= 0){ list.splice(index, 1); }
+				if(index >= 0){ list.splice(index, 1); }
 			});
 			return this.constructor._attribs = list; // String[]
 		}

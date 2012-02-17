@@ -77,7 +77,8 @@ define([
 			// summary:
 			//		Send the change back to the data source.
 
-			this.set(this.holdModelUntilCommit ? this._refSourceModelProp : this._refOriginalModelProp, this.get(this._refModelProp));
+			this.set(this.holdModelUntilCommit ? this._refSourceModelProp : this._refOriginalModelProp,
+			 this.holdModelUntilCommit ? this.get(this._refModelProp) : this.cloneModel(this.get(this._refModelProp)));
 		},
 
 		reset: function(){

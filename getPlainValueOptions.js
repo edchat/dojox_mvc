@@ -4,7 +4,7 @@ define([
 	"dojo/Stateful",
 	"./getPlainValue"
 ], function(darray, lang, Stateful, getPlainValue){
-	return {
+	var getPlainValueOptions = /*===== dojox.mvc.getPlainValueOptions = =====*/ {
 		// summary:
 		//		Options used for dojox.mvc.getPlainValue().
 
@@ -14,7 +14,7 @@ define([
 			// v: Anything
 			//		The value.
 
-			return lang.isArray(v) ? "array" : v.isInstanceOf && v.isInstanceOf(Stateful) || {}.toString.call(v) == "[object Object]" ? "object" : "value";
+			return lang.isArray(v) ? "array" : (v || {}).isInstanceOf && v.isInstanceOf(Stateful) || {}.toString.call(v) == "[object Object]" ? "object" : "value";
 		},
 
 		getPlainArray: function(/*Anything[]*/ a){
@@ -48,4 +48,6 @@ define([
 			return v; // Anything
 		}
 	};
+
+	return lang.setObject("dojox.mvc.getPlainValueOptions", getPlainValueOptions);
 });

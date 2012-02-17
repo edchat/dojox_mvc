@@ -5,7 +5,7 @@ define([
 	"./getStateful",
 	"./StatefulArray"
 ], function(darray, lang, Stateful, getStateful, StatefulArray){
-	return {
+	var getStatefulOptions = /*===== dojox.mvc.getStatefulOptions = =====*/ {
 		// summary:
 		//		Options used for dojox.mvc.getStateful().
 
@@ -47,4 +47,6 @@ define([
 			return v; // Anything
 		}
 	};
+
+	return lang.setObject("dojox.mvc.getStatefulOptions", getStatefulOptions);
 });

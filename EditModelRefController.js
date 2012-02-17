@@ -25,6 +25,14 @@ define([
 		//		This controller can reset the data model to the data source it originally got (reset()), or send the change back to the data source (commit()).
 		//		NOTE - If this class is used with a widget by data-dojo-mixins, make sure putting the widget in data-dojo-type and putting this class to data-dojo-mixins.
 
+		// getStatefulOptions: dojox.mvc.getStatefulOptions
+		//		The options to get stateful object from plain value.
+		getStatefulOptions: null,
+
+		// getPlainValueOptions: dojox.mvc.getPlainValueOptions
+		//		The options to get plain value from stateful object.
+		getPlainValueOptions: null,
+
 		// holdModelUntilCommit: Boolean
 		//		True not to send the change in model back to sourceModel until commit() is called.
 		holdModelUntilCommit: false,
@@ -61,15 +69,16 @@ define([
 			// value: Anything
 			//		The data serving as the data source.
 
-			var plain = lang.isFunction((value || {}).set) && lang.isFunction((value || {}).watch) ? getPlainValue(value, getPlainValueOptions) : value;
-			return getStateful(plain, getStatefulOptions);
+			var plain = lang.isFunction((value || {}).set) && lang.isFunction((value || {}).watch) ? getPlainValue(value, this.getPlainValueOptions) : value;
+			return getStateful(plain, this.getStatefulOptions);
 		},
 
 		commit: function(){
 			// summary:
 			//		Send the change back to the data source.
 
-			this.set(this.holdModelUntilCommit ? this._refSourceModelProp : this._refOriginalModelProp, this.get(this._refModelProp));
+			this.set(this.holdModelUntilCommit ? this._refSourceModelProp : this._refOriginalModelProp,
+			 this.holdModelUntilCommit ? this.get(this._refModelProp) : this.cloneModel(this.get(this._refModelProp)));
 		},
 
 		reset: function(){

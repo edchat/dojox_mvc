@@ -32,11 +32,12 @@ define(["dojo/_base/lang"], function(lang){
 		//		Recursively iterates the stateful value given, and convert them to raw ones.
 		// value: Anything
 		//		The stateful value.
-		// options: Object
+		// options: dojox.mvc.getPlainValueOptions
 		//		The object that defines how plain value should be created from stateful value.
 		// returns: Anything
 		//		 The converted value.
 
+		if(!options){ throw new Error("dojox.mvc.getPlainValue is called without conversion options. Try using dojox.mvc.getPlainValueOptions as the 2nd argument."); }
 		return options["getPlain" + options.getType(value).replace(/^[a-z]/, function(c){ return c.toUpperCase(); })](value); // Anything
 	};
 

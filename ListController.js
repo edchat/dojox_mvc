@@ -66,9 +66,9 @@ define([
 			//		Updates cursor, cursorId, cursorIndex properties internally and call watch callbacks for them.
 
 			if(!this.model){ return; }
+			this._set("cursorIndex", value);
 			this._set("cursor", this.model[value]);
 			this._set("cursorId", this.model[value] && this.model[value][this.idProperty]);
-			this._set("cursorIndex", value);
 		},
 
 		_setCursorAttr: function(/*dojo.Stateful*/ value){
@@ -80,7 +80,7 @@ define([
 			var foundIdx = darray.indexOf(this.model, value);
 			if(foundIdx < 0){
 				var targetIdx = this.get("cursorIndex");
-				if(targetIdx >= 0){
+				if(targetIdx >= 0 && targetIdx < this.model.length){
 					this.model.set(targetIdx, value);
 				}
 			}else{
@@ -104,20 +104,21 @@ define([
 					var curIdx = _self.get("cursorIndex");
 					// If selected element is removed, make "no selection" state
 					if(removals && curIdx >= idx && curIdx < idx + removals.length){
-						this.set("cursorIndex", -1);
+						_self.set("cursorIndex", -1);
 						return;
 					}
 					// If selected element is equal to or larger than the removals/adds point, update the selected index
 					if((removals.length || adds.length) && curIdx >= idx){
-						this.set("cursor", this.get("cursor"));
+						_self.set("cursor", this.get("cursor"));
 					}
 				}else{
 					// If there is a update to the whole array, update the selected index 
-					this.set("cursor", this.get("cursor"));
+					_self.set("cursor", _self.get("cursor"));
 				}
 			});
-			this._setCursorIndexAttr(this.cursorIndex);
+
 			this._set("model", value);
+			this._setCursorIndexAttr(this.cursorIndex);
 		}
 	});
 });

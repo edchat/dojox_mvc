@@ -133,6 +133,8 @@
 			"dijit/MenuItem",
 			"dojox/mvc/_atBindingExtension",
 			"dojox/mvc/_Controller",
+			"dojox/mvc/getPlainValueOptions",
+			"dojox/mvc/getStatefulOptions",
 			"dojox/mvc/EditModelRefController",
 			"dojox/mvc/ListController",
 			"dojox/mvc/StatefulArray",
@@ -264,7 +266,7 @@
 				</div>
 			</div>
 			<div id="editCtl" data-dojo-type="dijit.layout.ContentPane" data-dojo-mixins="dojox.mvc.EditModelRefController"
-			 data-dojo-props="region: 'center', style: 'background-color: white;', sourceModel: dojox.mvc.at('widget:listCtl', 'cursor')">
+			 data-dojo-props="region: 'center', style: 'background-color: white;', getStatefulOptions: dojox.mvc.getStatefulOptions, getPlainValueOptions: dojox.mvc.getPlainValueOptions, sourceModel: dojox.mvc.at('widget:listCtl', 'cursor')">
 				<div data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="persist: false, gutters: false, target: dojox.mvc.at('rel:', 'model')">
 					<div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region: 'top'">
 						<div data-dojo-type="dojox.mvc.Repeat" data-dojo-mixins="dijit.MenuBar" data-dojo-props="children: DetailMenuBarData">

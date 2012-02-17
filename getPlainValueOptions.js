@@ -4,7 +4,7 @@ define([
 	"dojo/Stateful",
 	"./getPlainValue"
 ], function(darray, lang, Stateful, getPlainValue){
-	return {
+	var getPlainValueOptions = /*===== dojox.mvc.getPlainValueOptions = =====*/ {
 		// summary:
 		//		Options used for dojox.mvc.getPlainValue().
 
@@ -48,4 +48,6 @@ define([
 			return v; // Anything
 		}
 	};
+
+	return lang.setObject("dojox.mvc.getPlainValueOptions", getPlainValueOptions);
 });

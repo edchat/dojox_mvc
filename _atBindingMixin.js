@@ -26,7 +26,7 @@ define([
 		}catch(e){
 			return;
 		}
-		var pn = w.domNode.parentNode, pw, pb;
+		var pn = w.domNode && w.domNode.parentNode, pw, pb;
 		while(pn){
 			pw = registry.getEnclosingWidget(pn);
 			if(pw){

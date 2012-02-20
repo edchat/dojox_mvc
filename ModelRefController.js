@@ -1,7 +1,8 @@
 define([
 	"dojo/_base/declare",
-	"dojo/_base/lang"
-], function(declare, lang){
+	"dojo/_base/lang",
+	"dojo/Stateful"
+], function(declare, lang, Stateful){
 	return declare("dojox.mvc.ModelRefController", null, {
 		// summary:
 		//		A controller, used as a mixin to dojox.mvc._Controller or dijit._WidgetBase descendants, working with a data model as a reference.
@@ -80,9 +81,13 @@ define([
 				if(hp){ hp.unwatch(); }
 				if(old){
 					var props = {};
-					if(name == "*"){
-						for(var s in old){ if(old.hasOwnProperty(s)){ props[name] = 1; } }
-						for(var s in current){ if(old.hasOwnProperty(s)){ props[name] = 1; } }
+					if(!name){
+						var oldProps = old.get("properties");
+						if(oldProps){ array.forEach(oldProps, function(item){ props[item] = 1; }); }
+						else{ for(var s in old){ if(old.hasOwnProperty(s)){ props[s] = 1; } } }
+						var currentProps = current && current.get("properties");
+						if(currentProps){ array.forEach(currentProps, function(item){ props[item] = 1; }); }
+						else{ for(var s in current){ if(current.hasOwnProperty(s)){ props[s] = 1; } } }
 					}else{
 						props[name] = 1;
 					}
@@ -94,7 +99,7 @@ define([
 				hp = current && lang.isFunction(current.set) && lang.isFunction(current.watch) && current.watch.apply(current, args);
 			}
 
-			hm = this.inherited("watch", [this._refModelProp, function(name, old, current){ if(old !== current){ watchModel(old, current); } }]);
+			hm = Stateful.prototype.watch.call(this, this._refModelProp, function(name, old, current){ if(old !== current){ watchModel(old, current); } });
 			watchModel(null, this[this._refModelProp]);
 
 			return {

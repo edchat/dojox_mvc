@@ -59,7 +59,7 @@ define([
 
 		watch: function(/*String?*/ name, /*Function*/ callback){
 			// summary:
-			//		Watch a propertyin  the data model or in this object.
+			//		Watch a property in the data model or in this object.
 			// name: String?
 			//		The property name.
 			// callback: Function
@@ -76,14 +76,26 @@ define([
 
 			var hm = null, hp = null;
 
-			function watchModel(model){
+			function watchModel(old, current){
 				if(hp){ hp.unwatch(); }
+				if(old){
+					var props = {};
+					if(name == "*"){
+						for(var s in old){ if(old.hasOwnProperty(s)){ props[name] = 1; } }
+						for(var s in current){ if(old.hasOwnProperty(s)){ props[name] = 1; } }
+					}else{
+						props[name] = 1;
+					}
+					for(var s in props){
+						callback(s, old.get(s), current && current.get(s));
+					}
+				}
 				var args = (name ? [name] : []).concat([function(name, old, current){ callback(name, old, current); }]);
-				hp = model && lang.isFunction(model.set) && lang.isFunction(model.watch) && model.watch.apply(model, args);
+				hp = current && lang.isFunction(current.set) && lang.isFunction(current.watch) && current.watch.apply(current, args);
 			}
 
-			hm = this.inherited("watch", [this._refModelProp, function(name, old, current){ if(old !== current){ watchModel(current); } }]);
-			watchModel(this[this._refModelProp]);
+			hm = this.inherited("watch", [this._refModelProp, function(name, old, current){ if(old !== current){ watchModel(old, current); } }]);
+			watchModel(null, this[this._refModelProp]);
 
 			return {
 				unwatch: function(){

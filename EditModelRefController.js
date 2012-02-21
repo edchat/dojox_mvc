@@ -2,11 +2,9 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"./getPlainValue",
-	"./getPlainValueOptions",
 	"./getStateful",
-	"./getStatefulOptions",
 	"./ModelRefController"
-], function(declare, lang, getPlainValue, getPlainValueOptions, getStateful, getStatefulOptions, ModelRefController){
+], function(declare, lang, getPlainValue, getStateful, ModelRefController){
 	function setRefSourceModel(/*Anything*/ value){
 		// summary:
 		//		A function called when this controller gets newer value as the data source.

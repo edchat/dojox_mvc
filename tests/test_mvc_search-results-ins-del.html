@@ -120,8 +120,6 @@
 				"dojo/Stateful",
 				"dojo/store/Memory",
 				"dojox/mvc/_Controller",
-				"dojox/mvc/getPlainValueOptions",
-				"dojox/mvc/getStatefulOptions",
 				"dojox/mvc/EditStoreRefController",
 				"dojox/mvc/ListController",
 				"dijit/form/Button",
@@ -131,14 +129,12 @@
 				"dojox/mvc/Output",
 				"dojox/mvc/Repeat",
 				"dojo/domReady!"
-			], function(declare, Deferred, parser, Stateful, Memory, _Controller, getPlainValueOptions, getStatefulOptions, EditStoreRefController, ListController){
+			], function(declare, Deferred, parser, Stateful, Memory, _Controller, EditStoreRefController, ListController){
 				dojox.debugDataBinding = true;
 
 				var inited,
 				 ctrlClass = declare([_Controller, EditStoreRefController, ListController], {
 					cursorIndex: 0,
-					getStatefulOptions: getStatefulOptions,
-					getPlainValueOptions: getPlainValueOptions,
 					_refModelProp: "model",
 
 					addEmpty: function(){

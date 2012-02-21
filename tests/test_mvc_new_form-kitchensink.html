@@ -44,10 +44,8 @@
 			'dijit/form/Textarea',
 			'dojo/data/ItemFileReadStore',
 			"dojox/mvc/_Controller",
-			"dojox/mvc/getPlainValueOptions",
 			"dojo/Stateful",
 			"dojox/mvc/getStateful",
-			"dojox/mvc/getStatefulOptions",
 			"dojox/mvc/EditStoreRefController",
 			"dojox/mvc/EditModelRefController",
 			"dojox/mvc/ListController",			
@@ -57,8 +55,7 @@
 			'dojox/mvc/Output',
 			'dojo/date/locale'
 			], function(kernel, declare, parser, ready, mvc, at, _WidgetBase, TextBox, Button, Select, FilteringSelect, ComboBox, DateTextBox, 
-						HorizontalSlider, NumberSpinner, SimpleTextarea, Textarea, ItemFileReadStore, _Controller,  
-						getPlainValueOptions, Stateful, getStateful, getStatefulOptions, EditStoreRefController, EditModelRefController, 
+						HorizontalSlider, NumberSpinner, SimpleTextarea, Textarea, ItemFileReadStore, _Controller, Stateful, getStateful, EditStoreRefController, EditModelRefController, 
 						ListController, Calendar, ColorPalette){
 
 			dojox.debugDataBinding = true;
@@ -108,10 +105,7 @@
 				]
 			};
 
-			var ctrlClass = declare([_Controller, EditModelRefController], {
-				getStatefulOptions: getStatefulOptions,
-				getPlainValueOptions: getPlainValueOptions
-			});
+			var ctrlClass = declare([_Controller, EditModelRefController], {});
 
 			selctrl = new ctrlClass({sourceModel: new Stateful({number: "1"})});
 			decselctrl = new ctrlClass({sourceModel: new Stateful({number: "1"})});

@@ -27,7 +27,6 @@ var results, savedData;
 			"dijit/registry", 
 			"dojox/mvc/at",
 			"dojox/mvc/getStateful", 
-			"dojox/mvc/getStatefulOptions",
 			"dojo/data/ItemFileWriteStore",
 			"dojo/store/DataStore",
 			"dojo/_base/kernel",
@@ -43,13 +42,13 @@ var results, savedData;
 			"dijit/layout/ContentPane",
 			"dijit/form/TextBox"
 			],
-			function(parser, registry, at, getStateful, getStatefulOptions, ItemFileWriteStore, DataStore, kernel){
+			function(parser, registry, at, getStateful, ItemFileWriteStore, DataStore, kernel){
 				dojox.debugDataBinding=true;
 				var writeStore = new ItemFileWriteStore({url: kernel.moduleUrl("dojox.mvc.tests.regression._data", "mvcRepeatData.json")});
 				var modelPromise = new DataStore({store: writeStore}).query(); 
 				modelPromise.then(function(data){ 
 					savedData = data;
-					results = getStateful(data, getStatefulOptions);
+					results = getStateful(data);
 
 					parser.parse();
 				});

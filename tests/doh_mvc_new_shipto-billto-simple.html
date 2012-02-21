@@ -18,12 +18,11 @@
 				"dijit/registry",
 				"dojox/mvc/at",
 				"dojox/mvc/getStateful",
-				"dojox/mvc/getStatefulOptions",
 				"dijit/form/TextBox",
 				"dijit/form/Button",
 				"dojox/mvc/Group",
 				"dojox/mvc/Output"
-			], function(doh, parser, Stateful, registry, at, getStateful, getStatefulOptions){
+			], function(doh, parser, Stateful, registry, at, getStateful){
 				dojox.debugDataBinding = true;
 
 				data = {
@@ -45,7 +44,7 @@
 					}
 				};
 
-				model = getStateful(data, getStatefulOptions);
+				model = getStateful(data);
 
 				parser.parse();
 

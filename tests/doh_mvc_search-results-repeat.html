@@ -18,7 +18,6 @@
 				"dojo/parser",
 				"dijit/registry",
 				"dojox/mvc/getStateful",
-				"dojox/mvc/getStatefulOptions",
 				"dojo/_base/declare",
 				"dojo/Stateful",
 				"dojox/mvc/at",
@@ -32,7 +31,7 @@
 				"dojox/mvc/Output",
 				"dojox/mvc/Repeat",
 				"dojo/domReady!"
-			], function(doh, parser, registry, getStateful, getStatefulOptions){
+			], function(doh, parser, registry, getStateful){
 				function runTests(){
 					parser.parse();
 
@@ -182,7 +181,7 @@
 								"Fax"	  : "408-764-4321"
 							}
 						]
-					}, getStatefulOptions);
+					});
 				
 				runTests();
 

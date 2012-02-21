@@ -23,7 +23,6 @@
 				"dojo/store/Memory",
 				"dijit/registry",
 				"dojox/mvc/getStateful",
-				"dojox/mvc/getStatefulOptions",
 				"dijit/form/TextBox",
 				"dijit/form/Button",
 				"dojox/mvc/at",
@@ -31,7 +30,7 @@
 				"dojox/mvc/Output",
 				"dojox/mvc/Repeat",
 				"dojo/domReady!"
-			], function(doh, array, lang, Deferred, parser, MemoryStore, registry, getStateful, getStatefulOptions){
+			], function(doh, array, lang, Deferred, parser, MemoryStore, registry, getStateful){
 				function runTests(){
 					parser.parse();
 
@@ -123,7 +122,7 @@
 						]
 					}
 				]}).query()), function(data){
-					model1 = getStateful(data, getStatefulOptions)[0];
+					model1 = getStateful(data)[0];
 					if(model1 && model2 && model3){ runTests(); }
 				});
 
@@ -142,7 +141,7 @@
 						]
 					}
 				]}).query()), function(data){
-					model2 = getStateful(data, getStatefulOptions)[0];
+					model2 = getStateful(data)[0];
 					if(model1 && model2 && model3){ runTests(); }
 				});
 
@@ -157,7 +156,7 @@
 						]
 					}
 				]}).query()), function(data){
-					model3 = getStateful(data, getStatefulOptions)[0];
+					model3 = getStateful(data)[0];
 					if(model1 && model2 && model3){ runTests(); }
 				});
 			});

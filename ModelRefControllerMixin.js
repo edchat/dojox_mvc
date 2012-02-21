@@ -38,7 +38,7 @@ define([
 			var getterName = "_get" + name.replace(/^[a-z]/, function(c){ return c.toUpperCase(); }) + "Attr";
 			if(!this[getterName] && name != this._refModelProp && !(name in (this.ownProps || {})) && !(name in this.constructor.prototype)){
 				var model = this[this._refModelProp];
-				return model && model.get(name);
+				return model && (model.get ? model.get(name) : model[name]);
 			}
 			return this.inherited(arguments);
 		},
@@ -53,7 +53,7 @@ define([
 
 			if(name != this._refModelProp && !(name in (this.ownProps || {})) && !(name in this.constructor.prototype)){
 				var model = this[this._refModelProp];
-				model && model.set(name, value);
+				model && (model.set ? model.set(name, value) : (model[name] = value));
 				return this;
 			}
 			return this.inherited(arguments);
@@ -67,7 +67,7 @@ define([
 			// callback: Function
 			//		The callback function.
 
-			if(name == this._refModelProp || (name in (this.ownProps || {})) || (name in this.constructor.prototype)){
+			if(this.hasControllerProperty(name)){
 				return this.inherited(arguments);
 			}
 
@@ -84,16 +84,16 @@ define([
 					var props = {};
 					if(!name){
 						var oldProps = old.get("properties");
-						if(oldProps){ array.forEach(oldProps, function(item){ props[item] = 1; }); }
-						else{ for(var s in old){ if(old.hasOwnProperty(s)){ props[s] = 1; } } }
+						if(oldProps){ array.forEach(oldProps, function(item){ if(this.hasControllerProperty(item)){ props[item] = 1; } }); }
+						else{ for(var s in old){ if(old.hasOwnProperty(s) && this.hasControllerProperty(s)){ props[s] = 1; } } }
 						var currentProps = current && current.get("properties");
-						if(currentProps){ array.forEach(currentProps, function(item){ props[item] = 1; }); }
-						else{ for(var s in current){ if(current.hasOwnProperty(s)){ props[s] = 1; } } }
+						if(currentProps){ array.forEach(currentProps, function(item){ if(this.hasControllerProperty(item)){ props[item] = 1; } }); }
+						else{ for(var s in current){ if(current.hasOwnProperty(s) && this.hasControllerProperty(s)){ props[s] = 1; } } }
 					}else{
 						props[name] = 1;
 					}
 					for(var s in props){
-						callback(s, old.get(s), current && current.get(s));
+						callback(s, old.get ? old.get(s) : old[s], current && (current.get ? current.get(s) : current[s]));
 					}
 				}
 				var args = (name ? [name] : []).concat([function(name, old, current){ callback(name, old, current); }]);
@@ -108,6 +108,15 @@ define([
 					if(hp){ hp.unwatch(); } if(hm){ hm.unwatch(); }
 				}
 			};
+		},
+
+		hasControllerProperty: function(/*String*/ name){
+			// summary:
+			//		Returns true if this controller itself owns the given property.
+			// name: String
+			//		The property name.
+
+			return name == this._refModelProp || (name in (this.ownProps || {})) || (name in this.constructor.prototype);
 		}
 	});
 });

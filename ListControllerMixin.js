@@ -14,24 +14,25 @@ define([
 			this._listModelWatchHandle = null;
 		}
 		var _self = this;
-		this._listModelWatchHandle = value.watchElements(function(idx, removals, adds){
-			if(removals && adds){
-				var curIdx = _self.get("cursorIndex");
-				// If selected element is removed, make "no selection" state
-				if(removals && curIdx >= idx && curIdx < idx + removals.length){
-					_self.set("cursorIndex", -1);
-					return;
+		if(value){
+			this._listModelWatchHandle = value.watchElements(function(idx, removals, adds){
+				if(removals && adds){
+					var curIdx = _self.get("cursorIndex");
+					// If selected element is removed, make "no selection" state
+					if(removals && curIdx >= idx && curIdx < idx + removals.length){
+						_self.set("cursorIndex", -1);
+						return;
+					}
+					// If selected element is equal to or larger than the removals/adds point, update the selected index
+					if((removals.length || adds.length) && curIdx >= idx){
+						_self.set("cursor", this.get("cursor"));
+					}
+				}else{
+					// If there is a update to the whole array, update the selected index 
+					_self.set("cursor", _self.get("cursor"));
 				}
-				// If selected element is equal to or larger than the removals/adds point, update the selected index
-				if((removals.length || adds.length) && curIdx >= idx){
-					_self.set("cursor", this.get("cursor"));
-				}
-			}else{
-				// If there is a update to the whole array, update the selected index 
-				_self.set("cursor", _self.get("cursor"));
-			}
-		});
-
+			});
+		}
 		this._set(this._refListModelProp, value);
 		this._setCursorIndexAttr(this.cursorIndex);
 	}
@@ -112,8 +113,8 @@ define([
 			// description:
 			//		Updates cursor, cursorId, cursorIndex properties internally and call watch callbacks for them.
 
-			if(!this[this._refListModelProp]){ return; }
 			this._set("cursorIndex", value);
+			if(!this[this._refListModelProp]){ return; }
 			this._set("cursor", this[this._refListModelProp][value]);
 			this._set("cursorId", this[this._refListModelProp][value] && this[this._refListModelProp][value][this.idProperty]);
 		},

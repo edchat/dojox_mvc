@@ -151,13 +151,15 @@
 					},
 
 					_setGroupAttr: function(value){
+						this.set("groupTyped", value);
+						var old = this.group;
+						if(old === value){ return; }
 						Deferred.when(this.queryStore({Group: value}), function(){
 							if(!inited){
 								parser.parse();
 								inited = true;
 							}
 						});
-						this.set("groupTyped", value);
 						this._set("group", value);
 					}
 				});

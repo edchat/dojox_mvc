@@ -119,7 +119,6 @@
 				"dojo/parser",
 				"dojo/Stateful",
 				"dojo/store/Memory",
-				"dojox/mvc/_Controller",
 				"dojox/mvc/EditStoreRefController",
 				"dojox/mvc/ListController",
 				"dijit/form/Button",
@@ -129,12 +128,14 @@
 				"dojox/mvc/Output",
 				"dojox/mvc/Repeat",
 				"dojo/domReady!"
-			], function(declare, Deferred, parser, Stateful, Memory, _Controller, EditStoreRefController, ListController){
+			], function(declare, Deferred, parser, Stateful, Memory, EditStoreRefController, ListController){
 				dojox.debugDataBinding = true;
 
 				var inited,
-				 ctrlClass = declare([_Controller, EditStoreRefController, ListController], {
+				 ctrlClass = declare([EditStoreRefController, ListController], {
 					cursorIndex: 0,
+					group: "",
+					groupTyped: "",
 					_refModelProp: "model",
 
 					addEmpty: function(){

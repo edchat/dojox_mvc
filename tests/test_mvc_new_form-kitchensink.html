@@ -46,17 +46,15 @@
 			"dojox/mvc/_Controller",
 			"dojo/Stateful",
 			"dojox/mvc/getStateful",
-			"dojox/mvc/EditStoreRefController",
 			"dojox/mvc/EditModelRefController",
-			"dojox/mvc/ListController",			
 			'dijit/Calendar',
 			'dijit/ColorPalette',
 			'dojox/mvc/Group',
 			'dojox/mvc/Output',
 			'dojo/date/locale'
 			], function(kernel, declare, parser, ready, mvc, at, _WidgetBase, TextBox, Button, Select, FilteringSelect, ComboBox, DateTextBox, 
-						HorizontalSlider, NumberSpinner, SimpleTextarea, Textarea, ItemFileReadStore, _Controller, Stateful, getStateful, EditStoreRefController, EditModelRefController, 
-						ListController, Calendar, ColorPalette){
+						HorizontalSlider, NumberSpinner, SimpleTextarea, Textarea, ItemFileReadStore, _Controller, Stateful, getStateful, EditModelRefController, 
+						Calendar, ColorPalette){
 
 			dojox.debugDataBinding = true;
 
@@ -105,44 +103,42 @@
 				]
 			};
 
-			var ctrlClass = declare([_Controller, EditModelRefController], {});
-
-			selctrl = new ctrlClass({sourceModel: new Stateful({number: "1"})});
-			decselctrl = new ctrlClass({sourceModel: new Stateful({number: "1"})});
+			selctrl = new EditModelRefController({sourceModel: new Stateful({number: "1"})});
+			decselctrl = new EditModelRefController({sourceModel: new Stateful({number: "1"})});
 
 			// create models for filtering selects
-			filctrl = new ctrlClass({sourceModel: new Stateful({number: "2"})});
-			decfilctrl = new ctrlClass({sourceModel: new Stateful({number: "2"})});
+			filctrl = new EditModelRefController({sourceModel: new Stateful({number: "2"})});
+			decfilctrl = new EditModelRefController({sourceModel: new Stateful({number: "2"})});
 
 			// create models for ComboBoxes
-			comboctrl = new ctrlClass({sourceModel: new Stateful({number: "three"})});
-			deccomboctrl = new ctrlClass({sourceModel: new Stateful({number: "three"})});
+			comboctrl = new EditModelRefController({sourceModel: new Stateful({number: "three"})});
+			deccomboctrl = new EditModelRefController({sourceModel: new Stateful({number: "three"})});
 
 			// create a model for DateTextBox
-			datectrl = new ctrlClass({sourceModel: new Stateful({number: "2011-04-04"})});
-			decdatectrl = new ctrlClass({sourceModel: new Stateful({number: "2011-04-04"})});
+			datectrl = new EditModelRefController({sourceModel: new Stateful({number: "2011-04-04"})});
+			decdatectrl = new EditModelRefController({sourceModel: new Stateful({number: "2011-04-04"})});
 
 			// create a model for Slider
-			sliderctrl = new ctrlClass({sourceModel: new Stateful({number: "5"})});
-			decsliderctrl = new ctrlClass({sourceModel: new Stateful({number: "5"})});
+			sliderctrl = new EditModelRefController({sourceModel: new Stateful({number: "5"})});
+			decsliderctrl = new EditModelRefController({sourceModel: new Stateful({number: "5"})});
 
 			// create a model for NumberSpinner
-			numspinctrl = new ctrlClass({sourceModel: new Stateful({number: "6"})});
-			decnumspinctrl = new ctrlClass({sourceModel: new Stateful({number: "6"})});
+			numspinctrl = new EditModelRefController({sourceModel: new Stateful({number: "6"})});
+			decnumspinctrl = new EditModelRefController({sourceModel: new Stateful({number: "6"})});
 
 			// create a model for SimpleTextArea
-			simpTActrl = new ctrlClass({sourceModel: new Stateful({number: "7"})});
-			decsimpTActrl = new ctrlClass({sourceModel: new Stateful({number: "7"})});
+			simpTActrl = new EditModelRefController({sourceModel: new Stateful({number: "7"})});
+			decsimpTActrl = new EditModelRefController({sourceModel: new Stateful({number: "7"})});
 
 			// create a model for TextArea
-			textareactrl = new ctrlClass({sourceModel: new Stateful({number: "8"})});
-			dectextareactrl = new ctrlClass({sourceModel: new Stateful({number: "8"})});
+			textareactrl = new EditModelRefController({sourceModel: new Stateful({number: "8"})});
+			dectextareactrl = new EditModelRefController({sourceModel: new Stateful({number: "8"})});
 
 			// create a model for dijit.Calendar
-			deccalctrl = new ctrlClass({sourceModel: new Stateful({date: "Mon Apr 04 2011 01:00:00 GMT-0400 (Eastern Daylight Time)"})});
+			deccalctrl = new EditModelRefController({sourceModel: new Stateful({date: "Mon Apr 04 2011 01:00:00 GMT-0400 (Eastern Daylight Time)"})});
 
 			// create a model for dijit.ColorPalette
-			deccolorctrl = new ctrlClass({sourceModel: new Stateful({code: "#000000"})});
+			deccolorctrl = new EditModelRefController({sourceModel: new Stateful({code: "#000000"})});
 
 			// Handle the programmatic creation of widgets here:
 

@@ -56,6 +56,10 @@ define([
 		//		a Repeat inside of a dojox.mobile list.		
 		removeRepeatNode : false,
 
+		// children: dojox.mvc.StatefulArray
+		//		The array of data model that is used to render child nodes.
+		children: null,
+
 		// _relTargetProp: String
 		//		The name of the property that is used by child widgets for relative data binding.
 		_relTargetProp : "children",

@@ -119,9 +119,6 @@
 				"dojo/parser",
 				"dojo/Stateful",
 				"dojo/store/Memory",
-				"dojox/mvc/_Controller",
-				"dojox/mvc/getPlainValueOptions",
-				"dojox/mvc/getStatefulOptions",
 				"dojox/mvc/EditStoreRefController",
 				"dojox/mvc/ListController",
 				"dijit/form/Button",
@@ -131,14 +128,14 @@
 				"dojox/mvc/Output",
 				"dojox/mvc/Repeat",
 				"dojo/domReady!"
-			], function(declare, Deferred, parser, Stateful, Memory, _Controller, getPlainValueOptions, getStatefulOptions, EditStoreRefController, ListController){
+			], function(declare, Deferred, parser, Stateful, Memory, EditStoreRefController, ListController){
 				dojox.debugDataBinding = true;
 
 				var inited,
-				 ctrlClass = declare([_Controller, EditStoreRefController, ListController], {
+				 ctrlClass = declare([EditStoreRefController, ListController], {
 					cursorIndex: 0,
-					getStatefulOptions: getStatefulOptions,
-					getPlainValueOptions: getPlainValueOptions,
+					group: "",
+					groupTyped: "",
 					_refModelProp: "model",
 
 					addEmpty: function(){
@@ -154,13 +151,15 @@
 					},
 
 					_setGroupAttr: function(value){
+						this.set("groupTyped", value);
+						var old = this.group;
+						if(old === value){ return; }
 						Deferred.when(this.queryStore({Group: value}), function(){
 							if(!inited){
 								parser.parse();
 								inited = true;
 							}
 						});
-						this.set("groupTyped", value);
 						this._set("group", value);
 					}
 				});

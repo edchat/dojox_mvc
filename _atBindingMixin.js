@@ -31,7 +31,7 @@ define([
 			pw = registry.getEnclosingWidget(pn);
 			if(pw){
 				var relTargetProp = pw._relTargetProp || "target", pt = lang.isFunction(pw.get) ? pw.get(relTargetProp) : pw[relTargetProp];
-				if(pt){
+				if(pt || relTargetProp in pw.constructor.prototype){
 					return pw; // dijit._WidgetBase
 				}
 			}
@@ -56,10 +56,10 @@ define([
 		var _handles = {}, parent = getParent(source), relTargetProp = parent && parent._relTargetProp || "target";
 
 		function resolveAndBind(){
-			_handles["Two"] && _handles["Two"].unwatch();
-			delete _handles["Two"];
-			_handles["refModel"] && _handles["refModel"].unwatch();
-			delete _handles["refModel"];
+			for(var s in {Two: 1, refTargetModel: 1, refSourceModel: 1}){
+				_handles[s] && _handles[s].unwatch();
+				delete _handles[s];
+			}
 
 			var relTarget = parent && (lang.isFunction(parent.get) ? parent.get(relTargetProp) : parent[relTargetProp]),
 			 resolvedTarget = resolve(target, relTarget),
@@ -91,14 +91,28 @@ define([
 			}
 
 			bindResolved();
-			var refModelProp = resolvedTarget && resolvedTarget._refModelProp;
-			if(refModelProp){
-				_handles["refModel"] = resolvedTarget.watch(refModelProp, function(name, old, current){
-					if(old !== current){
-						if(dojox.debugDataBinding){ console.log("Change in referenced model of: " + resolvedTarget._setIdAttr || !resolvedTarget.declaredClass ? resolvedTarget : resolvedTarget.declaredClass); }
-						resolveAndBind();
-					}
-				});
+
+			var map = {
+				refTargetModel: {
+					resolved: resolvedTarget,
+					prop: targetProp
+				},
+				refSourceModel: {
+					resolved: resolvedSource,
+					prop: sourceProp
+				}
+			}
+
+			for(var s in map){
+				var resolved = map[s].resolved, refModelProp = resolved && resolved._refModelProp;
+				if(refModelProp && resolved.hasControllerProperty && (map[s].prop == "*" || !resolved.hasControllerProperty(map[s].prop))){
+					_handles[s] = resolved.watch(refModelProp, function(name, old, current){
+						if(old !== current){
+							if(dojox.debugDataBinding){ console.log("Change in referenced model of: " + (resolved._setIdAttr || !resolved.declaredClass ? resolved : resolved.declaredClass)); }
+							resolveAndBind();
+						}
+					});
+				}
 			}
 		}
 

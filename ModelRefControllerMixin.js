@@ -1,8 +1,9 @@
 define([
+	"dojo/_base/array",
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/Stateful"
-], function(declare, lang, Stateful){
+], function(array, declare, lang, Stateful){
 	return declare("dojox.mvc.ModelRefControllerMixin", null, {
 		// summary:
 		//		A controller, used as a mixin to dojox.mvc._Controller or dijit._WidgetBase descendants, working with a data model as a reference.
@@ -16,6 +17,11 @@ define([
 		// _refModelProp: String
 		//		The property name for the data model.
 		_refModelProp: "model",
+
+		// _refInModelProp: String
+		//		The property name for the data model, used as the input.
+		//		Used when this controller needs data model (as input) that is different from the data model this controller provides.
+		_refInModelProp: "model",
 
 		// model: dojo.Stateful
 		//		The data model.
@@ -78,30 +84,65 @@ define([
 
 			var hm = null, hp = null;
 
-			function watchModel(old, current){
+			function watchPropertiesInModel(/*dojo.Stateful*/ model){
+				// summary:
+				//		Watch properties in referred model.
+				// model: dojo.Stateful
+				//		The model to watch for.
+
+				// Unwatch properties of older model.
 				if(hp){ hp.unwatch(); }
-				if(old){
-					var props = {};
-					if(!name){
-						var oldProps = old.get("properties");
-						if(oldProps){ array.forEach(oldProps, function(item){ if(this.hasControllerProperty(item)){ props[item] = 1; } }); }
-						else{ for(var s in old){ if(old.hasOwnProperty(s) && this.hasControllerProperty(s)){ props[s] = 1; } } }
-						var currentProps = current && current.get("properties");
-						if(currentProps){ array.forEach(currentProps, function(item){ if(this.hasControllerProperty(item)){ props[item] = 1; } }); }
-						else{ for(var s in current){ if(current.hasOwnProperty(s) && this.hasControllerProperty(s)){ props[s] = 1; } } }
-					}else{
-						props[name] = 1;
-					}
-					for(var s in props){
-						callback(s, old.get ? old.get(s) : old[s], current && (current.get ? current.get(s) : current[s]));
-					}
+				// Watch properties of newer model.
+				if(model && lang.isFunction(model.set) && lang.isFunction(model.watch)){
+					hp = model.watch.apply(model, (name ? [name] : []).concat([function(name, old, current){ callback(name, old, current); }]));
 				}
-				var args = (name ? [name] : []).concat([function(name, old, current){ callback(name, old, current); }]);
-				hp = current && lang.isFunction(current.set) && lang.isFunction(current.watch) && current.watch.apply(current, args);
 			}
 
-			hm = Stateful.prototype.watch.call(this, this._refModelProp, function(name, old, current){ if(old !== current){ watchModel(old, current); } });
-			watchModel(null, this[this._refModelProp]);
+			function reflectChangeInModel(/*dojo.Stateful*/ old, /*dojo.Stateful*/ current){
+				// summary:
+				//		Upon change in model, detect change in properties, and call watch callbacks.
+				// old: dojo.Stateful
+				//		The older model.
+				// current: dojo.Stateful
+				//		The newer model.
+
+				// Gather list of properties to notify change in value as model changes.
+				var props = {};
+				if(!name){
+					// If all properties are being watched, find out all properties from older model as well as from newer model.
+					array.forEach([old, current], function(model){
+						var props = model && model.get("properties");
+						if(props){
+							// If the model explicitly specifies the list of properties, use it.
+							array.forEach(props, function(item){
+								if(this.hasControllerProperty(item)){ props[item] = 1; }
+							});
+						}else{
+							// Otherwise, iterate through own properties.
+							for(var s in model){
+								if(model.hasOwnProperty(s) && this.hasControllerProperty(s)){ props[s] = 1; }
+							}
+						}
+					});
+				}else{
+					props[name] = 1;
+				}
+
+				// Call watch callbacks for properties.
+				for(var s in props){
+					callback(s, old && (old.get ? old.get(s) : old[s]), current && (current.get ? current.get(s) : current[s]));
+				}
+			}
+
+			// Watch for change in model.
+			hm = Stateful.prototype.watch.call(this, this._refModelProp, function(name, old, current){
+				if(old === current){ return; }
+				reflectChangeInModel(old, current);
+				watchPropertiesInModel(current);
+			});
+
+			// Watch for properties in model.
+			watchPropertiesInModel(this.get(this._refModelProp));
 
 			return {
 				unwatch: function(){

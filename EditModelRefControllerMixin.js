@@ -12,7 +12,7 @@ define([
 		//		The data serving as the data source.
 
 		this.set(this._refOriginalModelProp, this.holdModelUntilCommit ? value : this.cloneModel(value));
-		this.set(this._refModelProp, this.holdModelUntilCommit ? this.cloneModel(value) : value);
+		this.set(this._refInModelProp, this.holdModelUntilCommit ? this.cloneModel(value) : value);
 		this._set(this._refSourceModelProp, value);
 	}
 
@@ -76,7 +76,7 @@ define([
 			//		Send the change back to the data source.
 
 			this.set(this.holdModelUntilCommit ? this._refSourceModelProp : this._refOriginalModelProp,
-			 this.holdModelUntilCommit ? this.get(this._refModelProp) : this.cloneModel(this.get(this._refModelProp)));
+			 this.holdModelUntilCommit ? this.get(this._refInModelProp) : this.cloneModel(this.get(this._refInModelProp)));
 		},
 
 		reset: function(){

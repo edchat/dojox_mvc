@@ -1,39 +1,58 @@
 define([
 	"dojo/_base/array",
+	"dojo/_base/lang",
 	"dojo/_base/declare",
 	"./ModelRefControllerMixin"
-], function(darray, declare, ModelRefControllerMixin){
-	function setRefListModel(/*dojox.mvc.StatefulArray*/ value){
+], function(array, lang, declare, ModelRefControllerMixin){
+	function unwatchHandles(/*dojox.mvc.ListControllerMixin*/ c){
+		// summary:
+		//		Unwatch model watch handles.
+
+		for(var s in {"_listModelWatchHandle": 1, "_tableModelWatchHandle": 1}){
+			if(c[s]){
+				c[s].unwatch();
+				c[s] = null;
+			}
+		}
+	}
+
+	function setRefInModel(/*dojox.mvc.StatefulArray*/ value){
 		// summary:
 		//		A function called when this controller gets newer value as the list data.
 		// value: Anything
 		//		The data serving as the list data.
 
-		if(this._listModelWatchHandle){
-			this._listModelWatchHandle.unwatch();
-			this._listModelWatchHandle = null;
-		}
+		unwatchHandles(this);
 		var _self = this;
 		if(value){
-			this._listModelWatchHandle = value.watchElements(function(idx, removals, adds){
-				if(removals && adds){
-					var curIdx = _self.get("cursorIndex");
-					// If selected element is removed, make "no selection" state
-					if(removals && curIdx >= idx && curIdx < idx + removals.length){
-						_self.set("cursorIndex", -1);
-						return;
+			if(value.watchElements){
+				this._listModelWatchHandle = value.watchElements(function(idx, removals, adds){
+					if(removals && adds){
+						var curIdx = _self.get("cursorIndex");
+						// If selected element is removed, make "no selection" state
+						if(removals && curIdx >= idx && curIdx < idx + removals.length){
+							_self.set("cursorIndex", -1);
+							return;
+						}
+						// If selected element is equal to or larger than the removals/adds point, update the selected index
+						if((removals.length || adds.length) && curIdx >= idx){
+							_self.set("cursor", _self.get("cursor"));
+						}
+					}else{
+						// If there is a update to the whole array, update the selected index 
+						_self.set("cursor", _self.get("cursor"));
 					}
-					// If selected element is equal to or larger than the removals/adds point, update the selected index
-					if((removals.length || adds.length) && curIdx >= idx){
-						_self.set("cursor", this.get("cursor"));
+				});
+			}else{
+				if(_self.get("cursorIndex") < 0){ _self._set("cursorIndex", ""); }
+				this._tableModelWatchHandle = value.watch(function(name, old, current){
+					if(old !== current && name == _self.get("cursorIndex")){
+						_self.set("cursor", current);
 					}
-				}else{
-					// If there is a update to the whole array, update the selected index 
-					_self.set("cursor", _self.get("cursor"));
-				}
-			});
+				});
+			}
 		}
-		this._set(this._refListModelProp, value);
+		this._set(this._refInModelProp, value);
 		this._setCursorIndexAttr(this.cursorIndex);
 	}
 
@@ -50,8 +69,8 @@ define([
 		//		The ID of the selected element in the model array.
 		cursorId: null,
 
-		// cursorIndex: Number
-		//		The index of the selected element in the model array.
+		// cursorIndex: Number|String
+		//		The index of the selected element in the model.
 		cursorIndex: -1,
 
 		// cursor: dojo.Stateful
@@ -63,12 +82,12 @@ define([
 		model: null,
 
 		// _listModelWatchHandle: Object
-		//		The watch handle of model.
+		//		The watch handle of model, watching for array elements.
 		_listModelWatchHandle: null,
 
-		// _refListModelProp: String
-		//		The property name for the data model of the list.
-		_refListModelProp: "model",
+		// _tableModelWatchHandle: Object
+		//		The watch handle of model.
+		_tableModelWatchHandle: null,
 
 		// _refModelProp: String
 		//		The property name for the data model.
@@ -76,18 +95,15 @@ define([
 
 		postscript: function(/*Object?*/ params, /*DomNode|String?*/ srcNodeRef){
 			// summary:
-			//		Sets the setter for _refListModelProp.
+			//		Sets the setter for _refInModelProp.
 
-			var setterName = "_set" + this._refListModelProp.replace(/^[a-z]/, function(c){ return c.toUpperCase(); }) + "Attr";
-			this[setterName] = setRefListModel;
+			var setterName = "_set" + this._refInModelProp.replace(/^[a-z]/, function(c){ return c.toUpperCase(); }) + "Attr";
+			this[setterName] = setRefInModel;
 			this.inherited(arguments);
 		},
 
 		destroy: function(){
-			if(this._listModelWatchHandle){
-				this._listModelWatchHandle.unwatch();
-				this._listModelWatchHandle = null;
-			}
+			unwatchHandles(this);
 			this.inherited(arguments);
 		},
 
@@ -97,14 +113,25 @@ define([
 			// description:
 			//		Finds the index associated with the given cursor ID, and updates cursorIndex property.
 
-			if(!this[this._refListModelProp]){ return; }
-			for(var i = 0; i < this[this._refListModelProp].length; i++){
-				if(this[this._refListModelProp][i][this.idProperty] == value){
-					this.set("cursorIndex", i);
-					return;
+			var model = this[this._refInModelProp];
+			if(!model){ return; }
+			if(lang.isArray(model)){
+				for(var i = 0; i < model.length; i++){
+					if(model[i][this.idProperty] == value){
+						this.set("cursorIndex", i);
+						return;
+					}
 				}
+				this._set("cursorIndex", -1);
+			}else{
+				for(var s in model){
+					if(model[s][this.idProperty] == value){
+						this.set("cursorIndex", s);
+						return;
+					}
+				}
+				this._set("cursorIndex", "");
 			}
-			this._set("cursorIndex", -1);
 		},
 
 		_setCursorIndexAttr: function(/*Number*/ value){
@@ -114,9 +141,9 @@ define([
 			//		Updates cursor, cursorId, cursorIndex properties internally and call watch callbacks for them.
 
 			this._set("cursorIndex", value);
-			if(!this[this._refListModelProp]){ return; }
-			this._set("cursor", this[this._refListModelProp][value]);
-			this._set("cursorId", this[this._refListModelProp][value] && this[this._refListModelProp][value][this.idProperty]);
+			if(!this[this._refInModelProp]){ return; }
+			this._set("cursor", this[this._refInModelProp][value]);
+			this._set("cursorId", this[this._refInModelProp][value] && this[this._refInModelProp][value][this.idProperty]);
 		},
 
 		_setCursorAttr: function(/*dojo.Stateful*/ value){
@@ -125,15 +152,31 @@ define([
 			// description:
 			//		Finds the index associated with the given element, and updates cursorIndex property.
 
-			var foundIdx = darray.indexOf(this[this._refListModelProp], value);
-			if(foundIdx < 0){
-				var targetIdx = this.get("cursorIndex");
-				if(targetIdx >= 0 && targetIdx < this[this._refListModelProp].length){
-					this[this._refListModelProp].set(targetIdx, value);
+			var model = this[this._refInModelProp];
+			if(!model){ return; }
+			if(lang.isArray(model)){
+				var foundIdx = array.indexOf(model, value);
+				if(foundIdx < 0){
+					var targetIdx = this.get("cursorIndex");
+					if(targetIdx >= 0 && targetIdx < model.length){
+						model.set(targetIdx, value);
+					}
+				}else{
+					this.set("cursorIndex", foundIdx);
 				}
 			}else{
-				this.set("cursorIndex", foundIdx);
+				for(var s in model){
+					if(model[s] == value){
+						this.set("cursorIndex", s);
+						return;
+					}
+				}
+				var targetIdx = this.get("cursorIndex");
+				if(targetIdx){
+					model.set(targetIdx, value);
+				}
 			}
+
 		}
 	});
 });

@@ -126,11 +126,11 @@ define([
 			}
 		},
 
-		_buildContained: function(/*dojo.Stateful*/ children){
+		_buildContained: function(/*dojox.mvc.StatefulArray*/ children){
 			// summary:
 			//		Destroy any existing contained view, recreate the repeating UI
 			//		markup and parse the new contents.
-			// children: dojo.Stateful
+			// children: dojox.mvc.StatefulArray
 			//		The array of child widgets.
 			// tags:
 			//		private

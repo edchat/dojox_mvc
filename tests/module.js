@@ -8,6 +8,7 @@ define(["doh/runner"], function(doh){
 		doh.registerUrl("dojox.mvc.tests.doh_mvc_search-results-repeat", require.toUrl("dojox/mvc/tests/doh_mvc_search-results-repeat.html" + userArgs), 999999);
 		doh.registerUrl("dojox.mvc.tests.doh_new-mvc_input-output-simple", require.toUrl("dojox/mvc/tests/doh_new-mvc_input-output-simple.html" + userArgs), 999999);
 		doh.registerUrl("dojox.mvc.tests.doh_new-mvc_label_and_totals", require.toUrl("dojox/mvc/tests/doh_new-mvc_label_and_totals.html" + userArgs), 999999);
+		doh.registerUrl("dojox.mvc.tests.doh_mvc_mobile-demo", require.toUrl("dojox/mvc/tests/doh_mvc_mobile-demo.html" + userArgs), 999999);
 		// Robot
 		doh.registerUrl("dojox.mvc.tests.regression.robot.mvc_loan-stateful", require.toUrl("dojox/mvc/tests/regression/robot/mvc_loan-stateful.html" + userArgs), 999999);
 	}catch(e){

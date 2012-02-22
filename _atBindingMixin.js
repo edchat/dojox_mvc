@@ -56,10 +56,8 @@ define([
 		var _handles = {}, parent = getParent(source), relTargetProp = parent && parent._relTargetProp || "target";
 
 		function resolveAndBind(){
-			for(var s in {Two: 1, refTargetModel: 1, refSourceModel: 1}){
-				_handles[s] && _handles[s].unwatch();
-				delete _handles[s];
-			}
+			_handles["Two"] && _handles["Two"].unwatch();
+			delete _handles["Two"];
 
 			var relTarget = parent && (lang.isFunction(parent.get) ? parent.get(relTargetProp) : parent[relTargetProp]),
 			 resolvedTarget = resolve(target, relTarget),
@@ -73,46 +71,17 @@ define([
 				return;
 			}
 
-			function bindResolved(){
-				_handles["Two"] && _handles["Two"].unwatch();
-				delete _handles["Two"];
-				if(targetProp == null){
-					// If target property is not specified, it means this handle is just for resolving data binding target.
-					// (For dojox.mvc.Group and dojox.mvc.Repeat)
-					// Do not perform data binding synchronization in such case.
-					lang.isFunction(resolvedSource.set) ? resolvedSource.set(sourceProp, resolvedTarget) : resolvedSource[sourceProp] = resolvedTarget;
-					if(dojox.debugDataBinding){
-						console.log("dojox.mvc._atBindingMixin set " + resolvedTarget + " to: " + getLogContent(resolvedSource, sourceProp));
-					}
-				}else{
-					// Start data binding
-					_handles["Two"] = BindTwo(resolvedTarget, targetProp, resolvedSource, sourceProp, options); // dojox.mvc.BindTwo.handle
+			if(targetProp == null){
+				// If target property is not specified, it means this handle is just for resolving data binding target.
+				// (For dojox.mvc.Group and dojox.mvc.Repeat)
+				// Do not perform data binding synchronization in such case.
+				lang.isFunction(resolvedSource.set) ? resolvedSource.set(sourceProp, resolvedTarget) : (resolvedSource[sourceProp] = resolvedTarget);
+				if(dojox.debugDataBinding){
+					console.log("dojox.mvc._atBindingMixin set " + resolvedTarget + " to: " + getLogContent(resolvedSource, sourceProp));
 				}
-			}
-
-			bindResolved();
-
-			var map = {
-				refTargetModel: {
-					resolved: resolvedTarget,
-					prop: targetProp
-				},
-				refSourceModel: {
-					resolved: resolvedSource,
-					prop: sourceProp
-				}
-			}
-
-			for(var s in map){
-				var resolved = map[s].resolved, refModelProp = resolved && resolved._refModelProp;
-				if(refModelProp && resolved.hasControllerProperty && (map[s].prop == "*" || !resolved.hasControllerProperty(map[s].prop))){
-					_handles[s] = resolved.watch(refModelProp, function(name, old, current){
-						if(old !== current){
-							if(dojox.debugDataBinding){ console.log("Change in referenced model of: " + (resolved._setIdAttr || !resolved.declaredClass ? resolved : resolved.declaredClass)); }
-							resolveAndBind();
-						}
-					});
-				}
+			}else{
+				// Start data binding
+				_handles["Two"] = BindTwo(resolvedTarget, targetProp, resolvedSource, sourceProp, options); // dojox.mvc.BindTwo.handle
 			}
 		}
 

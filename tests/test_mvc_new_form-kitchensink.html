@@ -43,7 +43,6 @@
 			'dijit/form/SimpleTextarea',
 			'dijit/form/Textarea',
 			'dojo/data/ItemFileReadStore',
-			"dojox/mvc/_Controller",
 			"dojo/Stateful",
 			"dojox/mvc/getStateful",
 			"dojox/mvc/EditModelRefController",
@@ -53,7 +52,7 @@
 			'dojox/mvc/Output',
 			'dojo/date/locale'
 			], function(kernel, declare, parser, ready, mvc, at, _WidgetBase, TextBox, Button, Select, FilteringSelect, ComboBox, DateTextBox, 
-						HorizontalSlider, NumberSpinner, SimpleTextarea, Textarea, ItemFileReadStore, _Controller, Stateful, getStateful, EditModelRefController, 
+						HorizontalSlider, NumberSpinner, SimpleTextarea, Textarea, ItemFileReadStore, Stateful, getStateful, EditModelRefController, 
 						Calendar, ColorPalette){
 
 			dojox.debugDataBinding = true;
@@ -185,10 +184,12 @@
 				store: store,
 				value: at(filctrl,'number') // bind to ctrl.number
 			}, document.getElementById('filsel'));
+			filsel.startup();
 			
 			var filtext = new TextBox({
 				value: at(filctrl,'number') // bind to ctrl.number
 			}, document.getElementById('filtext'));
+			filtext.startup();
 			
 			var filoutput = new mvc.Output({
 				value: at(filctrl,'number') // bind to ctrl.number
@@ -202,8 +203,6 @@
 			}, document.getElementById('filreset'));
 			filreset.startup();
 			
-			filtext.startup();
-			filsel.startup();
 			
 			// create the comboBox, textbox, output and button			
 			var combo = new ComboBox({

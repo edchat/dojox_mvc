@@ -16,6 +16,8 @@ define([
 		doh.registerUrl("dojox.mvc.tests.doh_mvc_zero-value-test", require.toUrl("dojox/mvc/tests/doh_mvc_zero-value-test.html" + userArgs), 999999);
 		doh.registerUrl("dojox.mvc.tests.doh_mvc_binding-simple", require.toUrl("dojox/mvc/tests/doh_mvc_binding-simple.html" + userArgs), 999999);
 		doh.registerUrl("dojox.mvc.tests.doh_mvc_shipto-billto-hierarchical", require.toUrl("dojox/mvc/tests/doh_mvc_shipto-billto-hierarchical.html" + userArgs), 999999);
+		doh.registerUrl("dojox.mvc.tests.doh_mvc_ref-template-13263", require.toUrl("dojox/mvc/tests/doh_mvc_ref-template-13263.html" + userArgs), 999999);
+		doh.registerUrl("dojox.mvc.tests.doh_async_mvc_14491-input-output", require.toUrl("dojox/mvc/tests/doh_async_mvc_14491-input-output.html" + userArgs), 999999);
 		if(!has("ie")){
 			// Hit an error inside AMD loader with IE, need to investigate
 			doh.registerUrl("dojox.mvc.tests.doh_mvc_date_test", require.toUrl("dojox/mvc/tests/doh_mvc_date_test.html" + userArgs), 999999);

@@ -343,7 +343,9 @@
 				doh.register("Update cal with new date", [{
 					name: "Update-withNewDate-test1",
 					runTest: function(){
-						var day2 = new Date(1993,9,28);  // 10/28/1993
+						var day2 = new Date(1993, 9, 28, 0, 0, 0, 0);
+						var test = day2.toDateString();
+						var startTime3 = (new Date()).getTime();
 						registry.byId(test1_cal).set("value", day2);
 						doh.is("1993", registry.byId("test1_cal").get("value").getFullYear(),"test1_cal getFullYear should be 1993");
 						doh.is("9", registry.byId("test1_cal").get("value").getMonth(),"test1_cal getMonth should be 9");
@@ -359,7 +361,8 @@
 				}, {
 					name: "Update-withNewDate-test2",
 					runTest: function(){
-						var day2 = new Date(1993,9,28);  // 10/28/1993
+						//var day2 = new Date(1993,9,28);  // 10/28/1993
+						var day2 = new Date(1993, 9, 28, 0, 0, 0, 0);
 						registry.byId(test2_cal).set("value", day2);
 						doh.is("1993", registry.byId("test2_cal").get("value").getFullYear(),"test2_cal getFullYear should be 1993");
 						doh.is("9", registry.byId("test2_cal").get("value").getMonth(),"test2_cal getMonth should be 9");

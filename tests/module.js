@@ -22,13 +22,12 @@ define([
 		doh.registerUrl("dojox.mvc.tests.doh_mvc_search-results-repeat-store", require.toUrl("dojox/mvc/tests/doh_mvc_search-results-repeat-store.html" + userArgs), 999999);
 		doh.registerUrl("dojox.mvc.tests.doh_mvc_template_repeat_exprchar", require.toUrl("dojox/mvc/tests/doh_mvc_template_repeat_exprchar.html" + userArgs), 999999);
 		doh.registerUrl("dojox.mvc.tests.doh_mvc_validation-test-simple", require.toUrl("dojox/mvc/tests/doh_mvc_validation-test-simple.html" + userArgs), 999999);
+		doh.registerUrl("doh_mvc_loan-stateful", require.toUrl("dojox/mvc/tests/doh_mvc_loan-stateful.html" + userArgs), 999999);
 
 		if(!has("ie")){
 			// Hit an error inside AMD loader with IE, need to investigate
 			doh.registerUrl("dojox.mvc.tests.doh_mvc_date_test", require.toUrl("dojox/mvc/tests/doh_mvc_date_test.html" + userArgs), 999999);
 		}
-		// Robot
-		doh.registerUrl("dojox.mvc.tests.regression.robot.mvc_loan-stateful", require.toUrl("dojox/mvc/tests/regression/robot/mvc_loan-stateful.html" + userArgs), 999999);
 	}catch(e){
 		doh.debug(e);
 	}

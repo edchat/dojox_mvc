@@ -39,7 +39,7 @@ define([
 		//		The data binding direction, choose from: dojox.mvc.Bind.from, dojox.mvc.Bind.to or dojox.mvc.Bind.both.
 		direction: dojox.mvc.both,
 
-		// converter: dojox.mvc.Bind.converter
+		// converter: dojox.mvc.sync.converter
 		//		Class/object containing the converter functions used when the data goes between data binding target (e.g. data model or controller) to data binding origin (e.g. widget).
 		converter: null
 	};

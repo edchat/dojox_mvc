@@ -43,7 +43,7 @@ define([
 			//		The property name.
 
 			var getterName = "_get" + name.replace(/^[a-z]/, function(c){ return c.toUpperCase(); }) + "Attr";
-			if(!this[getterName] && name != this._refModelProp && !(name in (this.ownProps || {})) && !(name in this.constructor.prototype)){
+			if(!this.hasControllerProperty(name)){
 				var model = this[this._refModelProp];
 				return model && (model.get ? model.get(name) : model[name]);
 			}
@@ -58,7 +58,7 @@ define([
 			// value: Anything
 			//		The property value.
 
-			if(name != this._refModelProp && !(name in (this.ownProps || {})) && !(name in this.constructor.prototype)){
+			if(!this.hasControllerProperty(name)){
 				var model = this[this._refModelProp];
 				model && (model.set ? model.set(name, value) : (model[name] = value));
 				return this;
@@ -158,7 +158,7 @@ define([
 			// name: String
 			//		The property name.
 
-			return name == this._refModelProp || (name in (this.ownProps || {})) || (name in this.constructor.prototype);
+			return name == this._refModelProp || name == this._refInModelProp || (name in (this.ownProps || {})) || (name in this.constructor.prototype);
 		}
 	});
 });

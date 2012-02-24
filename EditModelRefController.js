@@ -5,15 +5,20 @@ define([
 	"./getStateful",
 	"./ModelRefController"
 ], function(declare, lang, getPlainValue, getStateful, ModelRefController){
-	function setRefSourceModel(/*Anything*/ value){
+	function setRefSourceModel(/*dojox.mvc.EditModelRefController*/ ctrl, /*Anything*/ old, /*Anything*/ current){
 		// summary:
 		//		A function called when this controller gets newer value as the data source.
-		// value: Anything
-		//		The data serving as the data source.
+		// ctrl: dojox.mvc.EditModelRefController
+		//		The controller.
+		// old: Anything
+		//		The older value.
+		// current: Anything
+		//		The newer value.
 
-		this.set(this._refOriginalModelProp, this.holdModelUntilCommit ? value : this.cloneModel(value));
-		this.set(this._refInModelProp, this.holdModelUntilCommit ? this.cloneModel(value) : value);
-		this._set(this._refSourceModelProp, value);
+		if(old !== current){
+			ctrl.set(ctrl._refOriginalModelProp, ctrl.holdModelUntilCommit ? current : ctrl.cloneModel(current));
+			ctrl.set(ctrl._refEditModelProp, ctrl.holdModelUntilCommit ? ctrl.cloneModel(current) : current);
+		}
 	}
 
 	return declare("dojox.mvc.EditModelRefController", ModelRefController, {
@@ -51,12 +56,21 @@ define([
 		//		The property name for the data model, that serves as the data source.
 		_refSourceModelProp: "sourceModel",
 
-		postscript: function(/*Object?*/ params, /*DomNode|String?*/ srcNodeRef){
-			// summary:
-			//		Sets the setter for _refSourceModelProp.
+		// _refEditModelProp: String
+		//		The property name for the data model, that is being edited.
+		_refEditModelProp: "model",
 
-			var setterName = "_set" + this._refSourceModelProp.replace(/^[a-z]/, function(c){ return c.toUpperCase(); }) + "Attr";
-			this[setterName] = setRefSourceModel;
+		set: function(/*String*/ name, /*Anything*/ value){
+			// summary:
+			//		Set a property to this.
+			// name: String
+			//		The property to set.
+			// value: Anything
+			//		The value to set in the property.
+
+			if(name == this._refSourceModelProp){
+				setRefSourceModel(this, this[this._refSourceModelProp], value);
+			}
 			this.inherited(arguments);
 		},
 
@@ -75,15 +89,23 @@ define([
 			// summary:
 			//		Send the change back to the data source.
 
-			this.set(this.holdModelUntilCommit ? this._refSourceModelProp : this._refOriginalModelProp,
-			 this.holdModelUntilCommit ? this.get(this._refInModelProp) : this.cloneModel(this.get(this._refInModelProp)));
+			this.set(this.holdModelUntilCommit ? this._refSourceModelProp : this._refOriginalModelProp, this.cloneModel(this.get(this._refEditModelProp)));
 		},
 
 		reset: function(){
 			// summary:
 			//		Change the model back to its original state.
 
-			setRefSourceModel.call(this, this.get(this._refOriginalModelProp));
+			this.set(this.holdModelUntilCommit ? this._refEditModelProp : this._refSourceModelProp, this.cloneModel(this.get(this._refOriginalModelProp)));
+		},
+
+		hasControllerProperty: function(/*String*/ name){
+			// summary:
+			//		Returns true if this controller itself owns the given property.
+			// name: String
+			//		The property name.
+
+			return this.inherited(arguments) || name == this._refOriginalModelProp || name == this._refSourceModelProp;
 		}
 	});
 });

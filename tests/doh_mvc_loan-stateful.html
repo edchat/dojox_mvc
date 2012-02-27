@@ -62,7 +62,7 @@
 						url: "zips/" + model.get("Zip") + ".json",
 						content: {postalcode: model.get("Zip"), country: model.get("County")},
 						preventCache: true,
-						handleAs: "json",
+						handleAs: "json"
 					}).then(function(data){
 						model.set("City", data.postalcodes[0].placeName);
 						model.set("County", data.postalcodes[0].adminName2);
@@ -74,7 +74,7 @@
 						model.set("State", "");
 						model.set("isZipValid", false);
 					});	
-				}
+				};
 
 				function getNewValue(model, prop, name, value){
 					return prop == name ? value : model.get(prop);

@@ -60,6 +60,19 @@ define([
 		//		The property name for the data model, that is being edited.
 		_refEditModelProp: "model",
 
+		postscript: function(/*Object?*/ params, /*DomNode|String?*/ srcNodeRef){
+			// summary:
+			//		Sets certain properties before setting models.
+
+			for(var s in {getStatefulOptions: 1, getPlainValueOptions: 1, holdModelUntilCommit: 1}){
+				var value = (params || {})[s];
+				if(typeof value != "undefined"){
+					this[s] = value;
+				}
+			}
+			this.inherited(arguments);
+		},
+
 		set: function(/*String*/ name, /*Anything*/ value){
 			// summary:
 			//		Set a property to this.

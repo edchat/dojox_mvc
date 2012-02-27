@@ -175,12 +175,13 @@
 						var ctl = registry.byId("listCtl");
 						var payload = getStateful({
 							uniqueId: uniqueIdSeq++,
+							Completed: false,
 							Subject: "",
 							Due: new Date(""),
 							Priority: 2,
 							Description: ""
 						});
-						ctl.model.splice(0, 0, payload);
+						ctl.inModel.unshift(payload);
 						ctl.set("cursor", payload);
 					}
 				},
@@ -192,9 +193,9 @@
 
 						var idx = ctl.get("cursorIndex");
 						if(idx >= 0){
-							ctl.model.splice(idx, 1);
+							ctl.inModel.splice(idx, 1);
 						}
-						if(idx < ctl.model.get("length")){
+						if(idx < ctl.inModel.get("length")){
 							ctl.set("cursorIndex", idx);
 						}
 					}
@@ -278,7 +279,7 @@
 						<div class="row">
 							<span class="cell">
 								<label for="completed">Completed:</label>
-								<input data-dojo-type="dijit.form.CheckBox" data-dojo-props="checked: dojox.mvc.at('rel:', 'Completed')">
+								<input id="completed" data-dojo-type="dijit.form.CheckBox" data-dojo-props="checked: dojox.mvc.at('rel:', 'Completed')">
 							</span>
 						</div>
 						<div class="row">

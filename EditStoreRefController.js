@@ -77,6 +77,7 @@ define([
 			this._removals = [];
 			var _self = this;
 			return Deferred.when(this.inherited(arguments), function(results){
+				if(_self._beingDestroyed){ return; }
 				if(lang.isArray(results)){
 					_self._resultsWatchHandle = results.watchElements(function(idx, removals, adds){
 						[].push.apply(_self._removals, removals);

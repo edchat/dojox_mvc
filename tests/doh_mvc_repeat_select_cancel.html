@@ -233,7 +233,7 @@
 						ddom.byId("viewcheckbox1").click();
 						doh.is("Take dojox.mvc learning course", ddom.byId("subject").value, "The subject field should be of the second row");
 						ddom.byId("viewcheckbox2").click();
-						doh.is("March 03 2012", ddom.byId("due").value, "The due field should be of the third row");
+						doh.is("3", ddom.byId("priority").getElementsByTagName("input")[0].value, "The priority field should be of the third row");
 					}
 				},
 				{

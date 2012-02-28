@@ -7,9 +7,43 @@ define([
 ], function(array, declare, lang, Stateful, _Controller){
 	return declare("dojox.mvc.ModelRefController", _Controller, {
 		// summary:
-		//		A controller working with a data model as a reference.
-		//		Manages change in model as well as change in model properties.
+		//		A controller that keeps a reference to dojo.Stateful-based data model.
+		// description:
+		//		Does the following on behalf of such model:
+		//
+		//			* Provides data from model via dojo.Stateful get() interface
+		//			* Stores data to model via dojo.Stateful set() interface
+		//			* Watches for change in model via dojo.Stateful watch() interface (The callback is called when there is a change in data model, as well as when the data model itself is replaced with different one)
+		//
+		//		Can also be used to do some application-specific stuffs upon change in properties in model, by defining setter functions. 
+		//		Doing so will help keep models and widgets free from application-specific logic, and will help keep application logic free from specifics of models and widgets.
+		//		Such kind of setter functions can be defined in the same manner as widgets (_setXXXAttr()).
+		//
 		//		NOTE - If this class is used with a widget by data-dojo-mixins, make sure putting the widget in data-dojo-type and putting this class to data-dojo-mixins.
+		// example:
+		//		The text box refers to "value" property in the controller (with "ctrl" ID).
+		//		The controller provides the "value" property on behalf of the model ("model" property in the controller).
+		//		Two seconds later, the text box changes from "Foo" to "Bar" as the controller changes the data model it refers to.
+		// |		<html>
+		// |			<head>
+		// |				<script src="/path/to/dojo-toolkit/dojo/dojo.js" type="text/javascript" data-dojo-config="parseOnLoad: 0"></script>
+		// |				<script type="text/javascript">
+		// |					require([
+		// |						"dojo/parser", "dojo/Stateful", "dijit/registry",
+		// |						"dijit/form/TextBox", "dojox/mvc/at", "dojox/mvc/ModelRefController", "dojo/domReady!"
+		// |					], function(parser, Stateful, registry){
+		// |						modelFoo = new Stateful({value: "Foo"});
+		// |						modelBar = new Stateful({value: "Bar"});
+		// |						setTimeout(function(){ registry.byId("ctrl").set("model", modelBar); }, 2000);
+		// |						parser.parse();
+		// |					});
+		// |				</script>
+		// |			</head>
+		// |			<body>
+		// |				<span id="ctrl" data-dojo-type="dojox.mvc.ModelRefController" data-dojo-props="model: modelFoo"></span>
+		// |				<input type="text" data-dojo-type="dijit.form.TextBox" data-dojo-props="value: dojox.mvc.at('widget:ctrl', 'value')">
+		// |			</body>
+		// |		</html>
 
 		// ownProps: Object
 		//		List of property names owned by this controller, instead of the data model.

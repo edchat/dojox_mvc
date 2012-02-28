@@ -174,7 +174,7 @@ define([
 			list = source.get("properties");
 			if(!list){
 				list = [];
-				for(var s in source){ if(source.hasOwnProperty(s)){ list.push(s); } }
+				for(var s in source){ if(source.hasOwnProperty(s) && s != "_watchCallbacks"){ list.push(s); } }
 			}
 			excludes = source.get("excludes");
 		}else{

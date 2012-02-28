@@ -73,6 +73,7 @@ define([
 			var _self = this,
 			 queryResult = this.store.query(query, options),
 			 result = Deferred.when(queryResult, function(results){
+				if(_self._beingDestroyed){ return; }
 				results = getStateful(results, _self.getStatefulOptions);
 				_self.set(_self._refSourceModelProp, results);
 				return results;
@@ -100,6 +101,7 @@ define([
 			if(this._queryObserveHandle){ this._queryObserveHandle.cancel(); }
 			var _self = this;
 			return Deferred.when(this.store.get(id, options), function(result){
+				if(_self._beingDestroyed){ return; }
 				_self.set(_self._refSourceModelProp, getStateful(result, _self.getStatefulOptions));
 			});
 		},

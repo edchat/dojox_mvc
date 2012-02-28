@@ -79,7 +79,7 @@ define([
 			var getterName = "_get" + name.replace(/^[a-z]/, function(c){ return c.toUpperCase(); }) + "Attr";
 			if(!this.hasControllerProperty(name)){
 				var model = this[this._refModelProp];
-				return model && (model.get ? model.get(name) : model[name]);
+				return !model ? void 0 : model.get ? model.get(name) : model[name];
 			}
 			return this.inherited(arguments);
 		},
@@ -117,7 +117,7 @@ define([
 				name = null;
 			}
 
-			var hm = null, hp = null;
+			var hm = null, hp = null, _self = this;
 
 			function watchPropertiesInModel(/*dojo.Stateful*/ model){
 				// summary:
@@ -146,16 +146,16 @@ define([
 				if(!name){
 					// If all properties are being watched, find out all properties from older model as well as from newer model.
 					array.forEach([old, current], function(model){
-						var props = model && model.get("properties");
-						if(props){
+						var list = model && model.get("properties");
+						if(list){
 							// If the model explicitly specifies the list of properties, use it.
-							array.forEach(props, function(item){
-								if(this.hasControllerProperty(item)){ props[item] = 1; }
+							array.forEach(list, function(item){
+								if(!_self.hasControllerProperty(item)){ props[item] = 1; }
 							});
 						}else{
 							// Otherwise, iterate through own properties.
 							for(var s in model){
-								if(model.hasOwnProperty(s) && this.hasControllerProperty(s)){ props[s] = 1; }
+								if(model.hasOwnProperty(s) && !_self.hasControllerProperty(s)){ props[s] = 1; }
 							}
 						}
 					});
@@ -165,7 +165,7 @@ define([
 
 				// Call watch callbacks for properties.
 				for(var s in props){
-					callback(s, old && (old.get ? old.get(s) : old[s]), current && (current.get ? current.get(s) : current[s]));
+					callback(s, !old ? void 0 : old.get ? old.get(s) : old[s], !current ? void 0 : current.get ? current.get(s) : current[s]);
 				}
 			}
 
@@ -192,7 +192,7 @@ define([
 			// name: String
 			//		The property name.
 
-			return name == this._refModelProp || name == this._refInModelProp || (name in (this.ownProps || {})) || (name in this.constructor.prototype);
+			return name == "_watchCallbacks" || name == this._refModelProp || name == this._refInModelProp || (name in (this.ownProps || {})) || (name in this.constructor.prototype);
 		}
 	});
 });

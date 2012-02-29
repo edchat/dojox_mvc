@@ -76,7 +76,6 @@ define([
 			// name: String
 			//		The property name.
 
-			var getterName = "_get" + name.replace(/^[a-z]/, function(c){ return c.toUpperCase(); }) + "Attr";
 			if(!this.hasControllerProperty(name)){
 				var model = this[this._refModelProp];
 				return !model ? void 0 : model.get ? model.get(name) : model[name];
@@ -181,7 +180,7 @@ define([
 
 			return {
 				unwatch: function(){
-					if(hp){ hp.unwatch(); } if(hm){ hm.unwatch(); }
+					if(hp){ hp.unwatch(); hp = null; } if(hm){ hm.unwatch(); hm = null; }
 				}
 			};
 		},

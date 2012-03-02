@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"/>
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<title>MVC Repeat with Selectable RoundRectList - Multiple Select</title>
+
+	<script type="text/javascript" src="../../../../dojox/mobile/deviceTheme.js" data-dojo-config="mblThemeFiles: ['base']"></script>
+
+	<!-- required: dojo.js -->
+	<script type="text/javascript" src="../../../../dojo/dojo.js"
+		data-dojo-config="isDebug: true, async: true, parseOnLoad: false"></script>
+
+	<script type="text/javascript">
+		require([
+			"dojo/_base/lang",
+			"dojo/_base/declare",
+			"dijit/registry",
+			"dojo/dom",
+			"dojox/mobile/parser",
+			"dojo/store/Memory",
+			"dojo/ready",
+			"dojo/_base/Deferred",
+			"dojox/mvc/getStateful",
+			"dojo/data/ItemFileWriteStore",
+			"dojo/store/Memory",
+			"dojox/mvc/EditStoreRefController",
+			"dojox/mvc/ListController",
+			"dojox/mvc/at",
+			"dojox/mvc/Group",
+			"dojox/mvc/Repeat",
+			"dojox/mvc/Output",
+			"dojox/mobile",
+			"dojox/mobile/ListItem",
+			"dojox/mobile/Button",
+			"dojox/mobile/ToolBarButton",
+			"dojox/mobile/TextBox",
+			"dojox/mobile/CheckBox",
+			"dojox/mobile/EdgeToEdgeDataList",
+//			"dojox/mobile/TextArea",
+			"dojox/mobile/View",
+			"dojox/mobile/ScrollableView",
+//			"dojox/mobile/ViewController",
+//			"dojox/mobile/FixedSplitter",
+//			"dojox/mobile/EdgeToEdgeList",
+//			"dojox/mobile/EdgeToEdgeCategory",
+//			"dojox/mobile/RoundRectCategory",
+			"dojox/mobile/Heading",
+			"dojox/mobile/deviceTheme"
+		], function(lang, declare, registry, dom, parser, MemoryStore, ready, Deferred, getStateful, ItemFileWriteStore, 
+					Memory, EditStoreRefController, ListController, at){
+
+			dojox.debugDataBinding = true;
+
+			completeConverter = {
+					format: function(value){
+						console.log("****in completeConverter format value = "+value);
+						//return "dijitMenuItemLabel" + (value ? " complete" : "");
+						//ctrl.set("completed", false);
+						//ctrlComplete.set("completed", true);
+						//for(var a = this.target.inModel, i = 0; i < a.length; i++){
+						//	if(a[i].id == this.source.id){
+								console.log("****in completeConverter format this.target.id = "+this.target.id);
+								console.log(this.target);							
+								//return a[i];
+						//	}
+						//}						
+						return value;
+					},
+					parse: function(value){
+						console.log("****in completeConverter parse value = "+value);
+						console.log("****in completeConverter parse this.target.id = "+this.target.id);						
+						console.log(this.target);
+						var model = ctrlComplete.model;
+						if(value){
+							model = ctrl.model;
+						}
+						for(var a = model, i = 0; i < a.length; i++){
+							if(a[i].id == this.target.id){
+								if(value){ // remove from list and move to completed
+									window.setTimeout(swapModels(ctrl.model, ctrlComplete.model, i, value), 500);						
+									//swapModels(ctrl.model, ctrlComplete.model, i, value);								
+									//ctrl.model.splice(i, 1);
+									//this.target.set("completed", value);
+									//ctrlComplete.model.push(this.target);
+								}else{
+									window.setTimeout(swapModels(ctrlComplete.model, ctrl.model, i, value), 500);						
+									//swapModels(ctrlComplete.model, ctrl.model, i, value);
+									//ctrlComplete.model.splice(i, 1);
+									//this.target.set("completed", value);
+									//ctrl.model.push(this.target);
+								}
+							} 
+						}
+						//throw new Error(); // Stop copying the new value for unchecked case
+						if(!value){ throw new Error(); } // Stop copying the new value for unchecked case						
+						return value;
+					}					
+			};
+			
+			swapModels = function(fromModel, toModel, i, value) {
+				console.log("****in swapModels value = "+value);
+				var t = fromModel.splice(i, 1);
+				t[0].set("completed", value);
+				toModel.push(t[0]);
+			};
+			
+			var listData =
+			{
+				  	"identifier": "id",
+					"items": [
+								{
+									"id": 100,
+									"parentId":0,  
+									"title": "item 1 to do for 0",
+									"notes": "To do",
+									"due": "2010-10-15T11:03:47.681Z",
+									"completionDate": "", 
+									"reminder": "2010-10-15T11:03:47.681Z",  
+									"repeat": 0,
+									"priority": 0,
+									"hidden": false,
+									"completed": false,
+									"deleted": false
+								},
+								{
+									"id": 103,
+									"parentId":0,
+									"title": "item 3 to do for 0",
+									"notes": "To do",
+									"due": "2010-10-15T11:03:47.681Z",
+									"completionDate": "",
+									"reminder": "2010-10-15T11:03:47.681Z",
+									"repeat": 0,
+									"priority": 2,
+									"hidden": false,
+									"completed": false,
+									"deleted": false
+								}
+							]
+				}
+
+			var completedListData =
+			{
+				  	"identifier": "id",
+					"items": [
+								{
+									"id": 102,  
+									"parentId":0,  
+									"title": "item 2 to do for 0",
+									"notes": "To do",
+									"due": "2010-10-15T11:03:47.681Z",
+									"completionDate": "", 
+									"reminder": "2010-10-15T11:03:47.681Z",  
+									"repeat": 0,
+									"priority": 1,
+									"hidden": false,
+									"completed": true,
+									"deleted": false
+								}							]
+				}
+
+			var inited,
+			ctrlClass = declare([EditStoreRefController, ListController], {
+				cursorIndex: 0,
+				completed: "",
+				completedTyped: "",
+				_refModelProp: "model",
+
+				addEmpty: function(){
+					this.model.push(new Stateful({First: "", Last: "", Location: "", Office: "", Email: "", Tel: "", Fax: ""}));
+					this.set("cursorIndex", this.get("length") - 1);
+				},
+
+				remove: function(idx){
+					this.model.splice(idx, 1);
+					if(this.get("cursorIndex") < 0){
+						this.set("cursorIndex", this.get("length") - 1);
+					}
+				},
+
+				_setCompletedAttr: function(value){
+					this.set("completedTyped", value);
+					console.log("_setCompletedAttr called for completedTyped="+this.completedTyped +" with value="+value);					
+				
+					//var old = this.completed;
+					//if(old === value){ return; }
+					//Deferred.when(this.queryStore({Group: value}), function(){
+					//Deferred.when(this.queryStore({completed: value}), function(){
+					Deferred.when(this.queryStore(), function(){
+						if(!inited){
+							parser.parse();
+							inited = true;
+						}
+					});
+					this._set("completed", value);
+				}
+/*
+				_setGroupAttr: function(value){
+					this.set("groupTyped", value);
+					var old = this.group;
+					if(old === value){ return; }
+					//Deferred.when(this.queryStore({Group: value}), function(){
+					Deferred.when(this.queryStore(), function(){
+						if(!inited){
+							parser.parse();
+							inited = true;
+						}
+					});
+					//this._set("group", value);
+				}
+*/				
+			});
+
+			ctrl = new ctrlClass({store: new Memory({data: listData})});
+			ctrlComplete = new ctrlClass({store: new Memory({data: completedListData})});
+			ctrl.set("completed", false);
+			ctrlComplete.set("completed", true);
+
+			//listMemStore1 = new MemoryStore({data : listData});
+
+			//Deferred.when(listMemStore1.query(), function(data){
+			//	itemlistmodel = getStateful(data);
+			//});
+
+			
+			// when "dojo/ready" is ready call parser.parse (if not doing parseOnLoad)
+			//ready(function(){
+			//	parser.parse();
+			//});
+
+
+			movedTo = function(index) {
+				console.log("movedTo called with index"+index);
+				ctrl.set('cursorIndex', index);
+				var g = registry.byId("detailsGroup");
+				g.set("target", at(ctrl, 'cursor'))
+				var h = registry.byId("detailsHeading");
+				h.set("label","To-Do Details");
+				var h2 = dom.byId("detailsHeading2");
+				h2.innerHTML="To Do Item";
+			};
+
+			movedToCompleted = function(index) {
+				console.log("movedToCompleted called with index"+index);
+				ctrlComplete.set('cursorIndex', index);
+				var g = registry.byId("detailsGroup");
+				g.set("target", at(ctrlComplete, 'cursor'))
+				var h = registry.byId("detailsHeading");
+				h.set("label","Completed To-Do");
+				var h2 = dom.byId("detailsHeading2");
+				h2.innerHTML="Completed Item";
+			};
+
+			resetAll = function() {
+				console.log("resetAll called");
+			
+		//		model1 = lang.clone(model1Orig);
+		//		model2 = lang.clone(model2Orig);
+		//		registry.byId('repeatId1').set('children',model1.Results); 
+		//		registry.byId('repeatId2').set('children',model1.Results); 
+		//		registry.byId('repeatid2arem').set('children',model1.Results);
+			};
+			
+
+		});
+		
+	</script>
+</head>
+<body style="visibility:hidden;">
+		<div id="wrapper">
+			<div id="header">
+				<div id="navigation"></div>
+			</div>
+			<div id="main">
+				<div id="leftNav"></div>
+				<div id="mainContent">
+<!-- 
+				<ul data-dojo-type="dojox.mobile.RoundRectList"    
+					data-dojo-mixins="dojox.mvc.Repeat" data-dojo-props="exprchar:'#', children: itemlistmodel">
+							<li  class="mblVariableHeight" data-dojo-type="dojox.mobile.ListItem" clickable="true"  
+									data-dojo-props="label: dojox.mvc.at('rel:#{this.index}', 'label')">
+							</li>
+				</ul>
+-->
+<!-- 
+
+								transitionOptions="{title: 'Detail', target: 'details,detail', url: '#details,detail'}">  
+
+				<ul data-dojo-type="dojox.mobile.RoundRectList"   
+					data-dojo-mixins="dojox.mvc.Repeat" data-dojo-props="exprchar:'#', children: itemlistmodel">
+							<li  class="mblVariableHeight" 
+								data-dojo-type="dojox.mobile.ListItem" clickable="true" 
+								data-dojo-props="onClick: function(){console.log('select item ', '#{this.index}'); window.selected_item = this.index;}"
+								transitionOptions="{title: 'Detail', target: 'details,detail'}">  
+								<table><tr>
+									<td><input preventTouch='true' type='checkbox' 
+											data-dojo-type="dojox.mobile.CheckBox" 
+											data-dojo-props="checked: dojox.mvc.at('rel:#{this.index}','completed')"/></td>
+									<td data-dojo-type="dojox.mvc.Output" 
+										data-dojo-props="value: dojox.mvc.at('rel:#{this.index}','title')"></td>
+								</tr></table>
+							</li>
+				</ul>
+				"children: dojox.mvc.at(ctrl, 'model')"
+
+ -->
+ 			<div id="todomain" data-dojo-type="dojox.mobile.View" selected="true">
+			<h2 data-dojo-type="dojox.mobile.RoundRectCategory" region="top">
+			To Do Items
+			</h2>
+<!--  			<span id="addbutton" data-dojo-type="dojox.mobile.ToolBarButton" data-dojo-props='icon:"mblDomButtonWhitePlus"' 
+					style="float:right;"></span>
+-->
+				<ul data-dojo-type="dojox.mobile.RoundRectList"   
+					data-dojo-mixins="dojox.mvc.Repeat" 
+					data-dojo-props="exprchar:'#', children: dojox.mvc.at(ctrl, 'model')">
+							<li  class="mblVariableHeight"  moveTo="details" callback="function(){movedTo('#{this.index}')}" 
+								data-dojo-type="dojox.mobile.ListItem" clickable="true" 
+								data-dojo-props="onClick: function(){console.log('select item ', '#{this.index}'); window.selected_item = this.index;}"
+								transitionOptions="{title: 'Detail', target: 'details,detail'}">  
+								<table><tr>
+									<td><input preventTouch='true' type='checkbox' 
+											data-dojo-type="dojox.mobile.CheckBox" 
+											data-dojo-props="checked: dojox.mvc.at('rel:#{this.index}','completed').attach(completeConverter)"/></td>
+									<td data-dojo-type="dojox.mvc.Output" 
+										data-dojo-props="value: dojox.mvc.at('rel:#{this.index}','title')"></td>
+								</tr></table>
+							</li>
+				</ul>
+	<h2 data-dojo-type="dojox.mobile.RoundRectCategory" region="top">
+		<span>Completed Items</span>
+	</h2>
+				<ul data-dojo-type="dojox.mobile.RoundRectList"   
+					data-dojo-mixins="dojox.mvc.Repeat" 
+					data-dojo-props="exprchar:'#', children: dojox.mvc.at(ctrlComplete, 'model')">
+							<li  class="mblVariableHeight"   moveTo="details" callback="function(){movedToCompleted('#{this.index}')}" 
+								data-dojo-type="dojox.mobile.ListItem" clickable="true" 
+								data-dojo-props="onClick: function(){console.log('select item ', '#{this.index}'); window.selected_item = this.index;}"
+								transitionOptions="{title: 'Detail', target: 'details,detail'}">  
+								<table><tr>
+									<td><input preventTouch='true' type='checkbox' 
+											data-dojo-type="dojox.mobile.CheckBox" 
+											data-dojo-props="checked: dojox.mvc.at('rel:#{this.index}','completed').attach(completeConverter)"/></td>
+									<td data-dojo-type="dojox.mvc.Output" 
+										data-dojo-props="value: dojox.mvc.at('rel:#{this.index}','title')"></td>
+								</tr></table>
+							</li>
+				</ul>
+			</div>
+
+	<div id="details" data-dojo-type="dojox.mobile.ScrollableView">
+		<h1 id="detailsHeading" data-dojo-type="dojox.mobile.Heading" back="Back" moveTo="todomain">To-Do Details</h1>
+			<div id="detailsGroup" class="fieldset" data-dojo-type="dojox.mvc.Group" 
+								data-dojo-props="target: dojox.mvc.at(ctrl, 'cursor')">
+ 				<h2 id="detailsHeading2">Completed Items</h2>
+				<div class="field-row">
+					<span>To Do</span>
+					<input id="todo" data-dojo-type="dojox.mobile.TextBox"
+						placeholder="To do placeholder"  
+						data-dojo-props="value: dojox.mvc.at('rel:', 'title')"/>
+				</div>
+			</div>
+
+
+
+
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

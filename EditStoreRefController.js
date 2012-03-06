@@ -111,7 +111,7 @@ define([
 				}
 				this._removals = [];
 			}
-			var data = getPlainValue(this.get(this._refModelProp), this.getPlainValueOptions);
+			var data = getPlainValue(this.get(this._refEditModelProp), this.getPlainValueOptions);
 			if(lang.isArray(data)){
 				for(var i = 0; i < data.length; i++){
 					this.store.put(data[i]);

@@ -50,6 +50,11 @@ define([
 		//		The name of the property that is used by child widgets for relative data binding.
 		_relTargetProp : "children",
 
+		startup: function(){
+			this.inherited(arguments);
+			this._setChildrenAttr(this.children);
+		},
+
 		////////////////////// PRIVATE METHODS ////////////////////////
 
 		_setChildrenAttr: function(/*dojo.Stateful*/ value){

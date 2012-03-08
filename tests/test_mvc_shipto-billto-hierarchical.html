@@ -25,6 +25,7 @@
 				"dijit/form/Button",
 				"dijit/form/TextBox",
 				"dojox/mvc/at",
+				"dojox/mvc/Output",
 				"dojox/mvc/Group"
 			], function(declare, parser, getStateful, EditModelRefController, ListController){
 				var clz = declare([EditModelRefController, ListController], {});
@@ -112,7 +113,7 @@
 					<br/>
 					<div class="row">
 						<label class="cell" for="addrLabel">Selected Address:</label>
-						<input class="cell" data-dojo-type="dijit.form.TextBox" id="addrLabel" data-dojo-props="value: dojox.mvc.at(ctrl, 'cursorIndex')"/>
+						<div class="cell" data-dojo-type="dojox.mvc.Output" id="addrLabel" data-dojo-props="value: dojox.mvc.at(ctrl, 'cursorIndex')"/></div>
 					</div>
 					<br/>
 					<div id="addrGroup" data-dojo-type="dojox.mvc.Group" data-dojo-props="target: dojox.mvc.at(ctrl, 'cursor')">

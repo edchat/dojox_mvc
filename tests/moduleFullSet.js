@@ -1,6 +1,7 @@
 define([
 	"doh/runner",
-	"dojo/_base/sniff"
+	"dojo/_base/sniff",
+	"./equals"
 ], function(doh, has){
 	try{
 		var userArgs = window.location.search.replace(/[\?&](dojoUrl|testUrl|testModule)=[^&]*/g, "").replace(/^&/, "?");

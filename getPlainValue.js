@@ -60,8 +60,8 @@ define([
 		// returns: Anything
 		//		 The converted value.
 
-		return (options || getPlainValueOptions)["getPlain" + (options || getPlainValueOptions).getType(value).replace(/^[a-z]/, function(c){ return c.toUpperCase(); })](value); // Anything
+		return (options || getPlainValue)["getPlain" + (options || getPlainValue).getType(value).replace(/^[a-z]/, function(c){ return c.toUpperCase(); })](value); // Anything
 	};
 
-	return lang.setObject("dojox.mvc.getPlainValue", getPlainValue);
+	return lang.setObject("dojox.mvc.getPlainValue", lang.mixin(getPlainValue, getPlainValueOptions));
 });

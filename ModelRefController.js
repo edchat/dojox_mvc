@@ -128,7 +128,7 @@ define([
 				if(hp){ hp.unwatch(); }
 				// Watch properties of newer model.
 				if(model && lang.isFunction(model.set) && lang.isFunction(model.watch)){
-					hp = model.watch.apply(model, (name ? [name] : []).concat([function(name, old, current){ callback(name, old, current); }]));
+					hp = model.watch.apply(model, (name ? [name] : []).concat([function(name, old, current){ callback.call(_self, name, old, current); }]));
 				}
 			}
 
@@ -164,7 +164,7 @@ define([
 
 				// Call watch callbacks for properties.
 				for(var s in props){
-					callback(s, !old ? void 0 : old.get ? old.get(s) : old[s], !current ? void 0 : current.get ? current.get(s) : current[s]);
+					callback.call(_self, s, !old ? void 0 : old.get ? old.get(s) : old[s], !current ? void 0 : current.get ? current.get(s) : current[s]);
 				}
 			}
 

@@ -121,7 +121,7 @@
 					<div class="row">
 						<button type="button" data-dojo-type="dijit.form.Button" data-dojo-props="onClick: function(){dijit.byId('outergroupId').set('ref',model1);}">Swap Model1</button>
 						<button type="button" data-dojo-type="dijit.form.Button" data-dojo-props="onClick: function(){dijit.byId('outergroupId').set('ref',model2);}">Swap Model2</button>
-						<button type="button" data-dojo-type="dijit.form.Button" data-dojo-props="onClick: function(){dijit.byId('outergroupId').set('ref',model3);}">Swap Model3</button>
+						<button type="button" data-dojo-type="dijit.form.Button" data-dojo-props="onClick: function(){dijit.byId('outergroupId').set('target',dojox.mvc.at(model3));}">Swap Model3</button>
 					</div>
 					<div id="outergroupId"	 data-dojo-type="dojox.mvc.Group" data-dojo-props="target: dojox.mvc.at('model1')">
 						<div id="repeatId" data-dojo-type="dojox.mvc.Repeat" data-dojo-props="children: dojox.mvc.at('rel:', 'Results')">

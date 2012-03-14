@@ -28,16 +28,24 @@
 	<!-- required: a default dijit theme: -->
 	<link id="themeStyles" rel="stylesheet" href="../../../dijit/themes/claro/claro.css"/>
 
+	<script type="text/javascript">
+		require = {
+			isDebug: 1,
+			async: 1,
+			has: {
+				"dojox-mvc-binding-in-props-only": 0
+			}
+		};
+	</script>
+
 	<!-- required: dojo.js -->
-	<script type="text/javascript" src="../../../dojo/dojo.js"
-		data-dojo-config="isDebug: true, async: true"></script>
+	<script type="text/javascript" src="../../../dojo/dojo.js"></script>
 
 	<script type="text/javascript">
 		require([
 			"dojox",
 			"dojo/Stateful",
-			"dojox/mobile/parser",
-			"dojox/mvc/_patches",
+			"dojo/parser",
 			"dojox/mvc/at",
 			"dojox/mvc/ParserExtension"
 		], function(dojox, Stateful, parser){
@@ -53,12 +61,12 @@
 	<div>
 		<div>
 			Text:
-			<span data-dojo-props="class: dojox.mvc.at(boldTextModel, 'checked').direct(dojox.mvc.from).attach({format: function(value){ return value ? 'boldText' : ''; }}),
-			                       value: dojox.mvc.at(titleModel, 'value')"></span>
+			<span class="dojox.mvc.at(boldTextModel, 'checked').direct(dojox.mvc.from).attach({format: function(value){ return value ? 'boldText' : ''; }})"
+			 data-dojo-bind-text="dojox.mvc.at(titleModel, 'value')"></span>
 		</div>
 		<div>
 			Choose text from:
-			<select type="combo" data-dojo-props="value: dojox.mvc.at(titleModel, 'value')">
+			<select type="combo" value="dojox.mvc.at(titleModel, 'value')">
 				<option value="Foo">Foo</option>
 				<option value="Bar">Bar</option>
 			</select>
@@ -66,10 +74,10 @@
 	</div>
 
 	<div style="margin-top:8px;">
-		<div style="width:200px;height:200px;" data-dojo-props="class: dojox.mvc.at(colorModel, 'value')"></div>
+		<div style="width:200px;height:200px;" class="dojox.mvc.at(colorModel, 'value')"></div>
 		<div>
 			Choose color from:
-			<select type="combo" data-dojo-props="value: dojox.mvc.at(colorModel, 'value')">
+			<select type="combo" value="dojox.mvc.at(colorModel, 'value')">
 				<option value="bgRed">Red</option>
 				<option value="bgGreen">Green</option>
 				<option value="bgBlue">Blue</option>
@@ -79,7 +87,7 @@
 
 	<div style="margin-top:8px;">
 		The text should be bold:
-		<input type="checkbox" data-dojo-props="checked: dojox.mvc.at(boldTextModel, 'checked')">
+		<input type="checkbox" checked="dojox.mvc.at(boldTextModel, 'checked')">
 	</div>
   </body>
 </html>

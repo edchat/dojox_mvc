@@ -1,4 +1,4 @@
-var repeatModel, setRef, nextIndexToAdd, selectedIndex;
+var listCtl, repeatModel, setRef, nextIndexToAdd, selectedIndex, nameCtl;
 var setRef, setDetailsContext, insertResult, updateView, updateModel, addEmpty, remove;
 
 require(['dojo/has',
@@ -9,7 +9,10 @@ require(['dojo/has',
 	'dojox/mvc/at',
 	'dojox/mvc',
 	'dojox/mvc/getStateful',
-	'dojox/mvc/ListController',
+	'dojox/mvc/EditStoreRefListController',
+	'dojox/mvc/EditStoreRefController',
+	"dojo/store/Memory",
+	"dojo/_base/Deferred",
 	'dojox/mobile',
 	'dojox/mobile/ScrollableView',
 	'dojox/mobile/Button',
@@ -29,7 +32,8 @@ require(['dojo/has',
 	'dojox/mobile/Heading',
 	'dojo/_base/json',
 	'dojo/dom'
-], function(has, parser, ready, registry, at, mvc, getStateful, ListController, mobile, ScrollableView, Button, 
+], function(has, parser, ready, registry, at, mvc, getStateful, EditStoreRefListController, 
+		EditStoreRefController, Memory, Deferred, mobile, ScrollableView, Button, 
 		TextArea, Group, Output, Generate, Repeat, TextBox, CheckBox, ViewController,
 		FixedSplitter, EdgeToEdgeList, EdgeToEdgeCategory, deviceTheme, RoundRectCategory, 
 		Heading, json, dom){
@@ -38,7 +42,8 @@ require(['dojo/has',
 		require(["dojox/mobile/compat"]);
 	}
 
-	var names = {
+	var names = [{
+	"id" 	 : "360324",
 	"Serial" : "360324",
 	"First"  : "John",
 	"Last"   : "Doe",
@@ -55,7 +60,7 @@ require(['dojo/has',
 		"State"  : "NY",
 		"Zip"    : "10532"
 	}
-};
+}];
 
 // Initial repeat data used in the Repeat Data binding demo
 var repeatData = [ 
@@ -90,16 +95,26 @@ var repeatData = [
 
 	selectedIndex = 0;
 
-	model = getStateful(names );
-	repeatmodel = getStateful(repeatData );
+	//model = getStateful(names );
+	//nameCtl = new EditStoreRefController({store: new Memory({data: names})});
+	nameCtl = new EditStoreRefListController({store: new Memory({data: names})});
+	nameCtl.queryStore();
+	model = nameCtl.model[0];
 	
-	nextIndexToAdd = repeatmodel.length;
+	//listCtl = new EditStoreRefListController({model: getStateful(repeatData ), cursorIndex: 0});
+	listCtl = new EditStoreRefListController({store: new Memory({data: repeatData}), cursorIndex: 0});
+	Deferred.when(listCtl.queryStore(), function(model){
+		//repeatmodel = listCtl.model;
+		repeatmodel = model;
+		nextIndexToAdd = repeatmodel.length;
+	});
+	
+	
 
 
 	// used in the Repeat Data binding demo
 	setDetailsContext=function(index){
-		var ctl=registry.byId("listCtl");
-		ctl.set("cursorIndex", index);
+		listCtl.set("cursorIndex", index);
 		registry.byId("firstInput").focus();
 	};
 
@@ -114,10 +129,9 @@ var repeatData = [
 	},
 
 	remove = function(idx){
-		var ctl=registry.byId("listCtl");
 		repeatmodel.splice(idx, 1);
-		if(ctl.get("cursorIndex") > repeatmodel.length-1){
-			ctl.set("cursorIndex", repeatmodel.length - 1);
+		if(listCtl.get("cursorIndex") > repeatmodel.length-1){
+			listCtl.set("cursorIndex", repeatmodel.length - 1);
 		}
 	},
 

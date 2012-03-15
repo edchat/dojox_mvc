@@ -134,10 +134,10 @@
 	<!--	<button id="reset1" type="button" data-dojo-type="dojox.mobile.Button" class="mblBlueButton" onclick="model.reset()">Reset</button> -->
 		</form>
 	</div>
-
-	<span id="listCtl" data-dojo-type="dojox.mvc.ListController"
+<!--  
+	<span id="listCtl" data-dojo-type="dojox.mvc.EditStoreRefListController"
 		data-dojo-props="model: repeatmodel, cursorIndex: 0"></span>
-
+-->
 	<div id="repeat" data-dojo-type="dojox.mobile.ScrollableView">
 		<h1 data-dojo-type="dojox.mobile.Heading" data-dojo-props="back:'Back', moveTo:'foo', callback:function(){console.log('in callback function for repeat');}">Repeat Data
 				<span id="addbutton"  data-dojo-type="dojox.mobile.ToolBarButton" 
@@ -170,13 +170,17 @@
 		<h1 id="detailsHeading" data-dojo-type="dojox.mobile.Heading" 
 				data-dojo-props='back:"Back", moveTo:"repeat",
 		 		callback:function(){console.log("in callback function for Details");}'>Details</h1>
-			<div id="detailsGroup" class="fieldset" data-dojo-type="dojox.mvc.Group" 
+<!-- 			
 					data-dojo-props="target: dojox.mvc.at('widget:listCtl', 'cursor')">
+							data-dojo-props="value: dojox.mvc.at('widget:listCtl', 'cursorIndex')"></span>
+ -->
+			<div id="detailsGroup" class="fieldset" data-dojo-type="dojox.mvc.Group" 
+					data-dojo-props="target: dojox.mvc.at(listCtl, 'cursor')">
 					<div class="row">
 						<div style="display: inline-block;" id="detailsBanner">Details for selected index:</div>
 						<span class="cell" id="indexOutput"
 							data-dojo-type="dojox.mvc.Output"
-							data-dojo-props="value: dojox.mvc.at('widget:listCtl', 'cursorIndex')"></span>
+							data-dojo-props="value: dojox.mvc.at(listCtl, 'cursorIndex')"></span>
 					</div>
 					<table id="table" cellspacing="10"  style="width: 100%">
 						<tr>

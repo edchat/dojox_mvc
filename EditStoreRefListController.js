@@ -45,5 +45,20 @@ define([
 		// |				<input id="check" type="checkbox" data-dojo-type="dijit.form.CheckBox" data-dojo-props="checked: dojox.mvc.at('widget:ctrl', 'value')">
 		// |			</body>
 		// |		</html>
+
+		commitCurrent: function(){
+		// summary:
+		//		Send the change back to the data source for the current index.
+
+			var id = this.cursor[this.idProperty];
+			for(var i = 0; i < this.originalModel.length; i++){
+				if(this.originalModel[i][this.idProperty] == id){
+					this.originalModel.set(i, this.cloneModel(this.cursor));
+					break;
+				}
+			}
+			this.store.put(this.cursor);
+		}
+
 	});
 });

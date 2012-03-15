@@ -150,6 +150,7 @@
 				var inited,
 				 ctrlClass = declare([EditStoreRefListController], {
 					cursorIndex: 0,
+					idProperty: "id",
 					group: "",
 					groupTyped: "",
 					_refModelProp: "model",
@@ -296,6 +297,7 @@
 							Details for result index:
 							<span data-dojo-type="dojox.mvc.Output" data-dojo-props="value: dojox.mvc.at(ctrl, 'cursorIndex')"></span>
 						</div>
+							<button type="button" data-dojo-type="dijit.form.Button" data-dojo-props="onClick: function(){ ctrl.commitCurrent(); }">Save Item</button>
 						<div id="detailsGroup" data-dojo-type="dojox.mvc.Group" data-dojo-props="target: dojox.mvc.at(ctrl, 'cursor')">
 							<div class="row">
 								<label class="cell" for="firstInput">First Name:</label>

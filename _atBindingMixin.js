@@ -110,7 +110,7 @@ define([
 			//		See if any parameters for this widget are dojox.mvc.at handles.
 			//		If so, move them under this._refs to prevent widget implementations from referring them.
 
-			var refs = this._refs = {};
+			var refs = this._refs = params.refs || {};
 			for(var prop in params){
 				if((params[prop] || {}).atsignature == "dojox.mvc.at"){
 					var h = params[prop];

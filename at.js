@@ -89,5 +89,10 @@ define([
 		}; // dojox.mvc.at.handle
 	};
 
+	// Data binding directions
+	at.from = sync.from;
+	at.to = sync.to;
+	at.both = sync.both;
+
 	return lang.setObject("dojox.mvc.at", at);
 });

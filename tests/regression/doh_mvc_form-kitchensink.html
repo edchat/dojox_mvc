@@ -390,7 +390,6 @@
 				{
 					name: "initialOtherThanSelect",
 					runTest: function(){
-
 						var wid, textboxval, outputval; 
 						// Test FilteringSelect
 						wid = dijit.byId("filsel");
@@ -417,10 +416,8 @@
 						textboxval = dijit.byId("datetext").value;
 						outputval = dijit.byId("dateoutput").value;
 						if (wid) {
-								var date1 = "Mon Apr 04 2011 00:00:00 GMT-0400 (Eastern Daylight Time)";
-								var date2 = "Mon Apr 4 00:00:00 EDT 2011";
-								doh.t((date1.substring(0,15)==(wid.get('value').toString().substring(0,15)) || 
-									date2==(wid.get('value'))),"wid.get('value') should be set it is:"+wid.get('value'));
+								var date = new Date(2011, 3, 4, 0, 0, 0, 0);
+								doh.t(wid.get("value").getTime() == date.getTime(), "wid.get(\"value\") should be set to:" + date);
 								doh.is("4/4/2011",wid.displayedValue,"wid.displayedValue should be set it is:"+wid.displayedValue);
 								doh.is("2011-04-04",textboxval,"textboxval should be set it is:"+textboxval);
 								doh.is("2011-04-04",outputval,"outputval should be set it is:"+outputval);
@@ -509,10 +506,8 @@
 						textboxval = dijit.byId("decdatetext").value;
 						outputval = dijit.byId("decdateOutput").value;
 						if (wid) {
-								var date1 = "Mon Apr 04 2011 00:00:00 GMT-0400 (Eastern Daylight Time)";
-								var date2 = "Mon Apr 4 00:00:00 EDT 2011";
-								doh.t((date1.substring(0,15)==(wid.get('value').toString().substring(0,15)) || 
-									date2==(wid.get('value'))),"wid.get('value') should be set it is:"+wid.get('value'));
+								var date = new Date(2011, 3, 4, 0, 0, 0, 0);
+								doh.t(wid.get("value").getTime() == date.getTime(), "wid.get(\"value\") should be set to:" + date);
 								doh.is("4/4/2011",wid.displayedValue,"wid.displayedValue should be set it is:"+wid.displayedValue);
 								doh.is("2011-04-04",textboxval,"textboxval should be set it is:"+textboxval);
 								doh.is("2011-04-04",outputval,"outputval should be set it is:"+outputval);
@@ -572,12 +567,10 @@
 						textboxval = dijit.byId("deccaltext").value;
 						outputval = dijit.byId("deccalOutput").value;
 						if (wid) {
-							   var date1 = "Wed May 04 2011 00:00:00 GMT-0400 (Eastern Daylight Time)";
-							   var date2 = "Wed May 4 00:00:00 EDT 2011";
-								doh.t((date1.substring(0,15)==(wid.get('value').toString().substring(0,15)) || 
-									date2==(wid.get('value'))),"1-wid.get('value') should be set value is: "+wid.get('value').toString().substring(0,15));
-								doh.t((date1.substring(0,15)==(textboxval.toString().substring(0,15)) || date2==(textboxval)),"1-textboxval should be set "+textboxval.toString().substring(0,15));
-								doh.t((date1.substring(0,15)==(outputval.toString().substring(0,15)) || date2==(outputval)),"1-outputval should be set "+outputval.toString().substring(0,15));
+							var date = new Date(2011, 4, 4, 0, 0, 0, 0);
+							doh.t(wid.get("value").getTime() == date.getTime(), "wid.get(\"value\") should be set to:" + date);
+							doh.t(textboxval.getTime() == date.getTime(), "1-textboxval should be set to:" + date);
+							doh.t(outputval.getTime() == date.getTime(), "1-outputval should be set to:" + date);
 						}
 						// Test dijit.ColorPalette
 						wid = dijit.byId("deccolor");
@@ -605,14 +598,11 @@
 						textboxval = dijit.byId("deccaltext").value;
 						outputval = dijit.byId("deccalOutput").value;
 						if (wid && wid.get('value')) {
-							   var date1 = "Thu Nov 10 2011 00:00:00 GMT-0500 (Eastern Standard Time)";
-							   var date2 = "Thu Nov 10 00:00:00 EST 2011";
-							   var date1b = "Thu Nov 10 2011 01:00:00 GMT-0500 (Eastern Standard Time)";
-							   var date2b = "Thu Nov 10 01:00:00 EST 2011";
-								doh.t((date1.substring(0,15)==(wid.get('value').toString().substring(0,15)) || 
-									date2==(wid.get('value'))),"2-wid.get('value') should be set "+wid.get('value'));
-								doh.t((date1b.substring(0,15)==(textboxval.toString().substring(0,15)) || date2b==(textboxval)),"2-textboxval should be set"+textboxval);
-								doh.t((date1b.substring(0,15)==(outputval.toString().substring(0,15)) || date2b==(outputval)),"2-outputval should be set"+outputval);
+							var date1 = new Date(2011, 10, 10, 0, 0, 0, 0);
+							var date2 = new Date(2011, 10, 10, 1, 0, 0, 0);
+							doh.t(wid.get("value").getTime() == date1.getTime(), "wid.get(\"value\") should be set to:" + date1);
+							doh.t(textboxval.getTime() == date2.getTime(), "2-textboxval should be set to:" + date2);
+							doh.t(outputval.getTime() == date2.getTime(), "2-outputval should be set to:" + date2);
 						}
 
 						// Test dijit.ColorPalette
@@ -634,12 +624,10 @@
 						textboxval = dijit.byId("deccaltext").value;
 						outputval = dijit.byId("deccalOutput").value;
 						if (wid) {
-							   var date1 = "Wed May 04 2011 00:00:00 GMT-0400 (Eastern Daylight Time)";
-							   var date2 = "Wed May 4 00:00:00 EDT 2011";
-								doh.t((date1.substring(0,15)==(wid.get('value').toString().substring(0,15)) || 
-									date2==(wid.get('value'))),"3-wid.get('value') should be set "+wid.get('value'));
-								doh.t((date1.substring(0,15)==(textboxval.toString().substring(0,15)) || date2==(textboxval)),"3-textboxval should be set"+textboxval);
-								doh.t((date1.substring(0,15)==(outputval.toString().substring(0,15)) || date2==(outputval)),"3-outputval should be set"+outputval);
+							var date = new Date(2011, 4, 4, 0, 0, 0, 0);
+							doh.t(wid.get("value").getTime() == date.getTime(), "wid.get(\"value\") should be set to:" + date);
+							doh.t(textboxval.getTime() == date.getTime(), "3-textboxval should be set to:" + date);
+							doh.t(outputval.getTime() == date.getTime(), "3-outputval should be set to:" + date);
 						}
 						// Test reset the dijit.ColorPalette
 						button = dijit.byId("deccolorReset"); // reset the model
@@ -710,13 +698,10 @@
 						textboxval = dijit.byId("datetext").value;
 						outputval = dijit.byId("dateoutput").value;
 						if (wid) {
-								var date1 = "Mon Oct 10 2011 00:00:00 GMT-0400 (Eastern Daylight Time)";
-								var date2 = "Mon Oct 10 00:00:00 EDT 2011";
-								doh.t((date1.substring(0,15)==(wid.get('value').toString().substring(0,15)) || 
-									date2==(wid.get('value'))),"wid.get(value) should be set "+wid.get('value'));
-								doh.is("10/10/2011",wid.displayedValue,"wid.displayedValue should be set");
-								doh.t((date1.substring(0,15)==(textboxval.toString().substring(0,15)) || date2==(textboxval)),"2-textboxval should be set"+textboxval);
-								doh.t((date1.substring(0,15)==(outputval.toString().substring(0,15)) || date2==(outputval)),"2-outputval should be set"+outputval);
+							var date = new Date(2011, 9, 10, 0, 0, 0, 0);
+							doh.t(wid.get("value").getTime() == date.getTime(), "wid.get(\"value\") should be set to:" + date);
+							doh.t(textboxval.getTime() == date.getTime(), "2-textboxval should be set to:" + date);
+							doh.t(outputval.getTime() == date.getTime(), "2-outputval should be set to:" + date);
 						}
 						// Test dijit.form.HorizontalSlider
 						// update the text field
@@ -812,12 +797,10 @@
 						textboxval = dijit.byId("decdatetext").value;
 						outputval = dijit.byId("decdateOutput").value;
 						if (wid) {
-								var date1 = "Fri Sep 09 2011 00:00:00 GMT-0400 (Eastern Daylight Time)";
-								var date2 = "Fri Sep 9 00:00:00 EDT 2011";
-								doh.t((date1.substring(0,15)==(wid.get('value').toString().substring(0,15)) || 
-									date2==(wid.get('value'))),"wid.get('value') should be set "+wid.get('value'));
-								doh.t((date1.substring(0,15)==(textboxval.toString().substring(0,15)) || date2==(textboxval)),"textboxval should be set"+textboxval);
-								doh.t((date1.substring(0,15)==(outputval.toString().substring(0,15)) || date2==(outputval)),"outputval should be set"+outputval);
+								var date = new Date(2011, 8, 9, 0, 0, 0, 0);
+								doh.t(wid.get("value").getTime() == date.getTime(), "wid.get(\"value\") should be set to:" + date);
+								doh.t(textboxval.getTime() == date.getTime(), "2-textboxval should be set to:" + date);
+								doh.t(outputval.getTime() == date.getTime(), "2-outputval should be set to:" + date);
 								doh.is("9/9/2011",wid.displayedValue,"wid.displayedValue should be set");
 						}
 						// Test dijit.form.HorizontalSlider
@@ -918,20 +901,17 @@
 						textboxval = dijit.byId("datetext").value;
 						outputval = dijit.byId("dateoutput").value;
 						if (wid) {
-								var date1 = "Mon Apr 04 2011 00:00:00 GMT-0400 (Eastern Daylight Time)";
-								var date2 = "Mon Apr 4 00:00:00 EDT 2011";
-								doh.t((date1.substring(0,15)==(textboxval.toString().substring(0,15)) || date2==(textboxval)),"textboxval should be set"+textboxval);
-								doh.t((date1.substring(0,15)==(outputval.toString().substring(0,15)) || date2==(outputval)),"outputval should be set"+outputval);
+							var date = new Date(2011, 3, 4, 0, 0, 0, 0);
+							doh.t(textboxval.getTime() == date.getTime(), "textboxval should be set to:" + date);
+							doh.t(outputval.getTime() == date.getTime(), "outputval should be set to:" + date);
 						}
 						// test a second reset...
 						button.onClick();
 						if (wid) {
-								var date1 = "Mon Apr 04 2011 00:00:00 GMT-0400 (Eastern Daylight Time)";
-								var date2 = "Mon Apr 4 00:00:00 EDT 2011";
-								doh.t((date1.substring(0,15)==(wid.get('value').toString().substring(0,15)) || 
-									date2==(wid.get('value'))),"wid.get('value') should be set "+wid.get('value'));
-								doh.t((date1.substring(0,15)==(textboxval.toString().substring(0,15)) || date2==(textboxval)),"textboxval should be set"+textboxval);
-								doh.t((date1.substring(0,15)==(outputval.toString().substring(0,15)) || date2==(outputval)),"outputval should be set"+outputval);
+								var date = new Date(2011, 3, 4, 0, 0, 0, 0);
+								doh.t(wid.get("value").getTime() == date.getTime(), "wid.get(\"value\") should be set to:" + date);
+								doh.t(textboxval.getTime() == date.getTime(), "2-textboxval should be set to:" + date);
+								doh.t(outputval.getTime() == date.getTime(), "2-outputval should be set to:" + date);
 								doh.is("4/4/2011",wid.displayedValue,"wid.displayedValue should be set");
 						}
 						// Test dijit.form.HorizontalSlider
@@ -1033,10 +1013,8 @@
 						textboxval = dijit.byId("decdatetext").value;
 						outputval = dijit.byId("decdateOutput").value;
 						if (wid) {
-								var date1 = "Mon Apr 04 2011 00:00:00 GMT-0400 (Eastern Daylight Time)";
-								var date2 = "Mon Apr 4 00:00:00 EDT 2011";
-								doh.t((date1.substring(0,15)==(wid.get('value').toString().substring(0,15)) || 
-									date2==(wid.get('value'))),"wid.get('value') should be set "+wid.get('value'));
+								var date = new Date(2011, 3, 4, 0, 0, 0, 0);
+								doh.t(wid.get("value").getTime() == date.getTime(), "wid.get(\"value\") should be set to:" + date);
 								doh.is("4/4/2011",wid.displayedValue,"wid.displayedValue should be set");
 								doh.is("2011-04-04",textboxval,"textboxval should be set");
 								doh.is("2011-04-04",outputval,"outputval should be set");

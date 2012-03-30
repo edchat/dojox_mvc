@@ -89,5 +89,6 @@ define([
 		}; // dojox.mvc.at.handle
 	};
 
+	// lang.setObject() thing is for back-compat, remove it in 2.0
 	return lang.setObject("dojox.mvc.at", at);
 });

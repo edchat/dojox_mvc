@@ -110,7 +110,7 @@ define([
 
 		// dataBindAttr: String
 		//		The attribute name for data binding.
-		dataBindAttr: "data-dojox-mvc-bind",
+		dataBindAttr: "data-mvc-bindings",
 
 		_dbpostscript: function(/*Object?*/ params, /*DomNode|String*/ srcNodeRef){
 			// summary:

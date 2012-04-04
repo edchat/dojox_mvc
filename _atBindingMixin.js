@@ -195,7 +195,7 @@ define([
 
 		_setBind: function(/*Object*/ value){
 			// summary:
-			//		Sets data binding described in data-dojo-bind.
+			//		Sets data binding described in data-mvc-bindings.
 
 			var list = eval("({" + value + "})");
 			for(var prop in list){

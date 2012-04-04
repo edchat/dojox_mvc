@@ -48,13 +48,13 @@
 		<h1 id="home" data-dojo-type="dojox.mobile.Heading" data-dojo-props="back:'Back', moveTo:'foo'">Data Binding Example</h1>
 		<form name="testForm" id="testForm">	
 		<div class="field-title">Ship to - Bill to Address</div>
-			<div class="fieldset" data-dojo-type="dojox.mvc.Group" data-dojo-props="target: model">
+			<div class="fieldset" data-dojo-type="dojox.mvc.Group" data-dojo-props="target: at(nameCtl, 'model')">
 					<table id="table" cellspacing="10"  style="width: 100%">
 						<tr>
 							<td style="width: 100px;" class="layout">First</td>
 							<td class="layout">							
 								<input  id="firstInput1" data-dojo-type="dojox.mobile.TextBox" 
-									data-dojo-props="value: dojox.mvc.at('rel:', 'First'), placeholder:'First'">
+									data-dojo-props="value: at('rel:', 'First'), placeholder:'First'">
 							</td>
 						</tr>
 						<tr>
@@ -62,14 +62,14 @@
 							<td class="layout">
 								<input id="lastInput1" data-dojo-type="dojox.mobile.TextBox"
 									 
-									data-dojo-props="placeholder:'Last Name', value: dojox.mvc.at('rel:', 'Last')">
+									data-dojo-props="placeholder:'Last Name', value: at('rel:', 'Last')">
 							</td>
 						</tr>
 						<tr>
 							<td style="width: 100px;" class="layout">Email</td>
 							<td class="layout">
 								<input  id="emailInput1" data-dojo-type="dojox.mobile.TextBox"
-									data-dojo-props="value: dojox.mvc.at('rel:', 'Email'), placeholder:'Email'">
+									data-dojo-props="value: at('rel:', 'Email'), placeholder:'Email'">
 							</td>
 						</tr>
 					</table>
@@ -78,32 +78,31 @@
 				<div class="field-row">
 					<span>Order #</span>
 					<input id="lastnameInput" data-dojo-type="dojox.mobile.TextBox"						 
-						data-dojo-props="value: dojox.mvc.at('rel:', 'Serial'), placeholder:'Order #'">
+						data-dojo-props="value: at('rel:', 'Serial'), placeholder:'Order #'">
 				</div>
 				<div class="field-row">
 					<span>Last</span>
 					<input  id="serialInput" data-dojo-type="dojox.mobile.TextBox" 
-						data-dojo-props="value: dojox.mvc.at('rel:', 'Last'), placeholder:'Last'">
+						data-dojo-props="value: at('rel:', 'Last'), placeholder:'Last'">
 				</div>
 				<div class="field-row">
 					<span>Email</span>
 					<input  id="emailInput1" data-dojo-type="dojox.mobile.TextBox"
-						data-dojo-props="value: dojox.mvc.at('rel:', 'Email'), placeholder:'Email'">
+						data-dojo-props="value: at('rel:', 'Email'), placeholder:'Email'">
 				</div>
 -->
-			</div>
 			<div class="spacer"></div>
-			<button id="shipto" type="button" data-dojo-type="dojox.mobile.Button" class="mblBlueButton" onclick="setRef('addrGroup', model, 'ShipTo');">Ship To</button>
-			<button id="billto" type="button" data-dojo-type="dojox.mobile.Button" class="mblBlueButton" onclick="setRef('addrGroup', model, 'BillTo');">Bill To</button>		
+			<button id="shipto" type="button" data-dojo-type="dojox.mobile.Button" class="mblBlueButton" onclick="setRef('addrGroup', 'rel:', 'ShipTo');">Ship To</button>
+			<button id="billto" type="button" data-dojo-type="dojox.mobile.Button" class="mblBlueButton" onclick="setRef('addrGroup', 'rel:', 'BillTo');">Bill To</button>		
 			<br/>
 			<div class="fieldset" id="addrGroup" data-dojo-type="dojox.mvc.Group" 
-							data-dojo-props="target: model.ShipTo">
+							data-dojo-props="target: at('rel:', 'ShipTo')">
 					<table id="table" cellspacing="10"  style="width: 100%">
 						<tr>
 							<td style="width: 100px;" class="layout">Street</td>
 							<td class="layout">							
 								<input  id="streetInput" data-dojo-type="dojox.mobile.TextBox" 
-									data-dojo-props="value: dojox.mvc.at('rel:', 'Street'), placeholder:'Street'">
+									data-dojo-props="value: at('rel:', 'Street'), placeholder:'Street'">
 							</td>
 						</tr>
 						<tr>
@@ -111,27 +110,28 @@
 							<td class="layout">
 								<input id="cityInput" data-dojo-type="dojox.mobile.TextBox"
 									 
-									data-dojo-props="placeholder:'City', value: dojox.mvc.at('rel:', 'City')">
+									data-dojo-props="placeholder:'City', value: at('rel:', 'City')">
 							</td>
 						</tr>
 						<tr>
 							<td style="width: 100px;" class="layout">State</td>
 							<td class="layout">
 								<input  id="StateInput" data-dojo-type="dojox.mobile.TextBox"
-									data-dojo-props="value: dojox.mvc.at('rel:', 'State'), placeholder:'State'">
+									data-dojo-props="value: at('rel:', 'State'), placeholder:'State'">
 							</td>
 						</tr>
 						<tr>
 							<td style="width: 100px;" class="layout">State</td>
 							<td class="layout">
 								<input  id="ZipInput" data-dojo-type="dojox.mobile.TextBox"
-									data-dojo-props="value: dojox.mvc.at('rel:', 'Zip'), placeholder:'Zip Code'">
+									data-dojo-props="value: at('rel:', 'Zip'), placeholder:'Zip Code'">
 							</td>
 						</tr>
 					</table>
 			</div>
+			</div> <!--  end of outer group -->
 			<div class="spacer"></div>
-	<!--	<button id="reset1" type="button" data-dojo-type="dojox.mobile.Button" class="mblBlueButton" onclick="model.reset()">Reset</button> -->
+		<button id="reset1" type="button" data-dojo-type="dojox.mobile.Button" class="mblBlueButton" onclick="nameCtl.reset()">Reset</button>
 		</form>
 	</div>
 <!--  
@@ -159,7 +159,7 @@
 													background-image: none; border: none; margin-top: 0px;"></div>
 									</td>
 									<td  data-dojo-type="dojox.mvc.Output" 
-										data-dojo-props="value: dojox.mvc.at('rel:#{this.index}','First')"></td>										
+										data-dojo-props="value: at('rel:#{this.index}','First')"></td>										
 								</tr></table>								
 							</li>
 				</ul>
@@ -171,24 +171,24 @@
 				data-dojo-props='back:"Back", moveTo:"repeat",
 		 		callback:function(){console.log("in callback function for Details");}'>Details</h1>
 <!-- 			
-					data-dojo-props="target: dojox.mvc.at('widget:listCtl', 'cursor')">
-							data-dojo-props="value: dojox.mvc.at('widget:listCtl', 'cursorIndex')"></span>
+					data-dojo-props="target: at('widget:listCtl', 'cursor')">
+							data-dojo-props="value: at('widget:listCtl', 'cursorIndex')"></span>
  -->
  
 			<div id="detailsGroup" class="fieldset" data-dojo-type="dojox.mvc.Group" 
-					data-dojo-props="target: dojox.mvc.at(listCtl, 'cursor')">
+					data-dojo-props="target: at(listCtl, 'cursor')">
 					<div class="row">
 						<div style="display: inline-block;" id="detailsBanner">Details for selected index:</div>
 						<span class="cell" id="indexOutput"
 							data-dojo-type="dojox.mvc.Output"
-							data-dojo-props="value: dojox.mvc.at(listCtl, 'cursorIndex')"></span>
+							data-dojo-props="value: at(listCtl, 'cursorIndex')"></span>
 					</div>
 					<table id="table" cellspacing="10"  style="width: 100%">
 						<tr>
 							<td style="width: 100px;" class="layout">First Name</td>
 							<td class="layout">							
 								<input  id="firstInput" data-dojo-type="dojox.mobile.TextBox" 
-									data-dojo-props="value: dojox.mvc.at('rel:', 'First'), placeholder:'First Name'">
+									data-dojo-props="value: at('rel:', 'First'), placeholder:'First Name'">
 							</td>
 						</tr>
 						<tr>
@@ -196,21 +196,21 @@
 							<td class="layout">
 								<input id="lastInput" data-dojo-type="dojox.mobile.TextBox"
 									 
-									data-dojo-props="placeholder:'Last Name', value: dojox.mvc.at('rel:', 'Last')">
+									data-dojo-props="placeholder:'Last Name', value: at('rel:', 'Last')">
 							</td>
 						</tr>
 						<tr>
 							<td style="width: 100px;" class="layout">Email</td>
 							<td class="layout">
 								<input  id="emailInput2" data-dojo-type="dojox.mobile.TextBox"
-									data-dojo-props="value: dojox.mvc.at('rel:', 'Email'), placeholder:'Email'">
+									data-dojo-props="value: at('rel:', 'Email'), placeholder:'Email'">
 							</td>
 						</tr>
 						<tr>
 							<td style="width: 100px;" class="layout">Telephone</td>
 							<td class="layout">
 								<input  id="telInput" data-dojo-type="dojox.mobile.TextBox"
-									data-dojo-props="value: dojox.mvc.at('rel:', 'Tel'), placeholder:'Telephone'">
+									data-dojo-props="value: at('rel:', 'Tel'), placeholder:'Telephone'">
 							</td>
 						</tr>
 					</table>
@@ -263,7 +263,7 @@
 							<div id="view" data-dojo-type="dojox.mvc.Generate"
 				 				data-dojo-props="widgetMapping:{'String' : 'dojox.mobile.TextBox'},
 				 					idNameMapping: {String: 'TB'},
-				 					children: dojox.mvc.at('widget:modelArea', 'value').direct(dojox.mvc.from).attach({format: dojo.fromJson})">
+				 					children: at('widget:modelArea', 'value').direct(dojox.mvc.from).attach({format: dojo.fromJson})">
 				 			</div>
 						</div>
 						<div class="fieldset">

@@ -60,8 +60,9 @@ define([
 		// |				<script src="/path/to/dojo-toolkit/dojo/dojo.js" type="text/javascript" data-dojo-config="parseOnLoad: 0"></script>
 		// |				<script type="text/javascript">
 		// |					require([
-		// |						"dojo/parser", "dojo/Stateful", "dijit/form/TextBox", "dojox/mvc/at", "dojo/domReady!"
-		// |					], function(parser, Stateful){
+		// |						"dojo/parser", "dojo/Stateful", "dojox/mvc/at", "dijit/form/TextBox", "dojo/domReady!"
+		// |					], function(parser, Stateful, at){
+		// |						window.at = at;
 		// |						model = new Stateful({value: "Foo"});
 		// |						setTimeout(function(){ model.set("value", "Bar"); }, 2000);
 		// |						parser.parse();
@@ -69,7 +70,7 @@ define([
 		// |				</script>
 		// |			</head>
 		// |			<body>
-		// |				<input type="text" data-dojo-type="dijit.form.TextBox" data-dojo-props="value: dojox.mvc.at(model, 'value')">
+		// |				<input type="text" data-dojo-type="dijit.form.TextBox" data-dojo-props="value: at(model, 'value')">
 		// |			</body>
 		// |		</html>
 

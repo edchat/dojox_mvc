@@ -114,7 +114,7 @@ define([
 
 		_dbpostscript: function(/*Object?*/ params, /*DomNode|String*/ srcNodeRef){
 			// summary:
-			//		See if any parameters for this widget are dojox.mvc.at handles.
+			//		See if any parameters for this widget are dojox/mvc/at handles.
 			//		If so, move them under this._refs to prevent widget implementations from referring them.
 
 			var refs = this._refs = (params || {}).refs || {};
@@ -129,7 +129,7 @@ define([
 
 		_startAtWatchHandles: function(){
 			// summary:
-			//		Establish data bindings based on dojox.mvc.at() watch handles.
+			//		Establish data bindings based on dojox/mvc/at handles.
 
 			var refs = this._refs;
 			if(refs){
@@ -163,12 +163,12 @@ define([
 
 		_setAtWatchHandle: function(/*String*/ name, /*Anything*/ value){
 			// summary:
-			//		Called if the value is a dojox.mvc.at handle.
-			//		If this widget has started, start data binding with the new dojox.mvc.at handle.
+			//		Called if the value is a dojox/mvc/at handle.
+			//		If this widget has started, start data binding with the new dojox/mvc/at handle.
 			//		Otherwise, queue it up to this._refs so that _dbstartup() can pick it up.
 
 			if(name == "ref"){
-				throw new Error(this + ": 1.7 ref syntax used in conjuction with 1.8 dojox.mvc.at() syntax, which is not supported.");
+				throw new Error(this + ": 1.7 ref syntax used in conjuction with 1.8 dojox/mvc/at syntax, which is not supported.");
 			}
 
 			// Claen up older data binding

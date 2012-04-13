@@ -164,7 +164,7 @@ var repeatData = [
 	var genmodel;
 	updateView = function() {
 		try {
-			registry.byId("view").set("children", at('widget:modelArea', 'value').setDirection(at.from).transform({format: dojo.fromJson}));
+			registry.byId("view").set("children", at('widget:modelArea', 'value').direction(at.from).transform({format: dojo.fromJson}));
 			dom.byId("outerModelArea").style.display = "none";
 			dom.byId("viewArea").style.display = "";              		
 		}catch(err){

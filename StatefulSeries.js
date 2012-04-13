@@ -24,8 +24,8 @@ define([
 					if(lang.isString(target)){
 						throw new Error("Literal-based dojox/mvc/at is not supported in dojox.mvc.StatefulSeries.");
 					}
-					if(item.direction && !(item.direction & at.from)){
-						console.warn("Data binding direction option is ignored in dojox.mvc.StatefulSeries.");
+					if(item.bindDirection && !(item.bindDirection & at.from)){
+						console.warn("Data binding bindDirection option is ignored in dojox.mvc.StatefulSeries.");
 					}
 					if(targetProp && lang.isFunction(target.set) && lang.isFunction(target.watch)){
 						var converter = item.converter, formatFunc = (converter || {}).format && lang.hitch({target: target, source: this}, converter.format);

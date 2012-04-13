@@ -17,19 +17,19 @@ define([
 		//		The property name in target to be synchronized.
 		targetProp: "",
 
-		// direction: Number
-		//		The data binding direction, choose from: dojox.mvc.sync.from, dojox.mvc.sync.to or dojox.mvc.sync.both.
-		direction: dojox.mvc.sync.both,
+		// bindDirection: Number
+		//		The data binding bindDirection, choose from: dojox.mvc.sync.from, dojox.mvc.sync.to or dojox.mvc.sync.both.
+		bindDirection: dojox.mvc.sync.both,
 
 		// converter: dojox.mvc.sync.converter
 		//		Class/object containing the converter functions used when the data goes between data binding target (e.g. data model or controller) to data binding origin (e.g. widget).
 		converter: null,
 
-		setDirection: function(direction){
+		direction: function(bindDirection){
 			// summary:
-			//		Sets data binding direction.
-			// direction: Number
-			//		The data binding direction, choose from: dojox.mvc.sync.from, dojox.mvc.sync.to or dojox.mvc.sync.both.
+			//		Sets data binding bindDirection.
+			// bindDirection: Number
+			//		The data binding bindDirection, choose from: dojox.mvc.sync.from, dojox.mvc.sync.to or dojox.mvc.sync.both.
 		},
 
 		transform: function(converter){
@@ -78,9 +78,9 @@ define([
 			atsignature: "dojox.mvc.at",
 			target: target,
 			targetProp: targetProp,
-			direction: sync.both,
-			setDirection: function(/*Number*/ direction){
-				this.direction = direction;
+			bindDirection: sync.both,
+			direction: function(/*Number*/ bindDirection){
+				this.bindDirection = bindDirection;
 				return this;
 			},
 			transform: function(/*dojox.mvc.sync.converter*/ converter){
@@ -90,7 +90,7 @@ define([
 		}; // dojox.mvc.at.handle
 	};
 
-	// Data binding directions
+	// Data binding bindDirections
 	at.from = sync.from;
 	at.to = sync.to;
 	at.both = sync.both;

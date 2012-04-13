@@ -25,14 +25,14 @@ define([
 		//		Class/object containing the converter functions used when the data goes between data binding target (e.g. data model or controller) to data binding origin (e.g. widget).
 		converter: null,
 
-		direct: function(direction){
+		setDirection: function(direction){
 			// summary:
 			//		Sets data binding direction.
 			// direction: Number
 			//		The data binding direction, choose from: dojox.mvc.sync.from, dojox.mvc.sync.to or dojox.mvc.sync.both.
 		},
 
-		attach: function(converter){
+		transform: function(converter){
 			// summary:
 			//		Attach a data converter.
 			// converter: dojox.mvc.sync.converter
@@ -79,11 +79,11 @@ define([
 			target: target,
 			targetProp: targetProp,
 			direction: sync.both,
-			direct: function(/*Number*/ direction){
+			setDirection: function(/*Number*/ direction){
 				this.direction = direction;
 				return this;
 			},
-			attach: function(/*dojox.mvc.sync.converter*/ converter){
+			transform: function(/*dojox.mvc.sync.converter*/ converter){
 				this.converter = converter;
 				return this;
 			}

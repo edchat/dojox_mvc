@@ -34,10 +34,10 @@
 				window.at = at;
 				dojox.debugDataBinding = true;
 				var testmem = new Memory({data: {First: "John", Last: "Doe", Email: "jdoe@example.com"}});
-				var testdata = testmem.query(*);
+				var testdata = testmem.query();
 				console.log("testdata = ",testdata);
 				var testmem2 = new Memory({data: {identifier: "id", items: [{id: "emp0", First: "John", Last: "Doe", Email: "jdoe@example.com"}]}});
-				var testdata2 = testmem2.query(*);
+				var testdata2 = testmem2.query();
 				console.log("testdata2 = ",testdata2);
 				
 				//ctrl = new EditModelRefController({sourceModel: new Stateful({First: "John", Last: "Doe", Email: "jdoe@example.com"})});

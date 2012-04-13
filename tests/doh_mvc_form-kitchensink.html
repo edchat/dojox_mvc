@@ -42,7 +42,10 @@
 				"dojox/mvc/at",
 				"dojox/mvc/EditModelRefController",
 				"dojox/mvc/Output"
-			], function(doh, ddom, number, parser, Stateful, ItemFileReadStore, locale, registry, Button, ComboBox, DateTextBox, FilteringSelect, HorizontalSlider, NumberSpinner, NumberTextBox, TextBox, Select, SimpleTextarea, Textarea, Calendar, ColorPalette, at, EditModelRefController, Output){
+			], function(doh, ddom, number, parser, Stateful, ItemFileReadStore, locale, registry, Button, 
+					ComboBox, DateTextBox, FilteringSelect, HorizontalSlider, NumberSpinner, NumberTextBox, 
+					TextBox, Select, SimpleTextarea, Textarea, Calendar, ColorPalette, at, 
+					EditModelRefController, Output){
 				window.at = at;
 				dojox.debugDataBinding = true;
 
@@ -129,7 +132,7 @@
 
 				nanmodel = new Stateful({num: null});
 
-				dummyDateWid = new DateTextBox({});
+				dummyDateWid = new DateTextBox({constraints:{datePattern:"MM-dd-yyyy", strict:true}});
 
 				parser.parse();
 
@@ -199,15 +202,18 @@
 				combo.startup();
 
 				// create the dijit.form.DateTextBox, textbox, output and button
-				var dateWid = new DateTextBox({value: at(datectrl, "number")}, ddom.byId("datesel"));
+				var dateWid = new DateTextBox({
+					value: at(datectrl, "number"),
+					constraints: dummyDateWid.constraints
+				}, ddom.byId("datesel"));
 
 				var datetext = new TextBox({
-					value: at(datectrl, "number").attach(dummyDateWid.dateLocaleModule),
+					value: at(datectrl, "number").transform(dummyDateWid.dateLocaleModule),
 					constraints: dummyDateWid.constraints
 				}, ddom.byId("datetext"));
 
 				var dateoutput = new Output({
-					value: at(datectrl, "number").attach(dummyDateWid.dateLocaleModule),
+					value: at(datectrl, "number").transform(dummyDateWid.dateLocaleModule),
 					constraints: dummyDateWid.constraints
 				}, ddom.byId("dateoutput"));
 				dateoutput.startup();
@@ -231,9 +237,9 @@
 					value: at(sliderctrl, "number") // bind to model.number
 				}, ddom.byId("slidersel"));
 
-				var slidertext = new TextBox({value: at(sliderctrl, "number").attach(number)}, ddom.byId("slidertext"));
+				var slidertext = new TextBox({value: at(sliderctrl, "number").transform(number)}, ddom.byId("slidertext"));
 
-				var slideroutput = new Output({	value: at(sliderctrl, "number").attach(number)}, ddom.byId("slideroutput"));
+				var slideroutput = new Output({	value: at(sliderctrl, "number").transform(number)}, ddom.byId("slideroutput"));
 				slideroutput.startup();
 
 				var sliderreset = new Button({
@@ -249,9 +255,9 @@
 				// create the dijit.form.NumberSpinner, textbox, output and button
 				var numspinWid = new NumberSpinner({value: at(numspinctrl, "number")}, ddom.byId("numspinsel"));
 
-				var numspintext = new TextBox({value: at(numspinctrl, "number").attach(number)}, ddom.byId("numspintext"));
+				var numspintext = new TextBox({value: at(numspinctrl, "number").transform(number)}, ddom.byId("numspintext"));
 
-				var numspinoutput = new Output({value: at(numspinctrl, "number").attach(number)}, ddom.byId("numspinoutput"));
+				var numspinoutput = new Output({value: at(numspinctrl, "number").transform(number)}, ddom.byId("numspinoutput"));
 				numspinoutput.startup();
 
 				var numspinreset = new Button({
@@ -348,9 +354,9 @@
 							textboxval = registry.byId("datetext").value;
 							outputval = registry.byId("dateoutput").value;
 							doh.is((new Date(2011, 3, 4)).getTime(), wid.get("value").getTime(), "wid.get(\"value\") should be set it is:" + wid.get("value"));
-							doh.is("4/4/2011", wid.displayedValue, "wid.displayedValue should be set it is:" + wid.displayedValue);
-							doh.is("4/4/2011", textboxval, "textboxval should be set it is:" + textboxval);
-							doh.is("4/4/2011", outputval, "outputval should be set it is:" + outputval);
+							doh.is("04-04-2011", wid.displayedValue, "wid.displayedValue should be set it is:" + wid.displayedValue);
+							doh.is("04-04-2011", textboxval, "textboxval should be set it is:" + textboxval);
+							doh.is("04-04-2011", outputval, "outputval should be set it is:" + outputval);
 							// Test dijit.form.HorizontalSlider
 							wid = registry.byId("slidersel");
 							textboxval = registry.byId("slidertext").value;
@@ -412,9 +418,9 @@
 							textboxval = registry.byId("decdatetext").value;
 							outputval = registry.byId("decdateOutput").value;
 							doh.is((new Date(2011, 3, 4)).getTime(), wid.get("value").getTime(), "wid.get(\"value\") should be set it is:" + wid.get("value"));
-							doh.is("4/4/2011", wid.displayedValue, "wid.displayedValue should be set it is:" + wid.displayedValue);
-							doh.is("4/4/2011", textboxval, "textboxval should be set it is:" + textboxval);
-							doh.is("4/4/2011", outputval, "outputval should be set it is:" + outputval);
+							doh.is("04-04-2011", wid.displayedValue, "wid.displayedValue should be set it is:" + wid.displayedValue);
+							doh.is("04-04-2011", textboxval, "textboxval should be set it is:" + textboxval);
+							doh.is("04-04-2011", outputval, "outputval should be set it is:" + outputval);
 							// Test dijit.form.HorizontalSlider
 							wid = registry.byId("decslidersel");
 							textboxval = registry.byId("decslidertext").value;
@@ -457,8 +463,8 @@
 							textboxval = registry.byId("deccaltext").value;
 							outputval = registry.byId("deccalOutput").value;
 							doh.is((new Date(2011, 3, 4)).getTime(), wid.get("value").getTime(), "wid.get(\"value\") should be set it is:" + wid.get("value"));
-							doh.is("4/4/2011", textboxval, "1-textboxval should be set");
-							doh.is("4/4/2011", outputval, "1-textboxval should be set");
+							doh.is("04-04-2011", textboxval, "1-textboxval should be set");
+							doh.is("04-04-2011", outputval, "1-textboxval should be set");
 							// Test dijit.ColorPalette
 							wid = registry.byId("deccolor");
 							textboxval = registry.byId("deccolortext").value;
@@ -478,8 +484,8 @@
 							textboxval = registry.byId("deccaltext").value;
 							outputval = registry.byId("deccalOutput").value;
 							doh.is(d.getTime(), wid.get("value").getTime(), "2-wid.get(\"value\") should be set " + wid.get("value"));
-							doh.is("11/10/2011", textboxval, "2-textboxval should be set" + textboxval);
-							doh.is("11/10/2011", outputval, "2-textboxval should be set" + outputval);
+							doh.is("11-10-2011", textboxval, "2-textboxval should be set" + textboxval);
+							doh.is("11-10-2011", outputval, "2-textboxval should be set" + outputval);
 							// Test dijit.ColorPalette
 							// update the text field
 							registry.byId("deccolortext").set("value", "#ffffff");
@@ -497,8 +503,8 @@
 							textboxval = registry.byId("deccaltext").value;
 							outputval = registry.byId("deccalOutput").value;
 							doh.is((new Date(2011, 3, 4)).getTime(), wid.get("value").getTime(), "3-wid.get(\"value\") should be set " + wid.get("value"));
-							doh.is("4/4/2011", textboxval, "3-textboxval should be set" + textboxval);
-							doh.is("4/4/2011", outputval, "3-textboxval should be set" + outputval);
+							doh.is("04-04-2011", textboxval, "3-textboxval should be set" + textboxval);
+							doh.is("04-04-2011", outputval, "3-textboxval should be set" + outputval);
 							// Test reset the dijit.ColorPalette
 							button = registry.byId("deccolorReset"); // reset the model
 							button.onClick();
@@ -548,13 +554,13 @@
 							doh.is(outputval, wid.get("value"), "wid.get(\"value\") should be set same as outputval");
 							// Test dijit.form.DateTextBox
 							// update the text field
-							registry.byId("datetext").set("value", "10/10/2011");
+							registry.byId("datetext").set("value", "10-10-2011");
 							wid = registry.byId("datesel");
 							textboxval = registry.byId("datetext").value;
 							outputval = registry.byId("dateoutput").value;
 							doh.is((new Date(2011, 9, 10)).getTime(), wid.get("value").getTime(), "wid.get(value) should be set " + wid.get("value"));
-							doh.is("10/10/2011", textboxval, "2-textboxval should be set" + textboxval);
-							doh.is("10/10/2011", outputval, "2-textboxval should be set" + outputval);
+							doh.is("10-10-2011", textboxval, "2-textboxval should be set" + textboxval);
+							doh.is("10-10-2011", outputval, "2-textboxval should be set" + outputval);
 							// Test dijit.form.HorizontalSlider
 							// update the text field
 							registry.byId("slidertext").set("value", "10");
@@ -625,8 +631,8 @@
 							textboxval = registry.byId("decdatetext").value;
 							outputval = registry.byId("decdateOutput").value;
 							doh.is((new Date(2011, 8, 9)).getTime(), wid.get("value").getTime(), "wid.get(\"value\") should be set " + wid.get("value"));
-							doh.is("9/9/2011", textboxval, "textboxval should be set" + textboxval);
-							doh.is("9/9/2011", outputval, "textboxval should be set" + outputval);
+							doh.is("09-09-2011", textboxval, "textboxval should be set" + textboxval);
+							doh.is("09-09-2011", outputval, "textboxval should be set" + outputval);
 							// Test dijit.form.HorizontalSlider
 							wid = registry.byId("decslidersel");
 							wid.set("value", "4");
@@ -706,13 +712,13 @@
 							textboxval = registry.byId("datetext").value;
 							outputval = registry.byId("dateoutput").value;
 							doh.is((new Date(2011, 3, 4)).getTime(), wid.get("value").getTime(), "wid.get(\"value\") should be set " + wid.get("value"));
-							doh.is("4/4/2011", textboxval, "textboxval should be set" + textboxval);
-							doh.is("4/4/2011", outputval, "textboxval should be set" + outputval);
+							doh.is("04-04-2011", textboxval, "textboxval should be set" + textboxval);
+							doh.is("04-04-2011", outputval, "textboxval should be set" + outputval);
 							// test a second reset...
 							button.onClick();
 							doh.is((new Date(2011, 3, 4)).getTime(), wid.get("value").getTime(), "wid.get(\"value\") should be set " + wid.get("value"));
-							doh.is("4/4/2011", textboxval, "textboxval should be set" + textboxval);
-							doh.is("4/4/2011", outputval, "textboxval should be set" + outputval);
+							doh.is("04-04-2011", textboxval, "textboxval should be set" + textboxval);
+							doh.is("04-04-2011", outputval, "textboxval should be set" + outputval);
 							// Test dijit.form.HorizontalSlider
 							button = registry.byId("sliderReset");
 							button.onClick();
@@ -790,8 +796,8 @@
 							textboxval = registry.byId("decdatetext").value;
 							outputval = registry.byId("decdateOutput").value;
 							doh.is((new Date(2011, 3, 4)).getTime(), wid.get("value").getTime(), "wid.get(\"value\") should be set " + wid.get("value"));
-							doh.is("4/4/2011", textboxval, "textboxval should be set" + textboxval);
-							doh.is("4/4/2011", outputval, "textboxval should be set" + outputval);
+							doh.is("04-04-2011", textboxval, "textboxval should be set" + textboxval);
+							doh.is("04-04-2011", outputval, "textboxval should be set" + outputval);
 							// Test dijit.form.HorizontalSlider
 							button = registry.byId("decsliderReset"); // reset the model
 							button.onClick();
@@ -1011,16 +1017,16 @@
 								<td><label for="datesel">DateTextBox:</label></td>
 								<td>
 									<input id="decdatesel" data-dojo-type="dijit.form.DateTextBox"
-									 data-dojo-props="store: store, value: at(decdatectrl, 'number')">
+									 data-dojo-props="store: store, value: at(decdatectrl, 'number'), constraints: dummyDateWid.constraints">
 								</td>
 								<td>
 									<input id="decdatetext" data-dojo-type="dijit.form.TextBox"
-									 data-dojo-props="value: at(decdatectrl, 'number').attach(dummyDateWid.dateLocaleModule),
+									 data-dojo-props="value: at(decdatectrl, 'number').transform(dummyDateWid.dateLocaleModule),
 									                  constraints: dummyDateWid.constraints"></input>
 								</td>
 								<td>
 									<span id="decdateOutput" data-dojo-type="dojox.mvc.Output"
-									 data-dojo-props="value: at(decdatectrl, 'number').attach(dummyDateWid.dateLocaleModule),
+									 data-dojo-props="value: at(decdatectrl, 'number').transform(dummyDateWid.dateLocaleModule),
 									                  constraints: dummyDateWid.constraints"></span><!--
 									--></td>
 								<td>
@@ -1040,11 +1046,11 @@
 								</td>
 								<td>
 									<input id="decslidertext" data-dojo-type="dijit.form.TextBox"
-									 data-dojo-props="value: at(decsliderctrl, 'number').attach(dojo.number)">
+									 data-dojo-props="value: at(decsliderctrl, 'number').transform(dojo.number)">
 								</td>
 								<td>
 									<span id="decsliderOutput" data-dojo-type="dojox.mvc.Output"
-									 data-dojo-props="value: at(decsliderctrl, 'number').attach(dojo.number)"></span><!--
+									 data-dojo-props="value: at(decsliderctrl, 'number').transform(dojo.number)"></span><!--
 								--></td>
 								<td>
 									<button id="decsliderReset" type="button" data-dojo-type="dijit.form.Button"
@@ -1059,11 +1065,11 @@
 								</td>
 								<td>
 									<input id="decnumspintext" data-dojo-type="dijit.form.TextBox"
-									 data-dojo-props="value: at(decnumspinctrl, 'number').attach(dojo.number)">
+									 data-dojo-props="value: at(decnumspinctrl, 'number').transform(dojo.number)">
 								</td>
 								<td>
 									<span id="decnumspinOutput" data-dojo-type="dojox.mvc.Output"
-									 data-dojo-props="value: at(decnumspinctrl, 'number').attach(dojo.number)"></span><!--
+									 data-dojo-props="value: at(decnumspinctrl, 'number').transform(dojo.number)"></span><!--
 								--></td>
 								<td>
 									<button id="decnumspinReset" type="button" data-dojo-type="dijit.form.Button"
@@ -1123,12 +1129,12 @@
 								</td>
 								<td>
 									<input class="cell" id="deccaltext" data-dojo-type="dijit.form.TextBox"
-									 data-dojo-props="value: at(deccalctrl, 'date').attach(dummyDateWid.dateLocaleModule),
+									 data-dojo-props="value: at(deccalctrl, 'date').transform(dummyDateWid.dateLocaleModule),
 									                  constraints: dummyDateWid.constraints">
 								</td>
 								<td>
 									<span id="deccalOutput" data-dojo-type="dojox.mvc.Output"
-									 data-dojo-props="value: at(deccalctrl, 'date').attach(dummyDateWid.dateLocaleModule),
+									 data-dojo-props="value: at(deccalctrl, 'date').transform(dummyDateWid.dateLocaleModule),
 									                  constraints: dummyDateWid.constraints"></span><!--
 								--></td>
 								<td>

@@ -113,13 +113,13 @@
 	<div style="margin-top:8px;">
 		Change the state for "Bold" (but this check box is free from change in the tool bar):
 		<input data-dojo-type="dijit.form.CheckBox" checked 
-				data-dojo-props="checked: at(boldItemModel, 'checked').direct(at.to)">
+				data-dojo-props="checked: at(boldItemModel, 'checked').setDirection(at.to)">
 	</div>
 
 	<div style="margin-top:8px;">
 		"Italic" should be unselected (directly bound to the tool bar item widget):
 		<input data-dojo-type="dijit.form.CheckBox" checked 
-				data-dojo-props="checked: at(dijit.byId('toolbar1.italic'), 'checked').attach(negativeConverter)">
+				data-dojo-props="checked: at(dijit.byId('toolbar1.italic'), 'checked').transform(negativeConverter)">
 	</div>
   </body>
 </html>

@@ -23,14 +23,13 @@
 				"dojox/mvc/EditStoreRefController",
 				"dojo/store/Memory",
 				"dojox/mvc/at",
-				"dojo/_base/Deferred",
 				"dojox/mvc/getStateful",
 				"dijit/form/Button",
 				"dijit/form/TextBox",
 				"dojox/mvc/Group",
 				"dojox/mvc/ParserExtension",
 				"dojo/domReady!"
-			], function(parser, Stateful, EditModelRefController, EditStoreRefController, Memory, at, Deferred, getStateful){
+			], function(parser, Stateful, EditModelRefController, EditStoreRefController, Memory, at, getStateful){
 				window.at = at;
 				dojox.debugDataBinding = true;
 				var testmem = new Memory({data: {First: "John", Last: "Doe", Email: "jdoe@example.com"}});
@@ -47,7 +46,7 @@
 				//ctrl3 = new EditStoreRefController({store: new Memory({data: {First: "John", Last: "Doe", Email: "jdoe@example.com"}})});
 				ctrl3 = new EditStoreRefController({store: new Memory({data: {items: [{id: "emp0", First: "John", Last: "Doe", Email: "jdoe@example.com"}]}})});
 				ctrl3.queryStore({});
-/*				Deferred.when((new Memory({data: data3 = [
+/*				when((new Memory({data: data3 = [
 				                           					{First: "John", Last: "Doe", Email: "jdoe@example.com"}
 				                           				]}).query()), function(data){
 				                           					ctrl3.set("model", getStateful(data)[0]);

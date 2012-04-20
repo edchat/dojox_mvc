@@ -5,10 +5,8 @@
 		<title>MVC DOH Search Results Repeat Test</title>
 		<style>
 			@import "../../../dojo/resources/dojo.css";
-			@import "../../../dijit/tests/css/dijitTests.css";
 			@import "css/app-format.css";
 		</style>
-		<link id="themeStyles" rel="stylesheet" href="../../../dijit/themes/claro/claro.css"/>
 		<script src="../../../dojo/dojo.js" type="text/javascript" data-dojo-config="isDebug: true"></script>
 		<script type="text/javascript" src="./helpers.js"></script>
 		<script type="text/javascript">
@@ -17,18 +15,18 @@
 				"doh/runner",
 				"dojo/parser",
 				"dijit/registry",
+				"dojo/dom",
 				"dojox/mvc/at",
 				"dojox/mvc/getStateful",
-				"dijit/form/Button",
-				"dijit/form/TextBox",
 				"dojox/mvc/_atBindingExtension",
 				"dojox/mvc/ListController",
 				"dojox/mvc/StatefulArray",
 				"dojox/mvc/Group",
 				"dojox/mvc/Output",
 				"dojox/mvc/Repeat",
+				"dojox/mvc/ParserExtension",
 				"dojo/domReady!"
-			], function(doh, parser, registry, at, getStateful){
+			], function(doh, parser, registry, dom, at, getStateful){
 				function runTests(){
 					// should be able to verify all of the inputs 
 					doh.register("Check initial values and bindings", [
@@ -36,12 +34,12 @@
 							name: "initial",
 							runTest: function(){
 								var name1, bind1, firstInput; 
-								name1 = registry.byId("nameInput0");
+								name1 = dom.byId("nameInput0");
 								if (name1) {
 										doh.is("Anne",name1.value,"name1.value should be set");
 								}
 
-								firstInput = registry.byId("firstInput");
+								firstInput = dom.byId("firstInput");
 								if (firstInput) {
 										doh.is("Anne",firstInput.value,"firstInput.value should be set");
 								}
@@ -55,17 +53,17 @@
 							runTest: function(){
 								setDetailsContext(1);
 								var name1, bind1, firstInput; 
-								name1 = registry.byId("nameInput1");
+								name1 = dom.byId("nameInput1");
 								if (name1) {
-										doh.is("Ben",name1.get("value"),"name1.get(value) is wrong");
+										doh.is("Ben",name1.value,"name1.value is wrong");
 								}
 
 								firstInput = registry.byId("firstInput");
 								if (firstInput) {
-										doh.is("Ben",firstInput.get("value"),"firstInput value is wrong");
+										doh.is("Ben",firstInput.value,"firstInput value is wrong");
 										firstInput.set("value","Benjamin");
-										doh.is("Benjamin",firstInput.get("value"),"firstInput value is wrong after update");
-										doh.is("Benjamin",name1.get("value"),"name1.get(value) is wrong after update");
+										doh.is("Benjamin",firstInput.value,"firstInput value is wrong after update");
+										doh.is("Benjamin",name1.value,"name1.get(value) is wrong after update");
 								}
 							}					
 						}
@@ -222,10 +220,9 @@
 				<div class="row" data-dojo-type="dojox.mvc.Group" 
 								data-dojo-props="target: at('rel:${this.index}')">
 					<label class="cell" for="nameInput${this.index}">Name:</label>
-					<input class="cell" data-dojo-type="dijit.form.TextBox" id="nameInput${this.index}" 
-										data-dojo-props="value: at('rel:', 'First')">
-					<button type="button" data-dojo-type="dijit.form.Button" 
-										data-dojo-props="onClick: function(){setDetailsContext('${this.index}');}">Details</button>
+					<input class="cell" id="nameInput${this.index}" 
+										data-mvc-bindings="value: at('rel:', 'First')">
+					<button type="button" onclick="setDetailsContext('${this.index}')">Details</button>
 				</div>
 			</div>
 			<div class="spacer"></div>
@@ -234,43 +231,43 @@
 								data-dojo-props="target: at('widget:listCtl', 'cursor')">
 				<div class="row">
 					<div style="display: inline-block;" id="detailsBanner">Details for result index: </div>
-					<span class="cell" id="indexOutput" data-dojo-type="dojox.mvc.Output" 
-							data-dojo-props="value: at('widget:listCtl', 'cursorIndex')"></span>
+					<span class="cell" id="indexOutput"  
+							data-mvc-bindings="innerText: at('widget:listCtl', 'cursorIndex')"></span>
 				</div>
 				<div class="row">
 					<label class="cell" for="firstInput">First Name:</label>
-					<input class="cell" id="firstInput" data-dojo-type="dijit.form.TextBox" 
-										data-dojo-props="value: at('rel:', 'First')">
+					<input class="cell" id="firstInput"  
+										data-mvc-bindings="value: at('rel:', 'First')">
 				</div>
 				<div class="row">
 					<label class="cell" for="lastInput">Last Name:</label>
-					<input class="cell" id="lastInput" data-dojo-type="dijit.form.TextBox" 
-									data-dojo-props="value: at('rel:', 'Last')">
+					<input class="cell" id="lastInput"  
+									data-mvc-bindings="value: at('rel:', 'Last')">
 				</div>
 				<div class="row">
 					<label class="cell" for="locationInput">Location:</label>
-					<input class="cell" id="locationInput" data-dojo-type="dijit.form.TextBox" 
-									data-dojo-props="value: at('rel:', 'Location')">
+					<input class="cell" id="locationInput"  
+									data-mvc-bindings="value: at('rel:', 'Location')">
 				</div>
 				<div class="row">
 					<label class="cell" for="officeInput">Office:</label>
-					<input class="cell" id="officeInput" data-dojo-type="dijit.form.TextBox" 
-									data-dojo-props="value: at('rel:', 'Office')">
+					<input class="cell" id="officeInput"  
+									data-mvc-bindings="value: at('rel:', 'Office')">
 				</div>
 				<div class="row">
 					<label class="cell" for="emailInput">Email:</label>
-					<input class="cell" id="emailInput" data-dojo-type="dijit.form.TextBox" 
-									data-dojo-props="value: at('rel:', 'Email')">
+					<input class="cell" id="emailInput"  
+									data-mvc-bindings="value: at('rel:', 'Email')">
 				</div>
 				<div class="row">
 					<label class="cell" for="telInput">Telephone:</label>
-					<input class="cell" id="telInput" data-dojo-type="dijit.form.TextBox" 
-									data-dojo-props="value: at('rel:', 'Tel')">
+					<input class="cell" id="telInput"  
+									data-mvc-bindings="value: at('rel:', 'Tel')">
 				</div>
 				<div class="row">
 					<label class="cell" for="faxInput">Fax:</label>
-					<input class="cell" id="faxInput" data-dojo-type="dijit.form.TextBox" 
-								data-dojo-props="value: at('rel:', 'Fax')">
+					<input class="cell" id="faxInput"  
+								data-mvc-bindings="value: at('rel:', 'Fax')">
 				</div>
 			</div>
 		   </div>

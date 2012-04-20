@@ -156,9 +156,11 @@
 					groupTyped: "",
 					_refModelProp: "model",
 
-					addEmpty: function(){
-						this.model.push(new Stateful({id:Math.random(), Group: this.groupTyped, First: "", Last: "", Location: "", Office: "", Email: "", Tel: "", Fax: ""}));
-						this.set("cursorIndex", this.get("length") - 1);
+					addEmpty: function(idx){
+						//this.model.push(new Stateful({id:Math.random(), Group: this.groupTyped, First: "", Last: "", Location: "", Office: "", Email: "", Tel: "", Fax: ""}));
+						this.model.splice(idx+1, 0, new Stateful({id:Math.random(), Group: this.groupTyped, First: "", Last: "", Location: "", Office: "", Email: "", Tel: "", Fax: ""}));
+						this.set("cursorIndex", idx+1);
+						//this.set("cursorIndex", this.get("length") - 1);
 					},
 
 					remove: function(idx){
@@ -288,7 +290,7 @@
 								<button type="button" data-dojo-type="dijit.form.Button"
 								 data-dojo-props="onClick: function(){ ctrl.set('cursorIndex', ${this.index}); }">Details</button>
 								<button type="button" data-dojo-type="dijit.form.Button"
-								 data-dojo-props="onClick: function(){ ctrl.addEmpty(); }">+</button>
+								 data-dojo-props="onClick: function(){ ctrl.addEmpty(${index}); }">+</button>
 								<button type="button" data-dojo-type="dijit.form.Button"
 								 data-dojo-props="onClick: function(){ ctrl.remove(${index}); }">-</button>
 							</div>

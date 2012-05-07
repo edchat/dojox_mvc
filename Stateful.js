@@ -35,6 +35,16 @@ define([
 			// value: Anything
 			//		The value to set in the property.
 
+			// If an object is used, iterate through object
+			if(typeof name === "object"){
+				for(var x in name){
+					if(name.hasOwnProperty(x)){
+						this.set(x, name[x]);
+					}
+				}
+				return this;
+			}
+
 			// If there is dijit._WidgetBase in upper class hierarchy (happens when this descendant is mixed into a widget), let _WidgetBase do all work
 			if(this._applyAttributes){
 				return this.inherited(arguments);

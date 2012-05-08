@@ -36,6 +36,7 @@
 				"dojo/_base/lang",
 				"dojo/_base/xhr",
 				"dojo/parser",
+				"dojo/when",
 				"dijit/registry",				
 				"dojox/charting/Chart",
 				"dojox/charting/themes/PlotKit/blue",
@@ -52,8 +53,7 @@
 				"dojox/mvc/ModelRefController",
 				"dojox/mvc/Output",
 				"dojo/domReady!"
-			], function(doh, declare, ddom, array, lang, dxhr, parser, registry, Chart, blue, at, Stateful, StatefulSeries){
-				window.at = at;
+			], function(doh, declare, ddom, array, lang, dxhr, parser, when, registry, Chart, blue, at, Stateful, StatefulSeries){
 				dojox.debugDataBinding = true;
 
 				lookup = function(model){
@@ -132,12 +132,11 @@
 					}
 				});
 
-				parser.parse();
-
-				new Chart("expenseChart")
-				 .setTheme(blue)
-				 .addPlot("default", {type: "Pie"})
-				 .addSeries("default", new StatefulSeries([at(loanModel, "Mortgage"), at(loanModel, "Taxes"), at(loanModel, "OtherHousing")])).render();
+				when(parser.parse(), function(){
+					new Chart("expenseChart")
+					 .setTheme(blue)
+					 .addPlot("default", {type: "Pie"})
+					 .addSeries("default", new StatefulSeries([at(loanModel, "Mortgage"), at(loanModel, "Taxes"), at(loanModel, "OtherHousing")])).render();
 
 					 // should be able to verify all of the inputs
 					doh.register("Check values and bindings", [
@@ -230,10 +229,12 @@
 					]);
 
 					doh.run();
+				});
 			});
 		</script>
 	</head>
 	<body class="claro" style="background-image: url(images/validating_form_pattern.png)">
+		<script type="dojo/require">at: "dojox/mvc/at"</script>
 		<h1 class="testTitle">doh_mvc_loan-stateful.html automated tests (non-robot)</h1>
 		<div id="wrapper">
 			<div id="addressLookupController" class="dijitDisplayNone" data-dojo-type="dojox.mvc.ModelRefController"

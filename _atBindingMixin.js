@@ -2,9 +2,12 @@ define([
 	"dojo/_base/array",
 	"dojo/_base/lang",
 	"dojo/_base/declare",
+	"dojo/_base/config",
 	"./resolve",
 	"./sync"
-], function(array, lang, declare, resolve, sync){
+], function(array, lang, declare, config, resolve, sync){
+	var debugDataBinding = (config["mvc"] && config["mvc"].debugBindings); 
+
 	function getLogContent(/*dojo.Stateful*/ target, /*String*/ targetProp){
 		return [target._setIdAttr || !target.declaredClass ? target : target.declaredClass, targetProp].join(":");
 	}
@@ -76,7 +79,7 @@ define([
 				// (For dojox.mvc.Group and dojox.mvc.Repeat)
 				// Do not perform data binding synchronization in such case.
 				lang.isFunction(resolvedSource.set) ? resolvedSource.set(sourceProp, resolvedTarget) : (resolvedSource[sourceProp] = resolvedTarget);
-				if(dojox.debugDataBinding){
+				if(debugDataBinding){
 					console.log("dojox.mvc._atBindingMixin set " + resolvedTarget + " to: " + getLogContent(resolvedSource, sourceProp));
 				}
 			}else{
@@ -89,7 +92,7 @@ define([
 		if(parent && /^rel:/.test(target) || /^rel:/.test(source) && lang.isFunction(parent.set) && lang.isFunction(parent.watch)){
 			_handles["rel"] = parent.watch(relTargetProp, function(name, old, current){
 				if(old !== current){
-					if(dojox.debugDataBinding){ console.log("Change in relative data binding target: " + parent); }
+					if(debugDataBinding){ console.log("Change in relative data binding target: " + parent); }
 					resolveAndBind();
 				}
 			});

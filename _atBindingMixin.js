@@ -2,18 +2,18 @@ define([
 	"dojo/_base/array",
 	"dojo/_base/lang",
 	"dojo/_base/declare",
-	"dojo/_base/config",
+	"dojo/has",
 	"./resolve",
 	"./sync"
-], function(array, lang, declare, config, resolve, sync){
-	var debugDataBinding = (config["mvc"] && config["mvc"].debugBindings); 
+], function(array, lang, declare, has, resolve, sync){
+	if(has("mvc-bindings-log-api")){
+		function getLogContent(/*dojo.Stateful*/ target, /*String*/ targetProp){
+			return [target._setIdAttr || !target.declaredClass ? target : target.declaredClass, targetProp].join(":");
+		}
 
-	function getLogContent(/*dojo.Stateful*/ target, /*String*/ targetProp){
-		return [target._setIdAttr || !target.declaredClass ? target : target.declaredClass, targetProp].join(":");
-	}
-
-	function logResolveFailure(target, targetProp){
-		console.warn(targetProp + " could not be resolved" + (typeof target == "string" ? (" with " + target) : "") + ".");
+		function logResolveFailure(target, targetProp){
+			console.warn(targetProp + " could not be resolved" + (typeof target == "string" ? (" with " + target) : "") + ".");
+		}
 	}
 
 	function getParent(/*dijit._WidgetBase*/ w){
@@ -66,11 +66,11 @@ define([
 			 resolvedTarget = resolve(target, relTarget),
 			 resolvedSource = resolve(source, relTarget);
 
-			if(!resolvedTarget || /^rel:/.test(target) && !parent){ logResolveFailure(target, targetProp); }
-			if(!resolvedSource || /^rel:/.test(source) && !parent){ logResolveFailure(source, sourceProp); }
+			if(has("mvc-bindings-log-api") && (!resolvedTarget || /^rel:/.test(target) && !parent)){ logResolveFailure(target, targetProp); }
+			if(has("mvc-bindings-log-api") && (!resolvedSource || /^rel:/.test(source) && !parent)){ logResolveFailure(source, sourceProp); }
 			if(!resolvedTarget || !resolvedSource || (/^rel:/.test(target) || /^rel:/.test(source)) && !parent){ return; }
 			if((!resolvedTarget.set || !resolvedTarget.watch) && targetProp == "*"){
-				logResolveFailure(target, targetProp);
+				if(has("mvc-bindings-log-api")){ logResolveFailure(target, targetProp); }
 				return;
 			}
 
@@ -79,7 +79,7 @@ define([
 				// (For dojox.mvc.Group and dojox.mvc.Repeat)
 				// Do not perform data binding synchronization in such case.
 				lang.isFunction(resolvedSource.set) ? resolvedSource.set(sourceProp, resolvedTarget) : (resolvedSource[sourceProp] = resolvedTarget);
-				if(debugDataBinding){
+				if(has("mvc-bindings-log-api")){
 					console.log("dojox.mvc._atBindingMixin set " + resolvedTarget + " to: " + getLogContent(resolvedSource, sourceProp));
 				}
 			}else{
@@ -92,7 +92,7 @@ define([
 		if(parent && /^rel:/.test(target) || /^rel:/.test(source) && lang.isFunction(parent.set) && lang.isFunction(parent.watch)){
 			_handles["rel"] = parent.watch(relTargetProp, function(name, old, current){
 				if(old !== current){
-					if(debugDataBinding){ console.log("Change in relative data binding target: " + parent); }
+					if(has("mvc-bindings-log-api")){ console.log("Change in relative data binding target: " + parent); }
 					resolveAndBind();
 				}
 			});

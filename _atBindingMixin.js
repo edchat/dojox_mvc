@@ -2,13 +2,10 @@ define([
 	"dojo/_base/array",
 	"dojo/_base/lang",
 	"dojo/_base/declare",
-	"dojo/_base/config",
 	"dojo/has",
 	"./resolve",
 	"./sync"
-], function(array, lang, declare, config, has, resolve, sync){
-	has.add("mvc-bindings-log-api", (config["mvc"] || {}).debugBindings);
-
+], function(array, lang, declare, has, resolve, sync){
 	if(has("mvc-bindings-log-api")){
 		function getLogContent(/*dojo.Stateful*/ target, /*String*/ targetProp){
 			return [target._setIdAttr || !target.declaredClass ? target : target.declaredClass, targetProp].join(":");

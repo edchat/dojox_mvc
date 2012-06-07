@@ -406,14 +406,14 @@
 				</ul>
 
 				<ul data-dojo-type="dojox.mobile.RoundRectList"   
-					data-dojo-mixins="dojox.mvc.Repeat" 
+					data-dojo-mixins="dojox/mvc/Repeat" 
 					data-dojo-props="exprchar:'#', children: at(listsCtrl, 'model')">
 							<li  class="mblVariableHeight" 
 								data-dojo-type="dojox.mobile.ListItem" clickable="true" 
 								data-dojo-props="label:at('rel:#{this.index}','title'), 
 									onClick: function(){console.log('selected list ', '#{this.index}'); selectList('#{this.index}');}">  
 							<!-- <table><tr>
-									<td data-dojo-type="dojox.mvc.Output" 
+									<td data-dojo-type="dojox/mvc/Output" 
 										data-dojo-props="value: at('rel:#{this.index}','title')"></td>
 								</tr></table>
 							-->	
@@ -428,7 +428,7 @@
 				<div id="leftNav"></div>
 				<div id="mainContent">
  			<div id="todomain" data-dojo-type="dojox.mobile.View" selected="true">
-				<div data-dojo-type="dojox.mvc.Group" 
+				<div data-dojo-type="dojox/mvc/Group" 
 					data-dojo-props="target: at(listsCtrl, 'cursor')">
 					<div data-dojo-type="dojox.mobile.Heading" region="top"
 						data-dojo-props="label: at('rel:','title')">
@@ -438,7 +438,7 @@
 					</div>	
 				</div>				
 				<ul data-dojo-type="dojox.mobile.RoundRectList" id="listItems"   
-					data-dojo-mixins="dojox.mvc.Repeat" 
+					data-dojo-mixins="dojox/mvc/Repeat" 
 					data-dojo-props="exprchar:'#', children: at(currentctrl, 'model')">
 							<li  class="mblVariableHeight"  moveTo="details" callback="function(){movedTo('#{this.index}')}" 
 								data-dojo-type="dojox.mobile.ListItem" clickable="true" 
@@ -448,7 +448,7 @@
 									<td><input preventTouch='true' type='checkbox' 
 											data-dojo-type="dojox.mobile.CheckBox" 
 											data-dojo-props="checked: at('rel:#{this.index}','completed').transform(completeConverter)"/></td>
-									<td data-dojo-type="dojox.mvc.Output" 
+									<td data-dojo-type="dojox/mvc/Output" 
 										data-dojo-props="value: at('rel:#{this.index}','title')"></td>
 								</tr></table>
 							</li>
@@ -458,7 +458,7 @@
 		<span>Completed Items</span>
 	</h2>
 				<ul data-dojo-type="dojox.mobile.RoundRectList"   
-					data-dojo-mixins="dojox.mvc.Repeat" 
+					data-dojo-mixins="dojox/mvc/Repeat" 
 					data-dojo-props="exprchar:'#', children: at(ctrlComplete, 'model')">
 							<li  class="mblVariableHeight"   moveTo="details" callback="function(){movedToCompleted('#{this.index}')}" 
 								data-dojo-type="dojox.mobile.ListItem" clickable="true" 
@@ -468,7 +468,7 @@
 									<td><input preventTouch='true' type='checkbox' 
 											data-dojo-type="dojox.mobile.CheckBox" 
 											data-dojo-props="checked: at('rel:#{this.index}','completed').transform(completeConverter)"/></td>
-									<td data-dojo-type="dojox.mvc.Output" 
+									<td data-dojo-type="dojox/mvc/Output" 
 										data-dojo-props="value: at('rel:#{this.index}','title')"></td>
 								</tr></table>
 							</li>
@@ -478,7 +478,7 @@
 			</div>
 	<div id="details" data-dojo-type="dojox.mobile.ScrollableView">
 		<h1 id="detailsHeading" data-dojo-type="dojox.mobile.Heading" back="Back" moveTo="todomain">To-Do Details</h1>
-			<div id="detailsGroup" class="fieldset" data-dojo-type="dojox.mvc.Group" 
+			<div id="detailsGroup" class="fieldset" data-dojo-type="dojox/mvc/Group" 
 								data-dojo-props="target: at(currentctrl, 'cursor')">
  				<h2 id="detailsHeading2">Completed Items</h2>
 				<div class="field-row">

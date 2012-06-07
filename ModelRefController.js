@@ -59,7 +59,7 @@ define([
 		//		Used when this controller needs data model (as input) that is different from the data model this controller provides.
 		_refInModelProp: "model",
 
-		// model: dojo.Stateful
+		// model: dojo/Stateful
 		//		The data model.
 		model: null,
 
@@ -119,10 +119,10 @@ define([
 
 			var hm = null, hp = null, _self = this;
 
-			function watchPropertiesInModel(/*dojo.Stateful*/ model){
+			function watchPropertiesInModel(/*dojo/Stateful*/ model){
 				// summary:
 				//		Watch properties in referred model.
-				// model: dojo.Stateful
+				// model: dojo/Stateful
 				//		The model to watch for.
 
 				// Unwatch properties of older model.
@@ -133,12 +133,12 @@ define([
 				}
 			}
 
-			function reflectChangeInModel(/*dojo.Stateful*/ old, /*dojo.Stateful*/ current){
+			function reflectChangeInModel(/*dojo/Stateful*/ old, /*dojo/Stateful*/ current){
 				// summary:
 				//		Upon change in model, detect change in properties, and call watch callbacks.
-				// old: dojo.Stateful
+				// old: dojo/Stateful
 				//		The older model.
-				// current: dojo.Stateful
+				// current: dojo/Stateful
 				//		The newer model.
 
 				// Gather list of properties to notify change in value as model changes.

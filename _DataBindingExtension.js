@@ -4,22 +4,18 @@ define([
 	"dijit/_WidgetBase",
 	"./_DataBindingMixin"
 ], function(array, lang, wb, dbm){
-	/*=====
-		dbm = dojox.mvc._DataBindingMixin;
-		wb = dijit._WidgetBase;
-	=====*/
 
 	//Apply the data binding mixin to all dijits, see mixin class description for details
 	lang.extend(wb, new dbm());
 
-	// monkey patch dijit._WidgetBase.startup to get data binds set up
+	// monkey patch dijit/_WidgetBase/startup to get data binds set up
 	var oldWidgetBaseStartup = wb.prototype.startup;
 	wb.prototype.startup = function(){
 		this._dbstartup();
 		oldWidgetBaseStartup.apply(this);
 	};
 
-	// monkey patch dijit._WidgetBase.destroy to remove watches setup in _DataBindingMixin
+	// monkey patch dijit/_WidgetBase/destroy to remove watches setup in _DataBindingMixin
 	var oldWidgetBaseDestroy = wb.prototype.destroy;
 	wb.prototype.destroy = function(/*Boolean*/ preserveDom){
 		if(this._modelWatchHandles){

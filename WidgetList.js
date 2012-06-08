@@ -18,13 +18,17 @@ define([
 		// summary:
 		//		A widget that creates child widgets repeatedly based on children attribute (the repeated data) and childType/childMixins/childParams attributes (determines how to create each child widget).
 
+		// childClz: Function
+		//		The class of child widget. Takes precedence over childType/childMixins.
+		childClz: null,
+
 		// childType: String
-		//		The module ID of child widget.
+		//		The module ID of child widget. childClz takes precedence over this/childMixins.
 		//		Can be specified via data-mvc-child-type attribute of widget declaration.
 		childType: "",
 
 		// childMixins: String
-		//		The list of module IDs, separated by comma, of the classes that will be mixed into child widget.
+		//		The list of module IDs, separated by comma, of the classes that will be mixed into child widget. childClz takes precedence over childType/this.
 		//		Can be specified via data-mvc-child-mixins attribute of widget declaration.
 		childMixins: "",
 
@@ -45,8 +49,12 @@ define([
 		_relTargetProp : "children",
 
 		postMixInProperties: function(){
-			this.childType = this[childTypeAttr];
-			this.childMixins = this[childMixinsAttr];
+			if(this[childTypeAttr]){
+				this.childType = this[childTypeAttr];
+			}
+			if(this[childMixinsAttr]){
+				this.childMixins = this[childMixinsAttr];
+			}
 		},
 
 		startup: function(){
@@ -70,17 +78,23 @@ define([
 			// summary:
 			//		Create child widgets upon children and inserts them into the container node.
 
-			require([this.childType].concat(this.childMixins && this.childMixins.split(",") || []), lang.hitch(this, function(seq){
+			var create = lang.hitch(this, function(seq){
 				if(this._buildChildrenSeq > seq){ return; } // If newer _buildChildren call comes during lazy loading, bail
 				var clz = declare([].slice.call(arguments, 1), {});
 				array.forEach(array.map(children, function(child){
-					var params = {ownerDocument: this.ownerDocument, target: child, parent: this};
+					var params = {/* ownerDocument: this.ownerDocument, */ target: child, parent: this}; // Disabling passing around ownerDocument for now, due to a bug in _WidgetBase.set()
 					if(this.templateString){ params.templateString = this.templateString; }
 					return new clz(lang.mixin(params, this.childParams || evalParams.call(params, this[childParamsAttr])), this.ownerDocument.createElement(this.domNode.tagName));
 				}, this), function(child){
 					this.addChild(child);
 				}, this);
-			}, this._buildChildrenSeq = (this._buildChildrenSeq || 0) + 1));
+			}, this._buildChildrenSeq = (this._buildChildrenSeq || 0) + 1);
+
+			if(this.childClz){
+				create(this.childClz);
+			}else{
+				require([this.childType].concat(this.childMixins && this.childMixins.split(",") || []), create);
+			}
 		}
 	});
 

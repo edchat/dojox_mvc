@@ -33,9 +33,11 @@
 				"dijit/_WidgetBase",
 				"dijit/_TemplatedMixin",
 				"dijit/_WidgetsInTemplateMixin",
+				"dojox/mvc/at",
 				"dojox/mvc/getStateful",
+				"dojox/mvc/WidgetList",
 				"dijit/form/TextBox" // dijit._WidgetsInTemplateMixin does not support auto-loading modules by parser
-			], function(declare, dom, domClass, parser, _WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, getStateful){
+			], function(declare, dom, domClass, parser, _WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, at, getStateful, WidgetList){
 				array = getStateful([
 					{
 						Serial: "A111",
@@ -69,20 +71,27 @@
 					}
 				]);
 
-				define("dojox/mvc/tests/SerialNameTemplate", [], function(){
-					return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
-						templateString: '<div>'
-						 + '<span data-dojo-type="dijit/_WidgetBase"'
-						 + ' data-dojo-props="_setValueAttr: {node: \'domNode\', type: \'innerText\'}, value: at(\'rel:\', \'Serial\')"></span>: '
-						 + '<span data-dojo-type="dijit/form/TextBox"'
-						 + ' data-dojo-props="value: at(\'rel:\', \'First\')"></span>'
-						 + '</div>'
-					});
+				var templateClz = declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
+					templateString: '<div>'
+					 + '<span data-dojo-type="dijit/_WidgetBase"'
+					 + ' data-dojo-attach-point="labelNode"'
+					 + ' data-dojo-props="_setValueAttr: {node: \'domNode\', type: \'innerText\'}"></span>: '
+					 + '<span data-dojo-type="dijit/form/TextBox"'
+					 + ' data-dojo-attach-point="inputNode"></span>'
+					 + '</div>'
 				});
 
 				domClass.add(dom.byId("loading"), "dijitDisplayNone");
 				domClass.remove(dom.byId("main"), "dijitDisplayNone");
 				parser.parse();
+
+				(new WidgetList({children: array, childClz: templateClz, childParams: {
+					startup: function(){
+						this.labelNode.set("value", at("rel:", "Serial"));
+						this.inputNode.set("value", at("rel:", "First"));
+						this.inherited("startup", arguments);
+					}
+				}}, dom.byId("programmaticRepeat"))).startup();
 			});
 		</script>
 	</head>
@@ -126,9 +135,7 @@
 			</div>
 			<div>
 				<h1>Repeating programmatically created template widget</h2>
-				<div data-dojo-type="dojox/mvc/WidgetList"
-				 data-dojo-props="children: array"
-				 data-mvc-child-type="dojox/mvc/tests/SerialNameTemplate"></div>
+				<div id="programmaticRepeat"></div>
 			</div>
 		</div>
 	</body>

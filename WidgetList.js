@@ -14,6 +14,13 @@ define([
 		return eval("({" + params + "})");
 	}
 
+	function unwatchElements(/*dojox.mvc.WidgetList*/ w){
+		if(w._elementWatchHandle){
+			w._elementWatchHandle.unwatch();
+			delete w._elementWatchHandle;
+		}
+	}
+
 	var WidgetList = declare("dojox.mvc.WidgetList", [_WidgetBase, _Container], {
 		// summary:
 		//		A widget that creates child widgets repeatedly based on children attribute (the repeated data) and childType/childMixins/childParams attributes (determines how to create each child widget).
@@ -69,6 +76,7 @@ define([
 			var children = this.children;
 			this._set("children", value);
 			if(this._started && (!this._builtOnce || children != value)){
+				unwatchElements(this);
 				this._builtOnce = true;
 				this._buildChildren(value);
 			}
@@ -78,23 +86,36 @@ define([
 			// summary:
 			//		Create child widgets upon children and inserts them into the container node.
 
-			var create = lang.hitch(this, function(seq){
+			var createAndWatch = lang.hitch(this, function(seq){
 				if(this._buildChildrenSeq > seq){ return; } // If newer _buildChildren call comes during lazy loading, bail
-				var clz = declare([].slice.call(arguments, 1), {});
-				array.forEach(array.map(children, function(child){
-					var params = {/* ownerDocument: this.ownerDocument, */ target: child, parent: this}; // Disabling passing around ownerDocument for now, due to a bug in _WidgetBase.set()
-					if(this.templateString){ params.templateString = this.templateString; }
-					return new clz(lang.mixin(params, this.childParams || evalParams.call(params, this[childParamsAttr])), this.ownerDocument.createElement(this.domNode.tagName));
-				}, this), function(child){
-					this.addChild(child);
-				}, this);
+				var clz = declare([].slice.call(arguments, 1), {}), _self = this;
+				function create(children, idx){
+					array.forEach(array.map(children, function(child){
+						var params = {/* ownerDocument: _self.ownerDocument, */ target: child, parent: _self}; // Disabling passing around ownerDocument for now, due to a bug in _WidgetBase.set()
+						if(_self.templateString){ params.templateString = _self.templateString; }
+						return new clz(lang.mixin(params, _self.childParams || evalParams.call(params, _self[childParamsAttr])), _self.ownerDocument.createElement(_self.domNode.tagName));
+					}), function(child){
+						_self.addChild(child, idx++);
+					});
+				}
+				create(children, 0);
+				this._elementWatchHandle = lang.isFunction(children.watchElements) && children.watchElements(function(idx, removals, adds){
+					for(var i = 0, l = (removals || []).length; i < l; ++i){
+						_self.removeChild(idx);
+					}
+					create(adds, idx);
+				});
 			}, this._buildChildrenSeq = (this._buildChildrenSeq || 0) + 1);
 
 			if(this.childClz){
-				create(this.childClz);
+				createAndWatch(this.childClz);
 			}else{
-				require([this.childType].concat(this.childMixins && this.childMixins.split(",") || []), create);
+				require([this.childType].concat(this.childMixins && this.childMixins.split(",") || []), createAndWatch);
 			}
+		},
+
+		destroy: function(){
+			unwatchElements(this);
 		}
 	});
 

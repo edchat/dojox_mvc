@@ -26,7 +26,6 @@
 
 		<script type="text/javascript">
 			require([
-				"dojo/_base/json",
 				"dojo/dom",
 				"dojo/dom-class",
 				"dojo/parser",
@@ -38,7 +37,7 @@
 				"dojo/text!dojox/mvc/tests/test_WidgetList_childTemplate.html",
 				"dojo/text!dojox/mvc/tests/test_WidgetList_childBindings.json",
 				"dijit/form/TextBox" // dijit._WidgetsInTemplateMixin does not support auto-loading modules by parser
-			], function(djson, dom, domClass, parser, _WidgetBase, at, getStateful, Templated, WidgetList, childTemplate, childBindings){
+			], function(dom, domClass, parser, _WidgetBase, at, getStateful, Templated, WidgetList, childTemplate, childBindings){
 				array = getStateful([
 					{
 						Serial: "A111",
@@ -114,7 +113,7 @@
 				(new WidgetList({
 					children: array,
 					templateString: childTemplate,
-					childBindings: djson.fromJson(childBindings)
+					childBindings: eval("(" + childBindings + ")")
 				}, dom.byId("programmaticRepeatWithSeparateBindingDeclaration"))).startup();
 			});
 		</script>

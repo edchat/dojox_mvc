@@ -80,7 +80,7 @@ define([
 		// |		(new WidgetList({
 		// |			children: array,
 		// |			templateString: childTemplate,
-		// |			childBindings: djson.fromJson(childBindings)
+		// |			childBindings: childBindings
 		// |		}, dom.byId("programmaticRepeatWithSeparateBindingDeclaration"))).startup();
 
 		// childClz: Function

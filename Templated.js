@@ -6,8 +6,6 @@ define([
 	"dijit/_WidgetsInTemplateMixin",
 	"dojox/mvc/at"
 ], function(declare, lang, _WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, at){
-	var global = this;
-
 	return declare("dojox.mvc.Templated", [_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
 		// summary:
 		//		A templated widget, mostly the same as dijit/_Templated, but without deprecated features in it.
@@ -22,7 +20,7 @@ define([
 				var w = this[s], props = this.bindings[s];
 				if(w){
 					for(var prop in props){
-						w.set(prop, lang.mixin(at.apply(global, props[prop].slice(0, 2)), props[prop][2]));
+						w.set(prop, props[prop]);
 					}
 				}
 			}

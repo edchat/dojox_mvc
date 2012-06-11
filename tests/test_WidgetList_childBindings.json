@@ -1,4 +1,4 @@
 {
-	labelNode: {value: ["rel:", "Serial"]},
-	inputNode: {value: ["rel:", "First"]}
+	labelNode: {value: at("rel:", "Serial")},
+	inputNode: {value: at("rel:", "First")}
 }

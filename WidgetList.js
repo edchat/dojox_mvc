@@ -4,8 +4,9 @@ define([
 	"dojo/_base/lang",
 	"dojo/_base/declare",
 	"dijit/_Container",
-	"dijit/_WidgetBase"
-], function(require, array, lang, declare, _Container, _WidgetBase){
+	"dijit/_WidgetBase",
+	"dojox/mvc/Templated"
+], function(require, array, lang, declare, _Container, _WidgetBase, Templated){
 	var childTypeAttr = "data-mvc-child-type",
 	 childMixinsAttr = "data-mvc-child-mixins",
 	 childParamsAttr = "data-mvc-child-props",
@@ -74,8 +75,8 @@ define([
 		//		Using the same childTemplate above, establish data binding for child widgets based on the declaration in childBindings.
 		//		(childBindings may come from dojo/text, by eval()'ing the text)
 		// |		var childBindings = {
-		// |			labelNode: {value: ["rel:", "Serial"]},
-		// |			inputNode: {value: ["rel:", "First"]}
+		// |			labelNode: {value: at("rel:", "Serial")},
+		// |			inputNode: {value: at("rel:", "First")}
 		// |		};
 		// |		(new WidgetList({
 		// |			children: array,
@@ -90,7 +91,7 @@ define([
 		// childType: String
 		//		The module ID of child widget. childClz takes precedence over this/childMixins.
 		//		Can be specified via data-mvc-child-type attribute of widget declaration.
-		childType: "dojox/mvc/Templated",
+		childType: "",
 
 		// childMixins: String
 		//		The list of module IDs, separated by comma, of the classes that will be mixed into child widget. childClz takes precedence over childType/this.
@@ -184,8 +185,10 @@ define([
 
 			if(this.childClz){
 				createAndWatch(this.childClz);
-			}else{
+			}else if(this.childType){
 				require([this.childType].concat(this.childMixins && this.childMixins.split(",") || []), createAndWatch);
+			}else{
+				createAndWatch(Templated);
 			}
 		},
 

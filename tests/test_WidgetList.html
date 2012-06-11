@@ -26,18 +26,19 @@
 
 		<script type="text/javascript">
 			require([
-				"dojo/_base/declare",
+				"dojo/_base/json",
 				"dojo/dom",
 				"dojo/dom-class",
 				"dojo/parser",
 				"dijit/_WidgetBase",
-				"dijit/_TemplatedMixin",
-				"dijit/_WidgetsInTemplateMixin",
 				"dojox/mvc/at",
 				"dojox/mvc/getStateful",
+				"dojox/mvc/Templated",
 				"dojox/mvc/WidgetList",
+				"dojo/text!dojox/mvc/tests/test_WidgetList_childTemplate.html",
+				"dojo/text!dojox/mvc/tests/test_WidgetList_childBindings.json",
 				"dijit/form/TextBox" // dijit._WidgetsInTemplateMixin does not support auto-loading modules by parser
-			], function(declare, dom, domClass, parser, _WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, at, getStateful, WidgetList){
+			], function(djson, dom, domClass, parser, _WidgetBase, at, getStateful, Templated, WidgetList, childTemplate, childBindings){
 				array = getStateful([
 					{
 						Serial: "A111",
@@ -94,27 +95,27 @@
 					}
 				]);
 
-				var templateClz = declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
-					templateString: '<div>'
-					 + '<span data-dojo-type="dijit/_WidgetBase"'
-					 + ' data-dojo-attach-point="labelNode"'
-					 + ' data-dojo-props="_setValueAttr: {node: \'domNode\', type: \'innerText\'}"></span>: '
-					 + '<span data-dojo-type="dijit/form/TextBox"'
-					 + ' data-dojo-attach-point="inputNode"></span>'
-					 + '</div>'
-				});
-
 				domClass.add(dom.byId("loading"), "dijitDisplayNone");
 				domClass.remove(dom.byId("main"), "dijitDisplayNone");
 				parser.parse();
 
-				(new WidgetList({children: array, childClz: templateClz, childParams: {
-					startup: function(){
-						this.labelNode.set("value", at("rel:", "Serial"));
-						this.inputNode.set("value", at("rel:", "First"));
-						this.inherited("startup", arguments);
-					}
-				}}, dom.byId("programmaticRepeat"))).startup();
+				(new WidgetList({
+					children: array,
+					childParams: {
+						startup: function(){
+							this.labelNode.set("value", at("rel:", "Serial"));
+							this.inputNode.set("value", at("rel:", "First"));
+							this.inherited("startup", arguments);
+						}
+					},
+					templateString: childTemplate
+				}, dom.byId("programmaticRepeat"))).startup();
+
+				(new WidgetList({
+					children: array,
+					templateString: childTemplate,
+					childBindings: djson.fromJson(childBindings)
+				}, dom.byId("programmaticRepeatWithSeparateBindingDeclaration"))).startup();
 			});
 		</script>
 	</head>
@@ -143,9 +144,7 @@
 				<h1>Repeating in-line template</h2>
 				<div data-dojo-type="dojox/mvc/WidgetList"
 				 data-dojo-mixins="dojox/mvc/_InlineTemplateMixin"
-				 data-dojo-props="children: array"
-				 data-mvc-child-type="dijit/_WidgetBase"
-				 data-mvc-child-mixins="dijit/_TemplatedMixin,dijit/_WidgetsInTemplateMixin">
+				 data-dojo-props="children: array">
 					<script type="dojox/mvc/InlineTemplate">
 						<div>
 							<span data-dojo-type="dijit/_WidgetBase"
@@ -159,6 +158,10 @@
 			<div>
 				<h1>Repeating programmatically created template widget</h2>
 				<div id="programmaticRepeat"></div>
+			</div>
+			<div>
+				<h1>Repeating programmatically created template widget, with separate data binding declaration from template</h2>
+				<div id="programmaticRepeatWithSeparateBindingDeclaration"></div>
 			</div>
 			<div>
 				<h1>Modifying array elements</h2>

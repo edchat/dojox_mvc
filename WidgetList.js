@@ -8,7 +8,8 @@ define([
 ], function(require, array, lang, declare, _Container, _WidgetBase){
 	var childTypeAttr = "data-mvc-child-type",
 	 childMixinsAttr = "data-mvc-child-mixins",
-	 childParamsAttr = "data-mvc-child-props";
+	 childParamsAttr = "data-mvc-child-props",
+	 childBindingsAttr = "data-mvc-child-bindings";
 
 	function evalParams(params){
 		return eval("({" + params + "})");
@@ -24,6 +25,63 @@ define([
 	var WidgetList = declare("dojox.mvc.WidgetList", [_WidgetBase, _Container], {
 		// summary:
 		//		A widget that creates child widgets repeatedly based on children attribute (the repeated data) and childType/childMixins/childParams attributes (determines how to create each child widget).
+		// example:
+		//		Create multiple instances of dijit/TextBox based on the data in array.
+		//		The text box refers to First property in the array item.
+		// |		<div data-dojo-type="dojox/mvc/WidgetList"
+		// |		 data-dojo-props="children: array"
+		// |		 data-mvc-child-type="dijit/form/TextBox"
+		// |		 data-mvc-child-props="value: at(this.target, 'First')"></div>
+		// example:
+		//		Create multiple instances of widgets-in-template based on the HTML written in <script type="dojox/mvc/InlineTemplate">.
+		//		The label refers to Serial property in the array item, and the text box refers to First property in the array item.
+		// |		<div data-dojo-type="dojox/mvc/WidgetList"
+		// |		 data-dojo-mixins="dojox/mvc/_InlineTemplateMixin"
+		// |		 data-dojo-props="children: array">
+		// |			<script type="dojox/mvc/InlineTemplate">
+		// |				<div>
+		// |					<span data-dojo-type="dijit/_WidgetBase"
+		// |					 data-dojo-props="_setValueAttr: {node: 'domNode', type: 'innerText'}, value: at('rel:', 'Serial')"></span>: 
+		// |					<span data-dojo-type="dijit/form/TextBox"
+		// |					 data-dojo-props="value: at('rel:', 'First')"></span>
+		// |				</div>
+		// |			</script>
+		// |		</div>
+		// example:
+		//		Programmatically create multiple instances of widgets-in-template based on the HTML stored in childTemplate.
+		//		(childTemplate may come from dojo/text)
+		//		Also programmatically establish data binding at child widget's startup phase.
+		//		The label refers to Serial property in the array item, and the text box refers to First property in the array item.
+		// |		var childTemplate = '<div>'
+		// |		 + '<span data-dojo-type="dijit/_WidgetBase"'
+		// |		 + ' data-dojo-attach-point="labelNode"'
+		// |		 + ' data-dojo-props="_setValueAttr: {node: \'domNode\', type: \'innerText\'}"></span>'
+		// |		 + '<span data-dojo-type="dijit/form/TextBox"'
+		// |		 + ' data-dojo-attach-point="inputNode"></span>'
+		// |		 + '</div>';
+		// |		(new WidgetList({
+		// |			children: array,
+		// |			childParams: {
+		// |				startup: function(){
+		// |					this.labelNode.set("value", at("rel:", "Serial"));
+		// |					this.inputNode.set("value", at("rel:", "First"));
+		// |					this.inherited("startup", arguments);
+		// |				}
+		// |			},
+		// |			templateString: childTemplate
+		// |		}, dom.byId("programmaticRepeat"))).startup();
+		// example:
+		//		Using the same childTemplate above, establish data binding for child widgets based on the declaration in childBindings.
+		//		(childBindings may come from dojo/text, by eval()'ing the text)
+		// |		var childBindings = {
+		// |			labelNode: {value: ["rel:", "Serial"]},
+		// |			inputNode: {value: ["rel:", "First"]}
+		// |		};
+		// |		(new WidgetList({
+		// |			children: array,
+		// |			templateString: childTemplate,
+		// |			childBindings: djson.fromJson(childBindings)
+		// |		}, dom.byId("programmaticRepeatWithSeparateBindingDeclaration"))).startup();
 
 		// childClz: Function
 		//		The class of child widget. Takes precedence over childType/childMixins.
@@ -32,7 +90,7 @@ define([
 		// childType: String
 		//		The module ID of child widget. childClz takes precedence over this/childMixins.
 		//		Can be specified via data-mvc-child-type attribute of widget declaration.
-		childType: "",
+		childType: "dojox/mvc/Templated",
 
 		// childMixins: String
 		//		The list of module IDs, separated by comma, of the classes that will be mixed into child widget. childClz takes precedence over childType/this.
@@ -47,9 +105,17 @@ define([
 		//			target - The data item in children.
 		childParams: null,
 
+		// childBindings: Obejct
+		//		Data bindings for child widget.
+		childBindings: null,
+
 		// children: dojox.mvc.StatefulArray
 		//		The array of data model that is used to render child nodes.
 		children: null,
+
+		// templateString: String
+		//		The template string for each child items. templateString in child widgets take precedence over this.
+		templateString: "",
 
 		// _relTargetProp: String
 		//		The name of the property that is used by child widgets for relative data binding.
@@ -88,14 +154,23 @@ define([
 
 			var createAndWatch = lang.hitch(this, function(seq){
 				if(this._buildChildrenSeq > seq){ return; } // If newer _buildChildren call comes during lazy loading, bail
-				var clz = declare([].slice.call(arguments, 1), {}), _self = this;
-				function create(children, idx){
-					array.forEach(array.map(children, function(child){
-						var params = {/* ownerDocument: _self.ownerDocument, */ target: child, parent: _self}; // Disabling passing around ownerDocument for now, due to a bug in _WidgetBase.set()
-						if(_self.templateString){ params.templateString = _self.templateString; }
-						return new clz(lang.mixin(params, _self.childParams || evalParams.call(params, _self[childParamsAttr])), _self.ownerDocument.createElement(_self.domNode.tagName));
-					}), function(child){
-						_self.addChild(child, idx++);
+				var clz = declare([].slice.call(arguments, 1), {}),
+				 _self = this;
+				function create(children, startIndex){
+					array.forEach(array.map(children, function(child, idx){
+						var params = {
+							// ownerDocument: _self.ownerDocument, // Disabling passing around ownerDocument for now, due to a bug in _WidgetBase.set()
+							target: child,
+							parent: _self,
+							indexAtStartup: startIndex + idx // Won't be updated even if there are removals/adds of repeat items after startup
+						};
+						var childParams = _self.childParams || _self[childParamsAttr] && evalParams.call(params, _self[childParamsAttr]),
+						 childBindings = _self.childBindings || _self[childBindingsAttr] && evalParams.call(params, _self[childBindingsAttr]);
+						if(_self.templateString && !params.templateString && !clz.prototype.templateString){ params.templateString = _self.templateString; }
+						if(childBindings && !params.bindings && !clz.prototype.bindings){ params.bindings = childBindings; }
+						return new clz(lang.mixin(params, childParams), _self.ownerDocument.createElement(_self.domNode.tagName));
+					}), function(child, idx){
+						_self.addChild(child, startIndex + idx);
 					});
 				}
 				create(children, 0);
@@ -119,6 +194,6 @@ define([
 		}
 	});
 
-	WidgetList.prototype[childTypeAttr] = WidgetList.prototype[childMixinsAttr] = WidgetList.prototype[childParamsAttr] = ""; // Let parser treat these attributes as string
+	WidgetList.prototype[childTypeAttr] = WidgetList.prototype[childMixinsAttr] = WidgetList.prototype[childParamsAttr] = WidgetList.prototype[childBindingsAttr] = ""; // Let parser treat these attributes as string
 	return WidgetList;
 });

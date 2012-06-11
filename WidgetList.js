@@ -153,6 +153,8 @@ define([
 			// summary:
 			//		Create child widgets upon children and inserts them into the container node.
 
+			if(!children){ return; }
+
 			var createAndWatch = lang.hitch(this, function(seq){
 				if(this._buildChildrenSeq > seq){ return; } // If newer _buildChildren call comes during lazy loading, bail
 				var clz = declare([].slice.call(arguments, 1), {}),

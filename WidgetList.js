@@ -153,6 +153,7 @@ define([
 			// summary:
 			//		Create child widgets upon children and inserts them into the container node.
 
+			for(var cw = this.getChildren(), w = null; w = cw.pop();){ this.removeChild(w); w.destroy(); }
 			if(!children){ return; }
 
 			var createAndWatch = lang.hitch(this, function(seq){

@@ -17,9 +17,8 @@ define([
 	}
 
 	function unwatchElements(/*dojox.mvc.WidgetList*/ w){
-		if(w._elementWatchHandle){
-			w._elementWatchHandle.unwatch();
-			delete w._elementWatchHandle;
+		for(var h = null; h = (w._handles || []).pop();){
+			h.unwatch();
 		}
 	}
 
@@ -150,11 +149,17 @@ define([
 				unwatchElements(this);
 				this._builtOnce = true;
 				this._buildChildren(value);
-				if(value && !this.partialRebuild){
+				if(value){
 					var _self = this;
-					this._elementWatchHandle = lang.isFunction(value.watchElements) && value.watchElements(function(idx, removals, adds){
+					!this.partialRebuild && lang.isFunction(value.watchElements) && (this._handles = this._handles || []).push(value.watchElements(function(idx, removals, adds){
 						_self._buildChildren(value);
-					});
+					}));
+					value.watch !== {}.watch && (this._handles = this._handles || []).push(value.watch(function(name, old, current){
+						if(!isNaN(name)){
+							var w = _self.getChildren()[name - 0];
+							w && w.set("target", current);
+						}
+					}));
 				}
 			}
 		},
@@ -189,12 +194,12 @@ define([
 				}
 				create(children, 0);
 				if(this.partialRebuild){
-					this._elementWatchHandle = lang.isFunction(children.watchElements) && children.watchElements(function(idx, removals, adds){
+					lang.isFunction(children.watchElements) && (this._handles = this._handles || []).push(children.watchElements(function(idx, removals, adds){
 						for(var i = 0, l = (removals || []).length; i < l; ++i){
 							_self.removeChild(idx);
 						}
 						create(adds, idx);
-					});
+					}));
 				}
 			}, this._buildChildrenSeq = (this._buildChildrenSeq || 0) + 1);
 

@@ -118,6 +118,10 @@ define([
 		//		The template string for each child items. templateString in child widgets take precedence over this.
 		templateString: "",
 
+		// partialRebuild: Boolean
+		//		If true, only rebuild repeat items for changed elements. Otherwise, rebuild everything if there is a change in children.
+		partialRebuild: false,
+
 		// _relTargetProp: String
 		//		The name of the property that is used by child widgets for relative data binding.
 		_relTargetProp : "children",
@@ -146,6 +150,12 @@ define([
 				unwatchElements(this);
 				this._builtOnce = true;
 				this._buildChildren(value);
+				if(value && !this.partialRebuild){
+					var _self = this;
+					this._elementWatchHandle = lang.isFunction(value.watchElements) && value.watchElements(function(idx, removals, adds){
+						_self._buildChildren(value);
+					});
+				}
 			}
 		},
 
@@ -172,18 +182,20 @@ define([
 						 childBindings = _self.childBindings || _self[childBindingsAttr] && evalParams.call(params, _self[childBindingsAttr]);
 						if(_self.templateString && !params.templateString && !clz.prototype.templateString){ params.templateString = _self.templateString; }
 						if(childBindings && !params.bindings && !clz.prototype.bindings){ params.bindings = childBindings; }
-						return new clz(lang.mixin(params, childParams), _self.ownerDocument.createElement(_self.domNode.tagName));
+						return new clz(lang.mixin(params, childParams));
 					}), function(child, idx){
 						_self.addChild(child, startIndex + idx);
 					});
 				}
 				create(children, 0);
-				this._elementWatchHandle = lang.isFunction(children.watchElements) && children.watchElements(function(idx, removals, adds){
-					for(var i = 0, l = (removals || []).length; i < l; ++i){
-						_self.removeChild(idx);
-					}
-					create(adds, idx);
-				});
+				if(this.partialRebuild){
+					this._elementWatchHandle = lang.isFunction(children.watchElements) && children.watchElements(function(idx, removals, adds){
+						for(var i = 0, l = (removals || []).length; i < l; ++i){
+							_self.removeChild(idx);
+						}
+						create(adds, idx);
+					});
+				}
 			}, this._buildChildrenSeq = (this._buildChildrenSeq || 0) + 1);
 
 			if(this.childClz){

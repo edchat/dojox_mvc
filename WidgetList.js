@@ -17,9 +17,8 @@ define([
 	}
 
 	function unwatchElements(/*dojox.mvc.WidgetList*/ w){
-		if(w._elementWatchHandle){
-			w._elementWatchHandle.unwatch();
-			delete w._elementWatchHandle;
+		for(var h = null; h = (w._handles || []).pop();){
+			h.unwatch();
 		}
 	}
 
@@ -118,6 +117,10 @@ define([
 		//		The template string for each child items. templateString in child widgets take precedence over this.
 		templateString: "",
 
+		// partialRebuild: Boolean
+		//		If true, only rebuild repeat items for changed elements. Otherwise, rebuild everything if there is a change in children.
+		partialRebuild: false,
+
 		// _relTargetProp: String
 		//		The name of the property that is used by child widgets for relative data binding.
 		_relTargetProp : "children",
@@ -146,12 +149,27 @@ define([
 				unwatchElements(this);
 				this._builtOnce = true;
 				this._buildChildren(value);
+				if(value){
+					var _self = this;
+					!this.partialRebuild && lang.isFunction(value.watchElements) && (this._handles = this._handles || []).push(value.watchElements(function(idx, removals, adds){
+						_self._buildChildren(value);
+					}));
+					value.watch !== {}.watch && (this._handles = this._handles || []).push(value.watch(function(name, old, current){
+						if(!isNaN(name)){
+							var w = _self.getChildren()[name - 0];
+							w && w.set("target", current);
+						}
+					}));
+				}
 			}
 		},
 
 		_buildChildren: function(/*dojox.mvc.StatefulArray*/ children){
 			// summary:
 			//		Create child widgets upon children and inserts them into the container node.
+
+			for(var cw = this.getChildren(), w = null; w = cw.pop();){ this.removeChild(w); w.destroy(); }
+			if(!children){ return; }
 
 			var createAndWatch = lang.hitch(this, function(seq){
 				if(this._buildChildrenSeq > seq){ return; } // If newer _buildChildren call comes during lazy loading, bail
@@ -169,18 +187,20 @@ define([
 						 childBindings = _self.childBindings || _self[childBindingsAttr] && evalParams.call(params, _self[childBindingsAttr]);
 						if(_self.templateString && !params.templateString && !clz.prototype.templateString){ params.templateString = _self.templateString; }
 						if(childBindings && !params.bindings && !clz.prototype.bindings){ params.bindings = childBindings; }
-						return new clz(lang.mixin(params, childParams), _self.ownerDocument.createElement(_self.domNode.tagName));
+						return new clz(lang.mixin(params, childParams));
 					}), function(child, idx){
 						_self.addChild(child, startIndex + idx);
 					});
 				}
 				create(children, 0);
-				this._elementWatchHandle = lang.isFunction(children.watchElements) && children.watchElements(function(idx, removals, adds){
-					for(var i = 0, l = (removals || []).length; i < l; ++i){
-						_self.removeChild(idx);
-					}
-					create(adds, idx);
-				});
+				if(this.partialRebuild){
+					lang.isFunction(children.watchElements) && (this._handles = this._handles || []).push(children.watchElements(function(idx, removals, adds){
+						for(var i = 0, l = (removals || []).length; i < l; ++i){
+							_self.removeChild(idx);
+						}
+						create(adds, idx);
+					}));
+				}
 			}, this._buildChildrenSeq = (this._buildChildrenSeq || 0) + 1);
 
 			if(this.childClz){

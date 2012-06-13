@@ -75,7 +75,7 @@ define([
 			}
 
 			if(sourceProp == null){
-				// If target property is not specified, it means this handle is just for resolving data binding target.
+				// If source property is not specified, it means this handle is just for resolving data binding target.
 				// (For dojox.mvc.Group and dojox.mvc.Repeat)
 				// Do not perform data binding synchronization in such case.
 				lang.isFunction(resolvedTarget.set) ? resolvedTarget.set(targetProp, resolvedSource) : (resolvedTarget[targetProp] = resolvedSource);

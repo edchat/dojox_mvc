@@ -1,16 +1,16 @@
 define([
 	"dojo/_base/declare",
-	"dijit/_WidgetBase",
-	"dijit/_TemplatedMixin",
-	"dijit/_WidgetsInTemplateMixin",
+	"dojox/mvc/Templated",
 	"dijit/registry",
-	"dojo/text!./test_mvc_widget_template.html",
+	"dojo/text!./test_mvc_widget_template3bDetails.html",
 	"dojox/mvc/at",
 	"dijit/form/TextBox",
+	"dijit/form/Button",
 	"dojox/mvc/Group",
+	"dojox/mvc/Output",
 	"dojox/mvc/Repeat"
-], function(declare, _WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, registry, template, at){
-	return declare("dojox.mvc.tests.test_templatedWidget.myMvcTemplated", [_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
+], function(declare, Templated, registry, template, at){
+	return dojo.declare("dojox.mvc.tests.test_templatedWidgetList.myMvcTemplated3bDetails", [Templated], {
 		// summary:
 		//		A sample templated widget for dojox.mvc
 		// description:
@@ -24,14 +24,25 @@ define([
 
 		templateString: template,
 
+		startup: function(){
+			console.log("startup called  in myMvcTemplated3bDetails!!! ");
+			this.groupNode.set("target", at(ctrl, 'cursor'));
+			
+			this.serialNode.set("value", at("rel:", "Serial"));
+			this.firstNode.set("value", at("rel:", "First"));
+			this.lastNode.set("value", at("rel:", "Last"));
+//			this.nameInputNode.set("value", at("rel:", "First"));
+			this.inherited("startup", arguments);
+		},
+
 		buildRendering: function(){
-			console.log("call myMvcTemplated buildRendering");
+			console.log("call myMvcTemplated3bDetails buildRendering");
 			window.at = at;			
 			this.inherited(arguments);
 		},
 
 		getParent: function(){
-			console.log("Call myMvcTemplated getParent");
+			console.log("Call myMvcTemplated3bDetails getParent");
 			return null;
 		}
 	});

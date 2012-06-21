@@ -136,6 +136,7 @@ define([
 			//		Clean up model watch handle as this object is destroyed.
 
 			if(this._resultsWatchHandle){ this._resultsWatchHandle.unwatch(); }
+			this.inherited(arguments);
 		}
 	});
 });

@@ -19,11 +19,11 @@ define([
 		//		|  </span>
 		//
 		//		The output widget being data-bound, if the balance changes in the
-		//		dojox/mvc/StatefulModel, the content within the <span> will be
+		//		dojox/mvc/StatefulModel, the content within the `<span>` will be
 		//		updated accordingly.
 
 		// exprchar:  Character
-		//		Character to use for a substitution expression, for a substitution string like ${this.index}
+		//		Character to use for a substitution expression, for a substitution string like ${this.value}
 		exprchar: '$',
 	
 		// templateString: [private] String

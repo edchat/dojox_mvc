@@ -1,6 +1,6 @@
 define([
 	"dojo/_base/lang",
-	"dojo/Stateful"
+	"./StatefulObject"
 ], function(lang, Stateful){
 	function update(/*dojox/mvc/StatefulArray*/ a){
 		// summary:

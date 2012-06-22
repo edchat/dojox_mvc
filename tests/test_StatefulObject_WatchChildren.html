@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html style="width:100%;height:100%;overflow:hidden;">
+    <head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<title>MVC watch children in model Test</title>
+
+		<style type="text/css">
+			@import "../../../dijit/themes/dijit.css";
+			@import "../../../dijit/themes/claro/document.css";
+			@import "../../../dijit/tests/css/dijitTests.css";
+		</style>
+
+		<!-- required: a default dijit theme: -->
+		<link id="themeStyles" rel="stylesheet" href="../../../dijit/themes/claro/claro.css"/>
+
+		<!-- required: dojo.js -->
+		<script type="text/javascript">
+			dojoConfig = {
+				isDebug: 1,
+				parseOnLoad: 0,
+				async: 1,
+				mvc: {debugBindings: 1},
+                packages: [
+                    { name: 'dojox/mvc', location: '../repos/dojox_mvc' }
+                ]
+			};
+		</script>
+		<script type="text/javascript" src="../../../dojo/dojo.js"></script>
+
+		<script type="text/javascript">
+		require([
+		    "dojo/parser",
+		    "dojo/_base/lang",
+            "dojox/mvc/getStateful",
+            "dojox/mvc/getStatefulOptionsTree",
+            "dojox/mvc/at",
+        	"dojox/mvc/Output",
+        	"dojox/mvc/Generate",
+        	"dijit/form/Button",
+        	"dojo/domReady!"
+		], function(parser, lang, getStateful, getStatefulOptions, at){
+		    
+            var data = {
+                id: 1,
+                reference: "Kitchen",
+                lines:[
+                    {
+                        id: 12,
+                        description: "this is line 1 description",
+                        quantity: 10,
+                        rate: 25
+                    },
+                    {
+                        id: 13,
+                        description: "this is line 2 description",
+                        quantity: 1,
+                        rate: 134
+                    }
+                ],
+                total: 10*25+1*134
+            };
+            
+            model = new getStateful(data, getStatefulOptions);
+
+    		model.watchChildren(function(params){ console.log("Params coming to model : ", params); });
+    		model.get("lines").watchChildren(function(params){
+                var total = 0;
+                var line, i;
+                for(i=0; i<model.lines.length;i++){
+                    line = model.lines[i];
+                    total += parseFloat(line.quantity||0) * parseFloat(line.rate||0);
+                }
+                model.set("total", total);
+    		});
+    		
+    		parser.parse();
+    		
+    		// Useful for making tests in console
+    		myGetStateful = lang.mixin(getStateful, getStatefulOptions);
+        });
+        </script>
+	</head>
+	<body class="claro" style="width:100%;height:100%;margin:0;padding:8px;overflow:hidden;">
+	    <script type="dojo/require">at: "dojox/mvc/at"</script>
+	    <div data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at(model)">
+	        <p>Reference : <input type="text" name="jean_transactiondocumenttype[reference]" data-dojo-type="dijit/form/TextBox" data-dojo-props="value: at('rel:', 'reference')"></p>
+	        <fieldset>
+		        <legend>Lines</legend>
+		        <table>
+			        <thead>
+				        <tr>
+					        <th>Description</th>
+					        <th>Quantity</th>
+					        <th>Rate</th>
+				        </tr>
+			        </thead>
+			        <tbody data-dojo-type="dojox/mvc/Repeat" data-dojo-props="children: at('rel:', 'lines'), exprchar: '#'">
+				        <tr data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at('rel:', '#{this.index}')">
+					        <td><input name="[#{this.index}][description]" data-dojo-type="dijit/form/TextBox" data-dojo-props="value: at('rel:', 'description')"></td>
+					        <td><input name="[#{this.index}][quantity]" data-dojo-type="dijit/form/TextBox" data-dojo-props="value: at('rel:', 'quantity')"></td>
+					        <td><input name="[#{this.index}][rate]" data-dojo-type="dijit/form/TextBox" data-dojo-props="value: at('rel:', 'rate')"></td>
+				        </tr>
+			        </tbody>
+			        <tfoot>
+				        <tr>
+					        <td>Total:<span data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at('rel:', 'total')"></span></td>
+				        </tr>
+			        </tfoot>
+		        </table>
+	        </fieldset>
+        </div>
+        <button data-dojo-type="dijit/form/Button" data-dojo-props="onClick: function(){model.lines.push(myGetStateful({}));}">Add Line</button>
+	</body>
+</html>

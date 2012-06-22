@@ -46,7 +46,7 @@ define([
 		// summary:
 		//		Returns a handle of data binding target (a dojo/Stateful property), which is used for start synchronization with data binding source (another dojo/Stateful property).
 		// description:
-		//		Typically used in ref property in data-dojo-props so that a widget can synchronize its attribute with another dojo/Stateful, like shown in the example.
+		//		Typically used in data-dojo-props so that a widget can synchronize its attribute with another dojo/Stateful, like shown in the example.
 		// target: dojo/Stateful|String
 		//		dojo/Stateful to be synchronized.
 		// targetProp: String

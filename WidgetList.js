@@ -158,7 +158,7 @@ define([
 					value.watch !== {}.watch && (this._handles = this._handles || []).push(value.watch(function(name, old, current){
 						if(!isNaN(name)){
 							var w = _self.getChildren()[name - 0];
-							w && w.set("target", current);
+							w && w.set(w._relTargetProp || "target", current);
 						}
 					}));
 				}
@@ -180,10 +180,11 @@ define([
 					array.forEach(array.map(children, function(child, idx){
 						var params = {
 							ownerDocument: _self.ownerDocument,
-							target: child,
 							parent: _self,
 							indexAtStartup: startIndex + idx // Won't be updated even if there are removals/adds of repeat items after startup
 						};
+						params[(_self.childParams || _self[childParamsAttr] || {})._relTargetProp || clz.prototype._relTargetProp || "target"] = child;
+
 						var childParams = _self.childParams || _self[childParamsAttr] && evalParams.call(params, _self[childParamsAttr]),
 						 childBindings = _self.childBindings || _self[childBindingsAttr] && evalParams.call(params, _self[childBindingsAttr]);
 						if(_self.templateString && !params.templateString && !clz.prototype.templateString){ params.templateString = _self.templateString; }

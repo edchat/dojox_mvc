@@ -183,7 +183,7 @@ define([
 							parent: _self,
 							indexAtStartup: startIndex + idx // Won't be updated even if there are removals/adds of repeat items after startup
 						};
-						params[(_self.childParams || _self[childParamsAttr] || {})._relTargetProp || clz.prototype._relTargetProp || "target"] = child;
+						params[(_self.childParams || _self[childParamsAttr] && evalParams.call(params, _self[childParamsAttr]) || {})._relTargetProp || clz.prototype._relTargetProp || "target"] = child;
 
 						var childParams = _self.childParams || _self[childParamsAttr] && evalParams.call(params, _self[childParamsAttr]),
 						 childBindings = _self.childBindings || _self[childBindingsAttr] && evalParams.call(params, _self[childBindingsAttr]);

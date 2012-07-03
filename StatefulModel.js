@@ -140,7 +140,10 @@ define([
 		//		outlined above support the flexible development of a number of MVC
 		//		patterns on the client. As an example, CRUD operations can be
 		//		supported with minimal application code.
-	
+		//
+		// tags:
+		//		deprecated
+
 		// data: Object
 		//		The plain JavaScript object / data structure used to initialize
 		//		this model. At any point in time, it holds the lasted saved model
@@ -320,7 +323,7 @@ define([
 			var data = (args && "data" in args) ? args.data : this.data; 
 
 			if(data != null){
-				kernel.deprecated("To create dojox/mvc/StatefulModel from data, dojox/mvc/getStateful() should be used.");
+				kernel.deprecated("Use dojox/mvc/getStateful, dojox/mvc/getPlainValue, dojox/mvc/StatefulArray or one of the dojox/mvc/*RefControllers instead");
 				data = getStateful(data, StatefulModel.getStatefulOptions);
 				if(lang.isArray(data)){
 					// Some consumers of dojox/mvc/StatefulModel inherits it via dojo/declare(), where we cannot use array inheritance technique

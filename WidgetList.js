@@ -24,7 +24,7 @@ define([
 
 	var WidgetList = declare("dojox.mvc.WidgetList", [_WidgetBase, _Container], {
 		// summary:
-		//		A widget that creates child widgets repeatedly based on children attribute (the repeated data) and childType/childMixins/childParams attributes (determines how to create each child widget).
+		//		A widget that creates child widgets repeatedly based on the children attribute (the repeated data) and childType/childMixins/childParams attributes (determines how to create each child widget).
 		// example:
 		//		Create multiple instances of dijit/TextBox based on the data in array.
 		//		The text box refers to First property in the array item.
@@ -84,7 +84,7 @@ define([
 		// |		}, dom.byId("programmaticRepeatWithSeparateBindingDeclaration"))).startup();
 
 		// childClz: Function
-		//		The class of child widget. Takes precedence over childType/childMixins.
+		//		The class of the child widget. Takes precedence over childType/childMixins.
 		childClz: null,
 
 		// childType: String
@@ -184,6 +184,7 @@ define([
 							indexAtStartup: startIndex + idx // Won't be updated even if there are removals/adds of repeat items after startup
 						};
 						params[(_self.childParams || _self[childParamsAttr] && evalParams.call(params, _self[childParamsAttr]) || {})._relTargetProp || clz.prototype._relTargetProp || "target"] = child;
+
 						var childParams = _self.childParams || _self[childParamsAttr] && evalParams.call(params, _self[childParamsAttr]),
 						 childBindings = _self.childBindings || _self[childBindingsAttr] && evalParams.call(params, _self[childBindingsAttr]);
 						if(_self.templateString && !params.templateString && !clz.prototype.templateString){ params.templateString = _self.templateString; }

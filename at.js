@@ -60,7 +60,7 @@ define([
 		// |				<script src="/path/to/dojo-toolkit/dojo/dojo.js" type="text/javascript" data-dojo-config="parseOnLoad: 0"></script>
 		// |				<script type="text/javascript">
 		// |					require([
-		// |						"dojo/parser", "dojo/Stateful", "dijit/form/TextBox", "dojo/domReady!"
+		// |						"dojo/parser", "dojo/Stateful", "dojo/domReady!"
 		// |					], function(parser, Stateful){
 		// |						model = new Stateful({value: "Foo"});
 		// |						setTimeout(function(){ model.set("value", "Bar"); }, 2000);
@@ -71,6 +71,26 @@ define([
 		// |			<body>
 		// |				<script type="dojo/require">at: "dojox/mvc/at"</script>
 		// |				<input type="text" data-dojo-type="dijit/form/TextBox" data-dojo-props="value: at(model, 'value')">
+		// |			</body>
+		// |		</html>
+		// example:
+		//		Edit in text box is reflected to the text next to it.
+		// |		<html>
+		// |			<head>
+		// |				<script src="/path/to/dojo-toolkit/dojo/dojo.js" type="text/javascript" data-dojo-config="parseOnLoad: 0"></script>
+		// |				<script type="text/javascript">
+		// |					require([
+		// |						"dojo/parser", "dojo/Stateful", "dojo/domReady!"
+		// |					], function(parser, Stateful){
+		// |						model = new Stateful({value: "Foo"});
+		// |						parser.parse();
+		// |					});
+		// |				</script>
+		// |			</head>
+		// |			<body>
+		// |				<script type="dojo/require">at: "dojox/mvc/at"</script>
+		// |				<input type="text" data-dojo-type="dijit/form/TextBox" data-dojo-props="value: at(model, 'value')">
+		// |				<span data-dojo-type="dijit/_WidgetBase" data-dojo-props="_setValueAttr: {node: 'domNode', type: 'innerText'}, value: at(model, 'value')"></span>
 		// |			</body>
 		// |		</html>
 

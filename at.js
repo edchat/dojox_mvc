@@ -60,7 +60,7 @@ define([
 		// |				<script src="/path/to/dojo-toolkit/dojo/dojo.js" type="text/javascript" data-dojo-config="parseOnLoad: 0"></script>
 		// |				<script type="text/javascript">
 		// |					require([
-		// |						"dojo/parser", "dojo/Stateful", "dojo/domReady!"
+		// |						"dojo/parser", "dojo/Stateful", "dijit/form/TextBox", "dojo/domReady!"
 		// |					], function(parser, Stateful){
 		// |						model = new Stateful({value: "Foo"});
 		// |						setTimeout(function(){ model.set("value", "Bar"); }, 2000);

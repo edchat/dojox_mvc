@@ -18,6 +18,9 @@ require(['dojo/has',
 	'dojox/mvc/Group',
 	'dojox/mvc/Output',
 	'dojox/mvc/Generate',
+	'dojox/mvc/WidgetList',
+	'dojox/mvc/Templated',
+	'dojox/mvc/_InlineTemplateMixin',
 	'dojox/mvc/Repeat',
 	'dojox/mobile/TextBox',
 	'dojox/mobile/deviceTheme',
@@ -26,7 +29,7 @@ require(['dojo/has',
 	'dojo/dom'
 ], function(has, parser, ready, registry, at, getStateful, EditStoreRefListController, 
 		Memory, when, mobile, ScrollableView, Button, TextArea, Group, Output, Generate, 
-		Repeat, TextBox, deviceTheme, Heading, json, dom){
+		WidgetList, Templated, _InlineTemplateMixin, Repeat, TextBox, deviceTheme, Heading, json, dom){
 
 	if(!has("webkit")){
 		require(["dojox/mobile/compat"]);

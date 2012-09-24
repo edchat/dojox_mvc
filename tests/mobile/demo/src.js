@@ -13,11 +13,11 @@ require([
 	"dojox/mvc/Templated",
 	"dojox/mvc/WidgetList",
 	"dojox/mvc/_InlineTemplateMixin",
-	"dojox/mvc/tests/mobile/demo/ContactModel",
-	"dojox/mvc/tests/mobile/demo/ContactListModel",
-	"dojox/mvc/tests/mobile/demo/ContactController",
-	"dojox/mvc/tests/mobile/demo/ContactListController",
-	"dojox/mvc/tests/mobile/demo/GenerateActions",
+	"dojox/mvc/tests/mobile/demo/MobileDemoContactModel",
+	"dojox/mvc/tests/mobile/demo/MobileDemoContactListModel",
+	"dojox/mvc/tests/mobile/demo/MobileDemoContactController",
+	"dojox/mvc/tests/mobile/demo/MobileDemoContactListController",
+	"dojox/mvc/tests/mobile/demo/MobileDemoGenerateActions",
 	"dojox/mobile",
 	"dojox/mobile/deviceTheme",
 	"dojox/mobile/Button",
@@ -30,7 +30,8 @@ require([
 	if(!has("webkit")){
 		require(["dojox/mobile/compat"]);
 	}
-	// A workaround for dojox/mobile/_ItemBase.onTouchStart() running setTimeout() callback even if the widget has been destroyed. It causes JavaScript error in our "delete" feature.
+ 	// A workaround for dojox/mobile/_ItemBase.onTouchStart() running setTimeout() callback even if the 
+ 	// widget has been destroyed. It causes JavaScript error in our "delete" feature.
 	aspect.around(ListItem.prototype, "_setSelectedAttr", function(oldSetSelectedAttr){
 		return function(){
 			if(!this._beingDestroyed){

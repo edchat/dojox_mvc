@@ -34,8 +34,8 @@
 				</ul>
 			</div>
 			<span data-dojo-id="nameCtl"
-				data-dojo-type="dojox/mvc/tests/mobile/demo/ContactController"
-				data-dojo-props="sourceModel: require('dojox/mvc/tests/mobile/demo/ContactModel'),
+				data-dojo-type="dojox/mvc/tests/mobile/demo/MobileDemoContactController"
+				data-dojo-props="sourceModel: require('dojox/mvc/tests/mobile/demo/MobileDemoContactModel'),
 				                 cursorIndex: 'ShipTo'"></span>
 			<div id="settings" data-dojo-type="dojox/mobile/ScrollableView">
 				<h1 id="home" data-dojo-type="dojox/mobile/Heading" data-dojo-props="back: 'Back', moveTo: 'foo'">Data Binding Example</h1>
@@ -117,8 +117,8 @@
 				</form>
 			</div>
 			<span data-dojo-id="listCtl"
-				data-dojo-type="dojox/mvc/tests/mobile/demo/ContactListController"
-				data-dojo-props="model: require('dojox/mvc/tests/mobile/demo/ContactListModel'),
+				data-dojo-type="dojox/mvc/tests/mobile/demo/MobileDemoContactListController"
+				data-dojo-props="model: require('dojox/mvc/tests/mobile/demo/MobileDemoContactListModel'),
 				                 summaryScrollableViewId: 'repeat',
 				                 detailScrollableViewId: 'repeatdetails',
 				                 initialFocusElementId: 'firstInput'"></span>
@@ -237,7 +237,7 @@
 								<div class="spacer"></div>
 								<button id="generate1" type="button" class="mblBlueButton"
 									data-dojo-type="dojox/mobile/Button"
-									onclick="require('dojox/mvc/tests/mobile/demo/GenerateActions').switchToGenerated()">Generate Form</button>
+									onclick="require('dojox/mvc/tests/mobile/demo/MobileDemoGenerateActions').switchToGenerated()">Generate Form</button>
 							</div>
 						</div>
 						<div id="viewArea" style="display:none">
@@ -253,7 +253,7 @@
 								<div class="spacer"></div>
 								<button id="updateModel" type="button" class="mblBlueButton"
 									data-dojo-type="dojox/mobile/Button"
-									onclick="require('dojox/mvc/tests/mobile/demo/GenerateActions').switchToData();">Update Model</button>
+									onclick="require('dojox/mvc/tests/mobile/demo/MobileDemoGenerateActions').switchToData();">Update Model</button>
 							</div>
 						</div>
 					</div>

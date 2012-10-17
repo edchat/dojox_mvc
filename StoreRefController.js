@@ -103,7 +103,7 @@ define([
 			var _self = this;
 			return when(this.store.get(id, options), function(result){
 				if(_self._beingDestroyed){ return; }
-				_self.set(_self._refSourceModelProp, getStateful(result, _self.getStatefulOptions));
+				return _self.set(_self._refSourceModelProp, getStateful(result, _self.getStatefulOptions));
 			});
 		},
 

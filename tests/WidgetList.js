@@ -184,7 +184,7 @@ define([
 				isMyMixin: true
 			});
 
-			var w = new (declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {templateString: template}))({children: data});
+			var w = new (declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {templateString: template}))({childData: data});
 			w.startup();
 
 			var simpleChildren = w.simpleWidgetList.getChildren(),

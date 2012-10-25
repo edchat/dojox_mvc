@@ -6,6 +6,7 @@ define([
 	"./_Controller",
 	"./ModelRefController",
 	"./StoreRefControllerTest",
+	"./EditModelRefListControllerMixin",
 	"./WidgetList",
 	"./StatefulArray",
 	"./StatefulModelOptions"

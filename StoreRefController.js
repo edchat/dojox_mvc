@@ -1,11 +1,9 @@
 define([
 	"dojo/_base/declare",
-	"dojo/_base/lang",
-	"dojo/when",
-	"./getStateful",
-	"./ModelRefController"
-], function(declare, lang, when, getStateful, ModelRefController){
-	return declare("dojox.mvc.StoreRefController", ModelRefController, {
+	"./ModelRefController",
+	"./StoreRefControllerMixin"
+], function(declare, ModelRefController, StoreRefControllerMixin){
+	return declare("dojox.mvc.StoreRefController", [ModelRefController, StoreRefControllerMixin], {
 		// summary:
 		//		A child class of dojox.mvc.ModelRefController, which keeps a reference to Dojo Object Store (in store property).
 		// description:
@@ -45,109 +43,5 @@ define([
 		// |				<input type="text" data-dojo-type="dijit/form/TextBox" data-dojo-props="value: at('widget:ctrl', 'value')">
 		// |			</body>
 		// |		</html>
-
-		// store: dojo/store/*
-		//		The Dojo Object Store in use.
-		store: null,
-
-		// getStatefulOptions: dojox.mvc.getStatefulOptions
-		//		The options to get stateful object from plain value.
-		getStatefulOptions: null,
-
-		// _refSourceModelProp: String
-		//		The property name for the data model, that serves as the data source.
-		_refSourceModelProp: "model",
-
-		queryStore: function(/*Object*/ query, /*dojo/store/api/Store.QueryOptions?*/ options){
-			// summary:
-			//		Queries the store for objects.
-			// query: Object
-			//		The query to use for retrieving objects from the store.
-			// options: dojo/store/api/Store.QueryOptions?
-			//		The optional arguments to apply to the resultset.
-			// returns: dojo/store/api/Store.QueryResults
-			//		The results of the query, extended with iterative methods.
-
-			if(!(this.store || {}).query){ return; }
-			if(this._queryObserveHandle){ this._queryObserveHandle.cancel(); }
-
-			var _self = this,
-			 queryResult = this.store.query(query, options),
-			 result = when(queryResult, function(results){
-				if(_self._beingDestroyed){ return; }
-				results = getStateful(results, _self.getStatefulOptions);
-				_self.set(_self._refSourceModelProp, results);
-				return results;
-			});
-			// For dojo/store/Observable, which adds a function to query result
-			for(var s in queryResult){
-				if(isNaN(s) && queryResult.hasOwnProperty(s) && lang.isFunction(queryResult[s])){
-					result[s] = queryResult[s];
-				}
-			}
-			return result;
-		},
-
-		getStore: function(/*Number*/ id, /*Object*/ options){
-			// summary:
-			//		Retrieves an object by its identity.
-			// id: Number
-			//		The identity to use to lookup the object.
-			// options: Object
-			//		The options for dojo/store.*.get().
-			// returns: Object
-			//		The object in the store that matches the given id.
-
-			if(!(this.store || {}).get){ return; }
-			if(this._queryObserveHandle){ this._queryObserveHandle.cancel(); }
-			var _self = this;
-			result = when(this.store.get(id, options), function(result){
-				if(_self._beingDestroyed){ return; }
-				result = getStateful(result, _self.getStatefulOptions);
-				_self.set(_self._refSourceModelProp, result);
-				return result;
-			});
-			return result;
-		},
-
-		putStore: function(/*Object*/ object, /*dojo/store/api/Store.PutDirectives?*/ options){
-			// summary:
-			//		Stores an object.
-			// object: Object
-			//		The object to store.
-			// options: dojo/store/api/Store.PutDirectives?
-			//		Additional metadata for storing the data.  Includes an "id" property if a specific id is to be used.
-			// returns: Number
-
-			if(!(this.store || {}).put){ return; }
-			return this.store.put(object, options);
-		},
-
-		addStore: function(object, options){
-			// summary:
-			//		Creates an object, throws an error if the object already exists.
-			// object: Object
-			//		The object to store.
-			// options: dojo/store/api/Store.PutDirectives?
-			//		Additional metadata for storing the data.  Includes an "id" property if a specific id is to be used.
-			// returns: Number
-
-			if(!(this.store || {}).add){ return; }
-			return this.store.add(object, options);
-		},
-
-		removeStore: function(/*Number*/ id, /*Object*/ options){
-			// summary:
-			//		Deletes an object by its identity
-			// id: Number
-			//		The identity to use to delete the object
-			// options: Object
-			//		The options for dojo/store/*.remove().
-			// returns: Boolean
-			//		Returns true if an object was removed, falsy (undefined) if no object matched the id.
-
-			if(!(this.store || {}).remove){ return; }
-			return this.store.remove(id, options);
-		}
 	});
 });

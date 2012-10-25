@@ -1,11 +1,14 @@
 define([
 	"dojo/_base/declare",
-	"dojo/_base/lang",
-	"./getPlainValue",
-	"./EditStoreRefController",
-	"./ListController"
-], function(declare, lang, getPlainValue, EditStoreRefController, ListController){
-	return declare("dojox.mvc.EditStoreRefListController", [EditStoreRefController, ListController], {
+	"./ModelRefController",
+	"./EditModelRefControllerMixin",
+	"./StoreRefControllerMixin",
+	"./EditStoreRefControllerMixin",
+	"./ListControllerMixin",
+	"./EditModelRefListControllerMixin",
+	"./EditStoreRefListControllerMixin"
+], function(declare, ModelRefController, EditModelRefControllerMixin, StoreRefControllerMixin, EditStoreRefControllerMixin, ListControllerMixin, EditModelRefListControllerMixin, EditStoreRefListControllerMixin){
+	return declare("dojox.mvc.EditStoreRefListController", [ModelRefController, EditModelRefControllerMixin, StoreRefControllerMixin, EditStoreRefControllerMixin, ListControllerMixin, EditModelRefListControllerMixin, EditStoreRefListControllerMixin], {
 		// summary:
 		//		A child class of dojox/mvc/EditStoreRefController, mixed with ListController.
 		// description:
@@ -45,20 +48,5 @@ define([
 		// |				<input id="check" type="checkbox" data-dojo-type="dijit/form/CheckBox" data-dojo-props="checked: at('widget:ctrl', 'value')">
 		// |			</body>
 		// |		</html>
-
-		commitCurrent: function(){
-		// summary:
-		//		Send the change back to the data source for the current index.
-
-			var id = this.cursor[this.idProperty];
-			for(var i = 0; i < this.originalModel.length; i++){
-				if(this.originalModel[i][this.idProperty] == id){
-					this.originalModel.set(i, this.cloneModel(this.cursor));
-					break;
-				}
-			}
-			this.store.put(this.cursor);
-		}
-
 	});
 });

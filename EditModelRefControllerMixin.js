@@ -179,6 +179,7 @@ define([
 			//		Send the change back to the data source.
 
 			this.set(this.holdModelUntilCommit ? this._refSourceModelProp : this._refOriginalModelProp, this.cloneModel(this.get(this._refEditModelProp)));
+			this.inherited(arguments);
 		},
 
 		reset: function(){
@@ -186,6 +187,7 @@ define([
 			//		Change the model back to its original state.
 
 			this.set(this.holdModelUntilCommit ? this._refEditModelProp : this._refSourceModelProp, this.cloneModel(this.get(this._refOriginalModelProp)));
+			this.inherited(arguments);
 		},
 
 		hasControllerProperty: function(/*String*/ name){

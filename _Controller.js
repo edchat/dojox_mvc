@@ -2,9 +2,10 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/Stateful",
+	"dijit/Destroyable",
 	"./_atBindingMixin"
-], function(declare, lang, Stateful, _atBindingMixin){
-	return declare("dojox.mvc._Controller", [Stateful, _atBindingMixin], {
+], function(declare, lang, Stateful, Destroyable, _atBindingMixin){
+	return declare("dojox.mvc._Controller", [Stateful, Destroyable, _atBindingMixin], {
 		postscript: function(/*Object?*/ params, /*DomNode|String?*/ srcNodeRef){
 			// summary:
 			//		If this object is not called from Dojo parser, starts this up right away.

@@ -3,12 +3,9 @@ define([
 	"./ModelRefController",
 	"./EditModelRefControllerMixin",
 	"./StoreRefControllerMixin",
-	"./EditStoreRefControllerMixin",
-	"./ListControllerMixin",
-	"./EditModelRefListControllerMixin",
-	"./EditStoreRefListControllerMixin"
-], function(declare, ModelRefController, EditModelRefControllerMixin, StoreRefControllerMixin, EditStoreRefControllerMixin, ListControllerMixin, EditModelRefListControllerMixin, EditStoreRefListControllerMixin){
-	return declare("dojox.mvc.EditStoreRefListController", [ModelRefController, EditModelRefControllerMixin, StoreRefControllerMixin, EditStoreRefControllerMixin, ListControllerMixin, EditModelRefListControllerMixin, EditStoreRefListControllerMixin], {
+	"./ListControllerMixin"
+], function(declare, ModelRefController, EditModelRefControllerMixin, StoreRefControllerMixin, ListControllerMixin){
+	return declare("dojox.mvc.EditStoreRefListController", [ModelRefController, EditModelRefControllerMixin, StoreRefControllerMixin, ListControllerMixin], {
 		// summary:
 		//		A child class of dojox/mvc/EditStoreRefController, mixed with ListController.
 		// description:
@@ -18,7 +15,7 @@ define([
 		//		The check box refers to "value" property in the controller (with "ctrl" ID).
 		//		The controller provides the "value" property, from the data coming from data store ("store" property in the controller), using the first one in array.
 		//		Two seconds later, the check box changes from unchecked to checked.
-		//		The change is committed to the data store, which is reflected to dojo/store/Observable callback. 
+		//		The change is committed to the data store, which is reflected to dojo/store/Observable callback.
 		// |		<html>
 		// |			<head>
 		// |				<script src="/path/to/dojo-toolkit/dojo/dojo.js" type="text/javascript" data-dojo-config="parseOnLoad: 0"></script>
@@ -43,7 +40,7 @@ define([
 		// |			</head>
 		// |			<body>
 		// |				<script type="dojo/require">at: "dojox/mvc/at"</script>
-		// |				<span id="ctrl" data-dojo-type="dojox/mvc/EditStoreRefListController" 
+		// |				<span id="ctrl" data-dojo-type="dojox/mvc/EditStoreRefListController"
 		// |				 data-dojo-props="store: store, cursorIndex: 0"></span>
 		// |				<input id="check" type="checkbox" data-dojo-type="dijit/form/CheckBox" data-dojo-props="checked: at('widget:ctrl', 'value')">
 		// |			</body>

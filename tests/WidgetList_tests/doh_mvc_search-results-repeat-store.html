@@ -41,7 +41,7 @@
 				var ctrlClass = declare([_WidgetBase, EditModelRefController, ListController], {});
 				(ctrl = (new ctrlClass({srcNodeRef: ddom.byId("detailsGroup"), cursorIndex: 0}))).startup();
 
-				when(all([parser.parse(), new JsonRest({target: require.toUrl("dojox/mvc/tests/regression/_data/mvcRepeatData.json")}).query({})]), function(a){
+				when(all([parser.parse(), new JsonRest({target: require.toUrl("dojox/mvc/tests/_data/mvcRepeatData.json")}).query({})]), function(a){
 					ctrl.set("sourceModel", getStateful(a[1].items));
 
 					 // should be able to verify all of the inputs

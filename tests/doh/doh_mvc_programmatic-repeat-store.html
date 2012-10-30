@@ -18,13 +18,6 @@
 		<script type="text/javascript" src="../helpers.js"></script>
 
 		<script type="text/javascript">
-			var templateString = '<div class="row">'
-			 + '<script type="dojo/require">at: "dojox/mvc/at"<\/script>'
-			 + '<label class="cell">Name:</label>'
-			 + '<input id="${parent.id}_textbox${indexAtStartup}" class="cell" data-dojo-type="dijit.form.TextBox" data-dojo-props="value: at(\'rel:\', \'First\')"></input>'
-			 + '<button type="button" data-dojo-type="dijit.form.Button" data-dojo-props="onClick: function(){ ctrl.set(\'cursorIndex\', \'${indexAtStartup}\'); }">Details</button>'
-			 + '</div>';
-
 			require([
 				"doh/runner",
 				"dojo/_base/declare",
@@ -39,17 +32,26 @@
 				"dojox/mvc/getStateful",
 				"dojox/mvc/EditModelRefController",
 				"dojox/mvc/ListController",
-				"dojox/mvc/WidgetList",
+				"dojox/mvc/Repeat",
 				"dijit/form/TextBox",
 				"dijit/form/Button",
 				"dojox/mvc/Group",
 				"dojo/domReady!"
-			], function(doh, declare, when, ddom, parser, all, JsonRest, registry, _WidgetBase, at, getStateful, EditModelRefController, ListController, WidgetList){
+			], function(doh, declare, when, ddom, parser, all, JsonRest, registry, _WidgetBase, at, getStateful, EditModelRefController, ListController, Repeat){
 
 				var ctrlClass = declare([_WidgetBase, EditModelRefController, ListController], {});
 				(ctrl = (new ctrlClass({srcNodeRef: ddom.byId("detailsGroup"), cursorIndex: 0}))).startup();
 
-				(new WidgetList({templateString: templateString, children: at(ctrl, "model")}, ddom.byId("repeat2"))).startup();
+				var repeatClass = declare("my.Repeat", Repeat, {
+					templateString: '<script type="dojo/require">at: "dojox/mvc/at"<\/script>'
+					 + '<div class="row" data-dojo-type="dojox.mvc.Group" data-dojo-props="target: at(\'rel:\', \'${this.index}\')">'
+					 + '<label class="cell">Name:</label>'
+					 + '<input id="${id}_textbox${index}" class="cell" data-dojo-type="dijit.form.TextBox" data-dojo-props="value: at(\'rel:\', \'First\')"></input>'
+					 + '<button type="button" data-dojo-type="dijit.form.Button" data-dojo-props="onClick: function(){ ctrl.set(\'cursorIndex\', \'${this.index}\'); }">Details</button>'
+					 + '</div>'
+				});
+
+				(new repeatClass({children: at(ctrl, "model")}).placeAt('repeat2')).startup();
 
 				when(all([parser.parse(), new JsonRest({target: require.toUrl("dojox/mvc/tests/_data/mvcRepeatData.json")}).query({})]), function(a){
 	//				ctrl.set("sourceModel", getStateful(a[1].items));
@@ -64,21 +66,21 @@
 						}, {
 							name: "Initial",
 							runTest: function(){
-								doh.is("Anne", registry.byId("repeat2_textbox0").value, "textbox0 should be Anne");
+								doh.is("Anne", registry.byId("my_Repeat_0_textbox0").value, "textbox0 should be Anne");
 								doh.is("Anne", registry.byId("firstInput").value, "firstInput should be Anne");
 							}
 						}, {
 							name: "TestBen",
 							runTest: function(){
 								ctrl.set("cursorIndex", 1);
-								doh.is("Ben", registry.byId("repeat2_textbox1").value, "textbox1 should be Ben");
+								doh.is("Ben", registry.byId("my_Repeat_0_textbox1").value, "textbox1 should be Ben");
 								doh.is("Ben", registry.byId("firstInput").value, "firstInput should be Ben");
 							}
 						}, {
 							name: "TestJohn",
 							runTest: function(){
 								ctrl.set("cursorIndex", 9);
-								doh.is("John", registry.byId("repeat2_textbox9").value, "textbox9 should be John");
+								doh.is("John", registry.byId("my_Repeat_0_textbox9").value, "textbox9 should be John");
 								doh.is("John", registry.byId("firstInput").value, "firstInput should be John");
 
 								registry.byId("firstInput").set("value", "Johnny");
@@ -90,7 +92,7 @@
 							runTest: function(){
 								ctrl.set("cursorIndex", 8);
 
-								doh.is("Irene", registry.byId("repeat2_textbox8").value, "textbox8 should be Irene");
+								doh.is("Irene", registry.byId("my_Repeat_0_textbox8").value, "textbox8 should be Irene");
 								doh.is("Irene", registry.byId("firstInput").value, "firstInput should be Irene");
 
 								registry.byId("firstInput").set("value", "IreneThisUpdateShouldBeSaved");
@@ -101,7 +103,7 @@
 
 								ctrl.reset();
 
-								doh.is("IreneThisUpdateShouldBeSaved", registry.byId("repeat2_textbox8").value, "textbox8 should be IreneThisUpdateShouldBeSaved");
+								doh.is("IreneThisUpdateShouldBeSaved", registry.byId("my_Repeat_0_textbox8").value, "textbox8 should be IreneThisUpdateShouldBeSaved");
 								doh.is("IreneThisUpdateShouldBeSaved", registry.byId("firstInput").value, "firstInput should be IreneThisUpdateShouldBeSaved");
 								doh.is("Ira", registry.byId("lastInput").value, "lastInput should be Ira");
 							}
@@ -139,9 +141,7 @@
 								<td>
 									<div>
 										<div>Declarative Repeat using my.Repeat does not pass templateString: </div>
-										<div id="repeatId2"
-											data-dojo-type="dojox/mvc/WidgetList"
-											data-dojo-props="templateString: templateString, children: at(ctrl, 'model')"></div>
+										<div id="repeatId2" data-dojo-type="my.Repeat" data-dojo-props="children: at(ctrl, 'model')"></div>
 									</div>
 								</td>
 							</tr>

@@ -50,8 +50,7 @@
 				"dojox/mobile/Heading",
 				"dojox/mvc/Group",
 				"dojox/mvc/Generate",
-				"dojox/mvc/WidgetList",
-				"dojox/mvc/_InlineTemplateMixin",
+				"dojox/mvc/Repeat",
 				"dojo/domReady!"
 			], function(doh, declare, djson, when, ddom, JsonRest, Memory, registry, parser, getPlainValue, getStateful, EditModelRefController, ListController, StoreRefController, at){
 				window.at = at;
@@ -261,16 +260,13 @@
 				<h1 data-dojo-type="dojox.mobile.Heading" back="Home" moveTo="foo">Repeat Data Binding Example</h1>
 				<form name="repeatTestForm" id="repeatTestForm">
 					<div class="field-title">Search Results</div>
-					<div class="fieldset" class="row"
-						data-dojo-type="dojox/mvc/WidgetList"
-						data-dojo-mixins="dojox/mvc/_InlineTemplateMixin"
-						data-dojo-props="children: at(listCtrl, 'model')">
-						<script type="dojox/mvc/InlineTemplate">
+					<div class="fieldset" class="row" data-dojo-type="dojox.mvc.Repeat" data-dojo-props="children: at(listCtrl, 'model')">
+						<div data-dojo-type="dojox.mvc.Group" data-dojo-props="target: at('rel:', '${this.index}')">
 							<div class="row">
-								<input id="nameInput${indexAtStartup}" placeHolder="First Name" data-dojo-type="dojox.mobile.TextBox" data-dojo-props="value: at('rel:', 'First')" />
-								<button id="details${indexAtStartup}" type="button" data-dojo-type="dojox.mobile.Button" class="mblBlueButton" onclick="listCtrl.set('cursorIndex', '${indexAtStartup}')">Details</button>
+								<input id="nameInput${this.index}" placeHolder="First Name" data-dojo-type="dojox.mobile.TextBox" data-dojo-props="value: at('rel:', 'First')" />
+								<button id="details${this.index}" type="button" data-dojo-type="dojox.mobile.Button" class="mblBlueButton" onclick="listCtrl.set('cursorIndex', '${this.index}')">Details</button>
 							</div>
-						</script>
+						</div>
 					</div>
 					<div class="spacer"></div>
 					<div id="detailsBanner">Details for selected index:</div>

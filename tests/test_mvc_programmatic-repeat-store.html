@@ -42,7 +42,7 @@
 
 				var ctrlClass = declare([_WidgetBase, EditStoreRefController, ListController], {
 					idProperty: "Serial",
-					store: new JsonRest({target: require.toUrl("dojox/mvc/tests/regression/_data/mvcRepeatData.json")}),
+					store: new JsonRest({target: require.toUrl("dojox/mvc/tests/_data/mvcRepeatData.json")}),
 					getStatefulOptions: {
 						getType: function(v){
 							return (v || {}).identifier ? "root" : lang.isArray(v) ? "array" : v !== null && v !== void 0 && {}.toString.call(v) == "[object Object]" ? "object" : "value";

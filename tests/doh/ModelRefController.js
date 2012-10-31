@@ -6,10 +6,10 @@ define([
 	"dijit/_WidgetBase",
 	"dijit/_TemplatedMixin",
 	"dijit/_WidgetsInTemplateMixin",
-	"../ModelRefController",
-	"dojo/text!./templates/ModelRefControllerInTemplate.html"
+	"../doh/ModelRefController",
+	"dojo/text!../templates/ModelRefControllerInTemplate.html"
 ], function(doh, declare, lang, Stateful, _WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, ModelRefController, template){
-	doh.register("dojox.mvc.tests.ModelRefController", [
+	doh.register("dojox.mvc.tests.doh.ModelRefController", [
 		{
 			name: "attachPoint",
 			runTest: function(){

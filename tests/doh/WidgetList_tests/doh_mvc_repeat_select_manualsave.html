@@ -5,13 +5,13 @@
 	<title>Dojo Repeat Selection Test</title>
 
 	<style type="text/css">
-		@import "../../../../dijit/themes/dijit.css";
-		@import "../../../../dijit/themes/claro/document.css";
-		@import "../../../../dijit/tests/css/dijitTests.css";
+		@import "../../../../../dijit/themes/dijit.css";
+		@import "../../../../../dijit/themes/claro/document.css";
+		@import "../../../../../dijit/tests/css/dijitTests.css";
 	</style>
 
 	<!-- required: a default dijit theme: -->
-	<link id="themeStyles" rel="stylesheet" href="../../../../dijit/themes/claro/claro.css"/>
+	<link id="themeStyles" rel="stylesheet" href="../../../../../dijit/themes/claro/claro.css"/>
 
 	<style>
 		.bordercontainer-nopadding .dijitContentPane, .bordercontainer-nopadding .dijitSplitContainer-dijitContentPane, .bordercontainer-nopadding .dijitBorderContainer-dijitContentPane {
@@ -80,7 +80,7 @@
 	<script type="text/javascript">
 		dojoConfig = {async: 1, isDebug: 1, mvc: {debugBindings: 1}};
 	</script>
-	<script type="text/javascript" src="../../../../dojo/dojo.js"></script>
+	<script type="text/javascript" src="../../../../../dojo/dojo.js"></script>
 
 	<script type="text/javascript">
 		var ViewMenuBarData, DetailMenuBarData, initialRows;
@@ -332,7 +332,7 @@
 											                  checked: at('widget:listCtl', 'cursor').transform(selectionStatusConverter)">
 										</td>
 										<td class="dijitMenuItemIconCell">
-											<img id="viewiconimg${indexAtStartup}" src="../../../../dojo/resources/blank.gif" data-dojo-type="dijit._WidgetBase"
+											<img id="viewiconimg${indexAtStartup}" src="../../../../../dojo/resources/blank.gif" data-dojo-type="dijit._WidgetBase"
 											 data-dojo-props="_setDomClassAttr: {node: 'domNode', type: 'class'}, domClass: at('rel:', 'Priority').direction(at.from).transform(priorityConverter)">
 										</td>
 										<td id="viewtext${indexAtStartup}" data-dojo-type="dijit._WidgetBase"

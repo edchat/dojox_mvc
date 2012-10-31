@@ -4,7 +4,7 @@ define([
 	"dijit/form/TextBox",
 	"dojox/mvc/at"
 ], function(doh, Stateful, TextBox, at){
-	doh.register("dojox.mvc.tests.wildcard", [
+	doh.register("dojox.mvc.tests.doh.wildcard", [
 		function wildcard(){
 			var m0 = new Stateful({"placeHolder": "placeHolder0", "value": "Value0"}),
 			 m1 = new Stateful({"placeHolder": "placeHolder1", "value": "Value1"}),

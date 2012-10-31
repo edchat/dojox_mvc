@@ -4,10 +4,10 @@
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 		<title>MVC DOH Search Results Repeat Test</title>
 		<style>
-			@import "../../../../dojo/resources/dojo.css";
-			@import "../css/app-format.css";
+			@import "../../../../../dojo/resources/dojo.css";
+			@import "../../css/app-format.css";
 		</style>
-		<script src="../../../../dojo/dojo.js" type="text/javascript" data-dojo-config="isDebug: true, mvc: {debugBindings: true}"></script>
+		<script src="../../../../../dojo/dojo.js" type="text/javascript" data-dojo-config="isDebug: true, mvc: {debugBindings: true}"></script>
 		<script type="text/javascript" src="../helpers.js"></script>
 		<script type="text/javascript">
 
@@ -29,47 +29,6 @@
 			], function(doh, parser, registry, dom, when, getStateful){
 				function runTests(){
 					// should be able to verify all of the inputs 
-					doh.register("Check initial values and bindings", [
-						{
-							name: "initial",
-							runTest: function(){
-								var name1, bind1, firstInput; 
-								name1 = dom.byId("nameInput0");
-								if (name1) {
-										doh.is("Anne",name1.value,"name1.value should be set");
-								}
-
-								firstInput = dom.byId("firstInput");
-								if (firstInput) {
-										doh.is("Anne",firstInput.value,"firstInput.value should be set");
-								}
-							}
-						}
-					]);
-
-					doh.register("select Ben", [
-						{
-							name: "testBen",
-							runTest: function(){
-								setDetailsContext(1);
-								var name1, bind1, firstInput; 
-								name1 = dom.byId("nameInput1");
-								if (name1) {
-										doh.is("Ben",name1.value,"name1.value is wrong");
-								}
-
-								firstInput = registry.byId("firstInput");
-								if (firstInput) {
-										doh.is("Ben",firstInput.value,"firstInput value is wrong");
-										firstInput.set("value","Benjamin");
-										doh.is("Benjamin",firstInput.value,"firstInput value is wrong after update");
-										doh.is("Benjamin",name1.value,"name1.get(value) is wrong after update");
-								}
-							}					
-						}
-					]);
-
-					doh.run();
 				}
 
 				setDetailsContext = function(index){
@@ -176,7 +135,52 @@
 
 				when(parser.parse(), function(){
 					registry.byId("listCtl").set("model", searchRecords.Results);
-					runTests();
+					//runTests();
+					doh.register("Test values and bindings", [
+						{
+							name: "Initial",
+							runTest: function(){
+								var dfd = new doh.Deferred();
+						
+								var name1, bind1, firstInput; 
+								name1 = dom.byId("nameInput0");
+								if (name1) {
+										doh.is("Anne",name1.value,"name1.value should be set");
+								}
+
+								firstInput = dom.byId("firstInput");
+								if (firstInput) {
+										doh.is("Anne",firstInput.value,"firstInput.value should be set");
+								}
+								return dfd.callback(true);
+							}
+						},
+						{
+							name: "testBen",
+							runTest: function(){
+								var dfd = new doh.Deferred();
+								setDetailsContext(1);
+								var name1, bind1, firstInput; 
+								name1 = dom.byId("nameInput1");
+								if (name1) {
+										doh.is("Ben",name1.value,"name1.value is wrong");
+								}
+
+								firstInput = registry.byId("firstInput");
+								if (firstInput) {
+										doh.is("Ben",firstInput.value,"firstInput value is wrong");
+										firstInput.set("value","Benjamin");
+										doh.is("Benjamin",firstInput.value,"firstInput value is wrong after update");
+										doh.is("Benjamin",name1.value,"name1.get(value) is wrong after update");
+								}
+								return dfd.callback(true);
+							}
+										
+						}
+					]);
+
+					doh.run();
+					
 				});
 			});
 		</script>

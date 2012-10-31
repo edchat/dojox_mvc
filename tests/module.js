@@ -1,29 +1,29 @@
 define([
 	"doh/runner",
 	"dojo/_base/sniff",
-	"./equals",
-	"./wildcard",
-	"./_Controller",
-	"./ModelRefController",
-	"./StoreRefControllerTest",
-	"./WidgetList",
-	"./StatefulArray",
-	"./StatefulModelOptions"
+	"./doh/equals",
+	"./doh/wildcard",
+	"./doh/_Controller",
+	"./doh/ModelRefController",
+	"./doh/StoreRefControllerTest",
+	"./doh/WidgetList",
+	"./doh/StatefulArray",
+	"./doh/StatefulModelOptions"
 ], function(doh, has){
 	try{
 		var userArgs = window.location.search.replace(/[\?&](dojoUrl|testUrl|testModule)=[^&]*/g, "").replace(/^&/, "?");
 
 		// DOH
-		doh.registerUrl("WidgetList_tests.doh_mvc_DOMNode-search-results-repeat", require.toUrl("dojox/mvc/tests/WidgetList_tests/doh_mvc_DOMNode-search-results-repeat.html" + userArgs), 999999);
-		doh.registerUrl("WidgetList_tests.doh_mvc_mobile-demo", require.toUrl("dojox/mvc/tests/WidgetList_tests/doh_mvc_mobile-demo.html" + userArgs), 999999);
-		doh.registerUrl("WidgetList_tests.doh_mvc_new_ref-set-repeat", require.toUrl("dojox/mvc/tests/WidgetList_tests/doh_mvc_new_ref-set-repeat.html" + userArgs), 999999);
-		doh.registerUrl("WidgetList_tests.doh_mvc_performance_search-results-repeat", require.toUrl("dojox/mvc/tests/WidgetList_tests/doh_mvc_performance_search-results-repeat.html" + userArgs), 999999);
-		doh.registerUrl("WidgetList_tests.doh_mvc_programmatic-repeat-store", require.toUrl("dojox/mvc/tests/WidgetList_tests/doh_mvc_programmatic-repeat-store.html" + userArgs), 999999);
-		doh.registerUrl("WidgetList_tests.doh_mvc_repeat_select_cancel", require.toUrl("dojox/mvc/tests/WidgetList_tests/doh_mvc_repeat_select_cancel.html" + userArgs), 999999);
-		doh.registerUrl("WidgetList_tests.doh_mvc_repeat_select_manualsave", require.toUrl("dojox/mvc/tests/WidgetList_tests/doh_mvc_repeat_select_manualsave.html" + userArgs), 999999);
-		doh.registerUrl("WidgetList_tests.doh_mvc_search-results-repeat", require.toUrl("dojox/mvc/tests/WidgetList_tests/doh_mvc_search-results-repeat.html" + userArgs), 999999);
-		doh.registerUrl("WidgetList_tests.doh_mvc_search-results-repeat-store", require.toUrl("dojox/mvc/tests/WidgetList_tests/doh_mvc_search-results-repeat-store.html" + userArgs), 999999);
-		doh.registerUrl("WidgetList_tests.doh_new-mvc_label_and_totals", require.toUrl("dojox/mvc/tests/WidgetList_tests/doh_new-mvc_label_and_totals.html" + userArgs), 999999);
+		doh.registerUrl("WidgetList_tests.doh_mvc_mobile-demo", require.toUrl("dojox/mvc/tests/doh/WidgetList_tests/doh_mvc_mobile-demo.html" + userArgs), 999999);
+		doh.registerUrl("WidgetList_tests.doh_mvc_DOMNode-search-results-repeat", require.toUrl("dojox/mvc/tests/doh/WidgetList_tests/doh_mvc_DOMNode-search-results-repeat.html" + userArgs), 999999);
+		doh.registerUrl("WidgetList_tests.doh_mvc_new_ref-set-repeat", require.toUrl("dojox/mvc/tests/doh/WidgetList_tests/doh_mvc_new_ref-set-repeat.html" + userArgs), 999999);
+		doh.registerUrl("WidgetList_tests.doh_mvc_performance_search-results-repeat", require.toUrl("dojox/mvc/tests/doh/WidgetList_tests/doh_mvc_performance_search-results-repeat.html" + userArgs), 999999);
+		doh.registerUrl("WidgetList_tests.doh_mvc_programmatic-repeat-store", require.toUrl("dojox/mvc/tests/doh/WidgetList_tests/doh_mvc_programmatic-repeat-store.html" + userArgs), 999999);
+		doh.registerUrl("WidgetList_tests.doh_mvc_repeat_select_cancel", require.toUrl("dojox/mvc/tests/doh/WidgetList_tests/doh_mvc_repeat_select_cancel.html" + userArgs), 999999);
+		doh.registerUrl("WidgetList_tests.doh_mvc_repeat_select_manualsave", require.toUrl("dojox/mvc/tests/doh/WidgetList_tests/doh_mvc_repeat_select_manualsave.html" + userArgs), 999999);
+		doh.registerUrl("WidgetList_tests.doh_mvc_search-results-repeat", require.toUrl("dojox/mvc/tests/doh/WidgetList_tests/doh_mvc_search-results-repeat.html" + userArgs), 999999);
+		doh.registerUrl("WidgetList_tests.doh_mvc_search-results-repeat-store", require.toUrl("dojox/mvc/tests/doh/WidgetList_tests/doh_mvc_search-results-repeat-store.html" + userArgs), 999999);
+		doh.registerUrl("WidgetList_tests.doh_new-mvc_label_and_totals", require.toUrl("dojox/mvc/tests/doh/WidgetList_tests/doh_new-mvc_label_and_totals.html" + userArgs), 999999);
 		
 		doh.registerUrl("dojox.mvc.tests.doh_mvc_new_shipto-billto-simple", require.toUrl("dojox/mvc/tests/doh/doh_mvc_new_shipto-billto-simple.html" + userArgs), 999999);
 		doh.registerUrl("dojox.mvc.tests.doh_mvc_new_ref-set-repeat", require.toUrl("dojox/mvc/tests/doh/doh_mvc_new_ref-set-repeat.html" + userArgs), 999999);

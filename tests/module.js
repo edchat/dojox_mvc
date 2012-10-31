@@ -1,10 +1,12 @@
 define([
 	"doh/runner",
 	"dojo/_base/sniff",
+// tests start here.
 	"./doh/equals",
 	"./doh/wildcard",
 	"./doh/_Controller",
 	"./doh/ModelRefController",
+	"./doh/EditModelRefControllerMixin",
 	"./doh/StoreRefControllerTest",
 	"./doh/WidgetList",
 	"./doh/StatefulArray",

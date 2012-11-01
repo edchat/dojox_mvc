@@ -3,21 +3,21 @@ define([
 	"dojo/_base/declare",
 	"dojo/Stateful",
 	"../../ModelRefController",
-	"../../EditModelRefControllerMixin",
+	"../../EditControllerMixin",
 	"../../ListControllerMixin",
 	"../../at",
 	"../../sync",
 	"../../getStateful"
-], function(doh, declare, Stateful, ModelRefController, EditModelRefControllerMixin, ListControllerMixin, at, sync, getStateful){
+], function(doh, declare, Stateful, ModelRefController, EditControllerMixin, ListControllerMixin, at, sync, getStateful){
 	var data = [
 		{uniqueId: 0, value: "Index 0"},
 		{uniqueId: 1, value: "Index 1"},
 		{uniqueId: 2, value: "Index 2"},
 		{uniqueId: 3, value: "Index 3"},
 		{uniqueId: 4, value: "Index 4"}
-	], clz = declare([ModelRefController, EditModelRefControllerMixin, ListControllerMixin], {});
+	], clz = declare([ModelRefController, EditControllerMixin, ListControllerMixin], {});
 
-	doh.register("dojox.mvc.tests.doh.EditModelRefControllerMixin", [
+	doh.register("dojox.mvc.tests.doh.EditControllerMixin", [
 		function commit(){
 			var ctrl = new clz({sourceModel: getStateful(data), cursorIndex: 2});
 			ctrl.set("value", "3rd");

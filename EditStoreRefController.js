@@ -1,10 +1,10 @@
 define([
 	"dojo/_base/declare",
 	"./ModelRefController",
-	"./EditModelRefControllerMixin",
-	"./StoreRefControllerMixin"
-], function(declare, ModelRefController, EditModelRefControllerMixin, StoreRefControllerMixin){
-	return declare("dojox.mvc.EditStoreRefController", [ModelRefController, EditModelRefControllerMixin, StoreRefControllerMixin], {
+	"./EditControllerMixin",
+	"./StoreControllerMixin"
+], function(declare, ModelRefController, EditControllerMixin, StoreControllerMixin){
+	return declare("dojox.mvc.EditStoreRefController", [ModelRefController, EditControllerMixin, StoreControllerMixin], {
 		// summary:
 		//		A child class of dojox/mvc/StoreRefController, managing edits.
 		// description:

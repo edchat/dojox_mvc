@@ -1,9 +1,9 @@
 define([
 	"dojo/_base/declare",
 	"./ModelRefController",
-	"./StoreRefControllerMixin"
-], function(declare, ModelRefController, StoreRefControllerMixin){
-	return declare("dojox.mvc.StoreRefController", [ModelRefController, StoreRefControllerMixin], {
+	"./StoreControllerMixin"
+], function(declare, ModelRefController, StoreControllerMixin){
+	return declare("dojox.mvc.StoreRefController", [ModelRefController, StoreControllerMixin], {
 		// summary:
 		//		A child class of dojox.mvc.ModelRefController, which keeps a reference to Dojo Object Store (in store property).
 		// description:

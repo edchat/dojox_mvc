@@ -5,7 +5,7 @@ define([
 	"./getStateful",
 	"./getPlainValue"
 ], function(declare, lang, when, getStateful, getPlainValue){
-	return declare("dojox.mvc.StoreRefControllerMixin", null, {
+	return declare("dojox.mvc.StoreControllerMixin", null, {
 		// summary:
 		//		A mixin class to dojox.mvc.ModelRefController, which keeps a reference to Dojo Object Store (in store property).
 		// description:
@@ -17,7 +17,7 @@ define([
 		//		- addStore(): Runs add() against the store
 		//		- removeStore(): Runs remove() against the store
 		//
-		//		dojo.Stateful get()/set()/watch() interfaces in dojox.mvc.StoreRefControllerMixin will work with the data model from queryStore() or getStore().
+		//		dojo.Stateful get()/set()/watch() interfaces in dojox.mvc.StoreControllerMixin will work with the data model from queryStore() or getStore().
 		// example:
 		//		The text box refers to "value" property in the controller (with "ctrl" ID).
 		//		The controller provides the "value" property, from the data coming from data store ("store" property in the controller).
@@ -39,7 +39,7 @@ define([
 		// |			</head>
 		// |			<body>
 		// |				<script type="dojo/require">at: "dojox/mvc/at"</script>
-		// |				<span id="ctrl" data-dojo-type="dojox/mvc/ModelRefController" data-dojo-mixins="dojox/mvc/StoreRefControllerMixin" data-dojo-props="store: store"></span>
+		// |				<span id="ctrl" data-dojo-type="dojox/mvc/ModelRefController" data-dojo-mixins="dojox/mvc/StoreControllerMixin" data-dojo-props="store: store"></span>
 		// |				<input type="text" data-dojo-type="dijit/form/TextBox" data-dojo-props="value: at('widget:ctrl', 'value')">
 		// |			</body>
 		// |		</html>
@@ -71,7 +71,7 @@ define([
 		// |			</head>
 		// |			<body>
 		// |				<script type="dojo/require">at: "dojox/mvc/at"</script>
-		// |				<span id="ctrl" data-dojo-type="dojox/mvc/ModelRefController" data-dojo-mixins="dojox/mvc/EditModelRefControllerMixin,dojox/mvc/StoreRefControllerMixin,dojox/mvc/ListControllerMixin"
+		// |				<span id="ctrl" data-dojo-type="dojox/mvc/ModelRefController" data-dojo-mixins="dojox/mvc/EditControllerMixin,dojox/mvc/StoreControllerMixin,dojox/mvc/ListControllerMixin"
 		// |				 data-dojo-props="uniqueId: 'id', store: store, cursorIndex: 0"></span>
 		// |				<input id="check" type="checkbox" data-dojo-type="dijit/form/CheckBox" data-dojo-props="checked: at('widget:ctrl', 'value')">
 		// |			</body>

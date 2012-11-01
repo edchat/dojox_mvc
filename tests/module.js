@@ -6,7 +6,7 @@ define([
 	"./doh/wildcard",
 	"./doh/_Controller",
 	"./doh/ModelRefController",
-	"./doh/EditModelRefControllerMixin",
+	"./doh/EditControllerMixin",
 	"./doh/StoreRefControllerTest",
 	"./doh/WidgetList",
 	"./doh/StatefulArray",
@@ -16,6 +16,11 @@ define([
 		var userArgs = window.location.search.replace(/[\?&](dojoUrl|testUrl|testModule)=[^&]*/g, "").replace(/^&/, "?");
 
 		// DOH
+		doh.registerUrl("doh/mixins/doh_async_mvc_14491-input-output", require.toUrl("dojox/mvc/tests/doh/mixins/doh_async_mvc_14491-input-output.html" + userArgs), 999999);
+		doh.registerUrl("doh/mixins/doh_mvc_date_test", require.toUrl("dojox/mvc/tests/doh/mixins/doh_mvc_date_test.html" + userArgs), 999999);
+		doh.registerUrl("doh/mixins/doh_mvc_programmatic-repeat-store", require.toUrl("dojox/mvc/tests/doh/mixins/doh_mvc_programmatic-repeat-store.html" + userArgs), 999999);
+		doh.registerUrl("doh/mixins/doh_mvc_repeat_select_cancel", require.toUrl("dojox/mvc/tests/doh/mixins/doh_mvc_repeat_select_cancel.html" + userArgs), 999999);
+
 		doh.registerUrl("WidgetList_tests.doh_mvc_mobile-demo", require.toUrl("dojox/mvc/tests/doh/WidgetList_tests/doh_mvc_mobile-demo.html" + userArgs), 999999);
 		doh.registerUrl("WidgetList_tests.doh_mvc_DOMNode-search-results-repeat", require.toUrl("dojox/mvc/tests/doh/WidgetList_tests/doh_mvc_DOMNode-search-results-repeat.html" + userArgs), 999999);
 		doh.registerUrl("WidgetList_tests.doh_mvc_new_ref-set-repeat", require.toUrl("dojox/mvc/tests/doh/WidgetList_tests/doh_mvc_new_ref-set-repeat.html" + userArgs), 999999);

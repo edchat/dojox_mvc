@@ -5,12 +5,12 @@ define([
 	"./getStateful"
 ], function(declare, lang, getPlainValue, getStateful){
 	// module:
-	//		dojox/mvc/EditModelRefControllerMixin
+	//		dojox/mvc/EditControllerMixin
 
-	function setRefSourceModel(/*dojox/mvc/EditModelRefControllerMixin*/ ctrl, /*Anything*/ old, /*Anything*/ current){
+	function setRefSourceModel(/*dojox/mvc/EditControllerMixin*/ ctrl, /*Anything*/ old, /*Anything*/ current){
 		// summary:
 		//		A function called when this controller gets newer value as the data source.
-		// ctrl: dojox/mvc/EditModelRefControllerMixin
+		// ctrl: dojox/mvc/EditControllerMixin
 		//		The controller.
 		// old: Anything
 		//		The older value.
@@ -23,7 +23,7 @@ define([
 		}
 	}
 
-	return declare("dojox.mvc.EditModelRefControllerMixin", null, {
+	return declare("dojox.mvc.EditControllerMixin", null, {
 		// summary:
 		//		A mixin class to dojox/mvc/ModelRefController.
 		//		Keeps a copy (originalModel) of given data model (sourceModel) so that it can manage the data model of before/after the edit.
@@ -65,7 +65,7 @@ define([
 		// |			</head>
 		// |			<body>
 		// |				<script type="dojo/require">at: "dojox/mvc/at"</script>
-		// |				<span id="ctrl" data-dojo-type="dojox/mvc/ModelRefController" data-dojo-mixins="dojox/mvc/EditModelRefControllerMixin" data-dojo-props="sourceModel: model"></span>
+		// |				<span id="ctrl" data-dojo-type="dojox/mvc/ModelRefController" data-dojo-mixins="dojox/mvc/EditControllerMixin" data-dojo-props="sourceModel: model"></span>
 		// |				<input id="check" type="checkbox" data-dojo-type="dijit/form/CheckBox" data-dojo-props="checked: at('widget:ctrl', 'value')">
 		// |			</body>
 		// |		</html>
@@ -93,7 +93,7 @@ define([
 		// |			<body>
 		// |				<script type="dojo/require">at: "dojox/mvc/at"</script>
 		// |				<span id="ctrlSource" data-dojo-type="dojox/mvc/ModelRefController" data-dojo-props="model: model"></span>
-		// |				<span id="ctrlEdit" data-dojo-type="dojox/mvc/ModelRefController" data-dojo-mixins="dojox/mvc/EditModelRefControllerMixin"
+		// |				<span id="ctrlEdit" data-dojo-type="dojox/mvc/ModelRefController" data-dojo-mixins="dojox/mvc/EditControllerMixin"
 		// |				 data-dojo-props="sourceModel: at('widget:ctrlSource', 'model'), holdModelUntilCommit: true"></span>
 		// |				Source:
 		// |				<input id="checkSource" type="checkbox" data-dojo-type="dijit/form/CheckBox"

@@ -1,9 +1,9 @@
 define([
 	"dojo/_base/declare",
 	"./ModelRefController",
-	"./EditModelRefControllerMixin"
-], function(declare, ModelRefController, EditModelRefControllerMixin){
-	return declare("dojox.mvc.EditModelRefController", [ModelRefController, EditModelRefControllerMixin], {
+	"./EditControllerMixin"
+], function(declare, ModelRefController, EditControllerMixin){
+	return declare("dojox.mvc.EditModelRefController", [ModelRefController, EditControllerMixin], {
 		// summary:
 		//		A child class of dojox/mvc/ModelRefController.
 		//		Keeps a copy (originalModel) of given data model (sourceModel) so that it can manage the data model of before/after the edit.

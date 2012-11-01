@@ -73,7 +73,7 @@ define([
 	function setRefSourceModel(/*dojox/mvc/EditModelRefListControllerMixin*/ ctrl, /*Anything*/ old, /*Anything*/ current){
 		// summary:
 		//		A function called when this controller gets newer value as the data source.
-		// ctrl: dojox/mvc/EditModelRefControllerMixin
+		// ctrl: dojox/mvc/EditControllerMixin
 		//		The controller.
 		// old: Anything
 		//		The older value.
@@ -193,7 +193,7 @@ define([
 		// |			</head>
 		// |			<body>
 		// |				<script type="dojo/require">at: "dojox/mvc/at"</script>
-		// |				<span id="ctrl" data-dojo-type="dojox/mvc/ModelRefController" data-dojo-mixins="dojox/mvc/EditModelRefControllerMixin,dojox/mvc/ListControllerMixin" data-dojo-props="sourceModel: model, cursorIndex: 2"></span>
+		// |				<span id="ctrl" data-dojo-type="dojox/mvc/ModelRefController" data-dojo-mixins="dojox/mvc/EditControllerMixin,dojox/mvc/ListControllerMixin" data-dojo-props="sourceModel: model, cursorIndex: 2"></span>
 		// |				<input id="text" type="text" data-dojo-type="dijit/form/TextBox" data-dojo-props="value: at('widget:ctrl', 'value')">
 		// |			</body>
 		// |		</html>
@@ -228,7 +228,7 @@ define([
 		// |			<body>
 		// |				<script type="dojo/require">at: "dojox/mvc/at"</script>
 		// |				<span id="ctrlSource" data-dojo-type="dojox/mvc/ModelRefController" data-dojo-mixins="dojox/mvc/ListControllerMixin" data-dojo-props="model: model, cursorIndex: 2"></span>
-		// |				<span id="ctrlEdit" data-dojo-type="dojox/mvc/ModelRefController" data-dojo-mixins="dojox/mvc/EditModelRefControllerMixin,dojox/mvc/ListControllerMixin" data-dojo-props="sourceModel: at('widget:ctrlSource', 'model'), cursorIndex: 2, holdModelUntilCommit: true"></span>
+		// |				<span id="ctrlEdit" data-dojo-type="dojox/mvc/ModelRefController" data-dojo-mixins="dojox/mvc/EditControllerMixin,dojox/mvc/ListControllerMixin" data-dojo-props="sourceModel: at('widget:ctrlSource', 'model'), cursorIndex: 2, holdModelUntilCommit: true"></span>
 		// |				Source: <input type="text" data-dojo-type="dijit/form/TextBox" data-dojo-props="value: at('widget:ctrlSource', 'value')">
 		// |				Edit: <input id="text" type="text" data-dojo-type="dijit/form/TextBox" data-dojo-props="value: at('widget:ctrlEdit', 'value')">
 		// |			</body>

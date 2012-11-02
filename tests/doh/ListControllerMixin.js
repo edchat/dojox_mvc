@@ -1,5 +1,6 @@
 define([
 	"doh",
+	"dojo/_base/array",
 	"dojo/_base/declare",
 	"dojo/Stateful",
 	"../../ModelRefController",
@@ -8,7 +9,7 @@ define([
 	"../../at",
 	"../../sync",
 	"../../getStateful"
-], function(doh, declare, Stateful, ModelRefController, EditControllerMixin, ListControllerMixin, at, sync, getStateful){
+], function(doh, array, declare, Stateful, ModelRefController, EditControllerMixin, ListControllerMixin, at, sync, getStateful){
 	var data = [
 		{uniqueId: 0, value: "Index 0"},
 		{uniqueId: 1, value: "Index 1"},
@@ -17,7 +18,7 @@ define([
 		{uniqueId: 4, value: "Index 4"}
 	], clz = declare([ModelRefController, EditControllerMixin, ListControllerMixin], {});
 
-	doh.register("dojox.mvc.tests.doh.EditControllerMixin", [
+	doh.register("dojox.mvc.tests.doh.ListControllerMixin", [
 		function commit(){
 			var ctrl = new clz({sourceModel: getStateful(data), cursorIndex: 2});
 			ctrl.set("value", "3rd");
@@ -56,6 +57,12 @@ define([
 			doh.is("3rd", ctrl.model[2].value, "Model should be updated as reset() is called");
 			doh.is("3rd", ctrl.sourceModel[2].value, "sourceModel should be updated as reset() is called");
 			doh.is("3rd", ctrl.originalModel[2].value, "originalModel should be updated as reset() is called");
+		},
+		function commitWithWrongIdProperty(){
+			var ctrl = new clz({idProperty: "id", sourceModel: getStateful(data), cursorIndex: 2});
+			ctrl.set("value", "foo");
+			ctrl.commitCurrent();
+			doh.t(array.every(data, function(item, idx){ return idx != 2 || ctrl.originalModel[idx].value == item.value; }), "originalModel of non-target index shouldn't be updated, even if idProperty is not correctly set");
 		},
 		{
 			name: "commitHoldModelToBindTarget",

@@ -8,13 +8,13 @@ define([
 	function findIndex(/*String*/ idProperty, /*Object*/ model, /*Object*/ cursor){
 		if(lang.isArray(model)){
 			for(var i = 0, l = model.length; i < l; ++i){
-				if(model[i][idProperty] == cursor[idProperty]){
+				if(model[i][idProperty] && model[i][idProperty] == cursor[idProperty]){
 					return i;
 				}
 			}
 		}else{
 			for(var s in model){
-				if(model[s][idProperty] == cursor[idProperty]){
+				if(model[s][idProperty] && model[s][idProperty] == cursor[idProperty]){
 					return s;
 				}
 			}
@@ -83,16 +83,9 @@ define([
 		if(old !== current){
 			ctrl._handleRefSourceModel && ctrl._handleRefSourceModel.remove();
 			current && ctrl.own(ctrl._handleRefSourceModel = current.watch(function(name, old, current){
-				if(old !== current){
-					var index;
-					index = findIndex(ctrl.idProperty, ctrl[ctrl._refOriginalModelProp], current);
-					if(index !== undef){
-						ctrl[ctrl._refOriginalModelProp].set(index, ctrl.holdModelUntilCommit ? current : ctrl.cloneModel(current));
-					}
-					index = findIndex(ctrl.idProperty, ctrl[ctrl._refEditModelProp], current);
-					if(index !== undef){
-						ctrl[ctrl._refEditModelProp].set(index, ctrl.holdModelUntilCommit ? ctrl.cloneModel(current) : current);
-					}
+				if(!isNaN(name) && old !== current){
+					ctrl[ctrl._refOriginalModelProp].set(name - 0, ctrl.holdModelUntilCommit ? current : ctrl.cloneModel(current));
+					ctrl[ctrl._refEditModelProp].set(name - 0, ctrl.holdModelUntilCommit ? ctrl.cloneModel(current) : current);
 				}
 			}));
 		}

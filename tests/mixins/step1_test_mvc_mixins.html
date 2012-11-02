@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<title>Step 1 of test for Controllers with mixins, use getStateful() only.</title>
+		<style type="text/css">
+			@import "../css/app-format.css";
+			@import "../../../../dijit/themes/claro/claro.css";
+		</style>
+		<script type="text/javascript" data-dojo-config="parseOnLoad:0,isDebug:1,async:1,mvc:{debugBindings:1}" src="../../../../dojo/dojo.js"></script>
+		<script type="text/javascript">
+		var model;
+ 
+		require([
+			'dojo/parser',
+			'dojo/ready',
+			"dojox/mvc/getStateful",
+			'dijit/form/TextBox',
+			'dijit/form/Button',
+			'dojox/mvc/Group',
+			'dojox/mvc/Output'
+			], function(parser, ready, getStateful){
+			
+				// Initial data
+				var order = {
+					"Serial" : "360324",
+					"Name" : "Mr. John Doe",
+					"Email" : "jdoe@example.com",
+					"Street" : "123 Valley Rd.",
+					"City" : "Katonah",
+					"State" : "NY",
+					"Zip" : "10536"
+				};
+				// The getStateful call will take json data and create make it Stateful
+				model = getStateful(order);
+
+				parser.parse();
+			});
+		</script>
+	</head>
+	<body class="claro">
+		<script type="dojo/require">at: "dojox/mvc/at"</script>
+		<div id="wrapper">
+		<div id="main">
+			<div>
+				<h2>Step 1 of test for Controllers with mixins, use getStateful() only.</h2>
+				<h2>Enter Shipping Address</h2>
+			</div>
+			<div class="row" data-dojo-type="dojox/mvc/Group"
+							data-dojo-props="target: at(model)">
+				<div class="row">
+					<label class="cell" for="nameInput">Name:</label>
+					<input class="cell" id="nameInput" data-dojo-type="dijit/form/TextBox"
+							data-dojo-props="value: at('rel:', 'Name')">
+				</div>
+				<div class="row">
+					<label class="cell" for="streetInput">Street:</label>
+					<input class="cell" id="streetInput" data-dojo-type="dijit/form/TextBox"
+						data-dojo-props="value: at('rel:', 'Street')">
+				</div>
+				<div class="row">
+					<label class="cell" for="cityInput">City:</label>
+					<input class="cell" id="cityInput" data-dojo-type="dijit/form/TextBox"
+						data-dojo-props="value: at('rel:', 'City')">
+				</div>
+				<div class="row">
+					<label class="cell" for="stateInput">State:</label>
+					<input class="cell" id="stateInput" data-dojo-type="dijit/form/TextBox"
+						data-dojo-props="value: at('rel:', 'State')">
+				</div>
+				<div class="row">
+					<label class="cell" for="zipInput">Zipcode:</label>
+					<input class="cell" id="zipInput" data-dojo-type="dijit/form/TextBox"
+						data-dojo-props="value: at('rel:', 'Zip')">
+				</div>
+			</div>
+			<br/>
+			<div>
+				<h2>Output of the current shipping address</h2>
+			</div>
+			<div class="row" data-dojo-type="dojox/mvc/Group"
+							data-dojo-props="target: at(model)">
+				<div class="row">
+					<div class="namecell" id="nameOutput" data-dojo-type="dojox/mvc/Output"
+							data-dojo-props="value: at('rel:', 'Name')"></div>
+				</div>
+				<div class="row">
+					<div class="namecell" id="streetOutput" data-dojo-type="dojox/mvc/Output"
+						data-dojo-props="value: at('rel:', 'Street')"></div>
+				</div>
+				<div class="row">
+					<div class="namecell" id="cityOutput" data-dojo-type="dojox/mvc/Output"
+						data-dojo-props="value: at('rel:', 'City')">${this.value},</div>
+					<div class="namecell" id="stateOutput" data-dojo-type="dojox/mvc/Output"
+						data-dojo-props="value: at('rel:', 'State')"></div>
+					<div class="namecell" id="zipOutput" data-dojo-type="dojox/mvc/Output"
+						data-dojo-props="value: at('rel:', 'Zip')"></div>
+				</div>
+			</div>
+		</div>
+		</div>
+	</body>
+</html>

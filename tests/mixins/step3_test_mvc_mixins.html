@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<title>Step 3 of test for Controllers with mixins, uses an EditControllerMixin.</title>
+		<style type="text/css">
+			@import "../css/app-format.css";
+			@import "../../../../dijit/themes/claro/claro.css";
+		</style>
+		<script type="text/javascript" data-dojo-config="parseOnLoad:0,isDebug:1,async:1,mvc:{debugBindings:1}" src="../../../../dojo/dojo.js"></script>
+		<script type="text/javascript">
+		var ctrl;
+ 
+		require([
+			'dojo/parser',
+			'dojo/_base/declare',
+			'dojo/ready',
+			'dojox/mvc/getStateful',
+			'dojox/mvc/ModelRefController',
+			'dojox/mvc/EditControllerMixin',
+			'dijit/form/TextBox',
+			'dijit/form/Button',
+			'dojox/mvc/Group',
+			'dojox/mvc/Output'
+			], function(parser, declare, ready, getStateful, ModelRefController, EditControllerMixin){
+			
+				// Initial data
+				var order = {
+					"Serial" : "360324",
+					"Name" : "Mr. John Doe",
+					"Email" : "jdoe@example.com",
+					"Street" : "123 Valley Rd.",
+					"City" : "Katonah",
+					"State" : "NY",
+					"Zip" : "10536"
+				};
+
+				// To move from ModelRefController to use EditControllerMixin, need to require declare and EditControllerMixin, 
+				// also need to setup ctrlclz with ModelRefController and the mixin, and use sourceModel instead of model.
+				// 
+				// If you want holdModelUntilCommit true, you will want to bind the output address for the group to 
+				// "target: at(ctrl,'sourceModel')", if holdModelUntilCommit is false it does not matter.
+				//
+				// You can change holdModelUntilCommit to true to see how that works.
+				// The ctrlclz constructor sets sourceModel to the results of the getStateful call which will take json data and create make it Stateful
+
+				var ctrlclz = declare([ModelRefController, EditControllerMixin], {});
+				ctrl = new ctrlclz({sourceModel: getStateful(order), holdModelUntilCommit: true});
+
+				parser.parse();
+			});
+		</script>
+	</head>
+	<body class="claro">
+		<script type="dojo/require">at: "dojox/mvc/at"</script>
+		<div id="wrapper">
+		<div id="main">
+			<div>
+				<h2>Step 3 of test for Controllers with mixins, uses an EditControllerMixin.</h2>
+				<h2>Enter Shipping Address</h2>
+			</div>
+			<div class="row" data-dojo-type="dojox/mvc/Group"
+							data-dojo-props="target: ctrl">
+				<div class="row">
+					<label class="cell" for="nameInput">Name:</label>
+					<input class="cell" id="nameInput" data-dojo-type="dijit/form/TextBox"
+							data-dojo-props="value: at('rel:', 'Name')">
+				</div>
+				<div class="row">
+					<label class="cell" for="streetInput">Street:</label>
+					<input class="cell" id="streetInput" data-dojo-type="dijit/form/TextBox"
+						data-dojo-props="value: at('rel:', 'Street')">
+				</div>
+				<div class="row">
+					<label class="cell" for="cityInput">City:</label>
+					<input class="cell" id="cityInput" data-dojo-type="dijit/form/TextBox"
+						data-dojo-props="value: at('rel:', 'City')">
+				</div>
+				<div class="row">
+					<label class="cell" for="stateInput">State:</label>
+					<input class="cell" id="stateInput" data-dojo-type="dijit/form/TextBox"
+						data-dojo-props="value: at('rel:', 'State')">
+				</div>
+				<div class="row">
+					<label class="cell" for="zipInput">Zipcode:</label>
+					<input class="cell" id="zipInput" data-dojo-type="dijit/form/TextBox"
+						data-dojo-props="value: at('rel:', 'Zip')">
+				</div>
+			</div>
+			<br/>
+			<div class="row">
+				<button  class="cell" id="reset" type="button" data-dojo-type="dijit.form.Button"  data-dojo-props="onClick: function(){ ctrl.reset(); }">Reset</button>
+				<button  class="cell" id="commit" type="button" data-dojo-type="dijit.form.Button"  data-dojo-props="onClick: function(){ ctrl.commit(); }">Save</button>
+			</div>
+			
+			<br/>
+			<div>
+				<h2>Output of the current shipping address, will not update until saved.</h2>
+			</div>
+			<div class="row" data-dojo-type="dojox/mvc/Group"
+							data-dojo-props="target: at(ctrl,'sourceModel')">
+				<div class="row">
+					<div class="namecell" id="nameOutput" data-dojo-type="dojox/mvc/Output"
+							data-dojo-props="value: at('rel:', 'Name')"></div>
+				</div>
+				<div class="row">
+					<div class="namecell" id="streetOutput" data-dojo-type="dojox/mvc/Output"
+						data-dojo-props="value: at('rel:', 'Street')"></div>
+				</div>
+				<div class="row">
+					<div class="namecell" id="cityOutput" data-dojo-type="dojox/mvc/Output"
+						data-dojo-props="value: at('rel:', 'City')">${this.value},</div>
+					<div class="namecell" id="stateOutput" data-dojo-type="dojox/mvc/Output"
+						data-dojo-props="value: at('rel:', 'State')"></div>
+					<div class="namecell" id="zipOutput" data-dojo-type="dojox/mvc/Output"
+						data-dojo-props="value: at('rel:', 'Zip')"></div>
+				</div>
+			</div>
+		</div>
+		</div>
+	</body>
+</html>

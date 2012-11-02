@@ -6,7 +6,7 @@ define([
 	"./doh/wildcard",
 	"./doh/_Controller",
 	"./doh/ModelRefController",
-	"./doh/EditControllerMixin",
+	"./doh/ListControllerMixin",
 	"./doh/StoreRefControllerTest",
 	"./doh/WidgetList",
 	"./doh/StatefulArray",

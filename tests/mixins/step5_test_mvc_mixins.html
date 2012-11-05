@@ -72,9 +72,8 @@
 				<h2>Step 5 of test for Controllers with mixins, uses an EditControllerMixin with a StoreControllerMixin.</h2>
 				<h2>Enter Shipping Address</h2>
 			</div>
-			<div class="row" data-dojo-type="dojox/mvc/Group"
-							data-dojo-props="target: at(ctrl,'model')">
-			<div class="row" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at('rel:0')">
+			<div class="row" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at(ctrl,'model')">
+				<div class="row" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at('rel:','0')">
 				<div class="row">
 					<label class="cell" for="nameInput">Name:</label>
 					<input class="cell" id="nameInput" data-dojo-type="dijit/form/TextBox"
@@ -112,28 +111,25 @@
 			<div>
 				<h2>Output of the current shipping address, will not update until saved.</h2>
 			</div>
-			<div class="row" data-dojo-type="dojox/mvc/Group"
-							data-dojo-props="target: at(ctrl,'sourceModel')">
-		<!--  either add this group or add 0 to the rel: lines in the list...
-				<div class="row" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at('rel:0')"> -->
+			<div class="row" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at(ctrl,'model')">
+				<div class="row" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at('rel:','0')">
 				<div class="row">
 					<div class="namecell" id="nameOutput" data-dojo-type="dojox/mvc/Output"
-							data-dojo-props="value: at('rel:0', 'Name')"></div>
+							data-dojo-props="value: at('rel:', 'Name')"></div>
 				</div>
 				<div class="row">
 					<div class="namecell" id="streetOutput" data-dojo-type="dojox/mvc/Output"
-						data-dojo-props="value: at('rel:0', 'Street')"></div>
+							data-dojo-props="value: at('rel:', 'Street')"></div>
 				</div>
 				<div class="row">
 					<div class="namecell" id="cityOutput" data-dojo-type="dojox/mvc/Output"
-						data-dojo-props="value: at('rel:0', 'City')">${this.value},</div>
+							data-dojo-props="value: at('rel:', 'City')">${this.value},</div>
 					<div class="namecell" id="stateOutput" data-dojo-type="dojox/mvc/Output"
-						data-dojo-props="value: at('rel:0', 'State')"></div>
+							data-dojo-props="value: at('rel:', 'State')"></div>
 					<div class="namecell" id="zipOutput" data-dojo-type="dojox/mvc/Output"
-						data-dojo-props="value: at('rel:0', 'Zip')"></div>
+							data-dojo-props="value: at('rel:', 'Zip')"></div>
 				</div>
 			</div>
-	<!--	</div> -->
 		</div>
 	</body>
 </html>

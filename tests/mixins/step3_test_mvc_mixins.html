@@ -38,8 +38,8 @@
 				// To move from ModelRefController to use EditControllerMixin, need to require declare and EditControllerMixin, 
 				// also need to setup ctrlclz with ModelRefController and the mixin, and use sourceModel instead of model.
 				// 
-				// If you want holdModelUntilCommit true, you will want to bind the output address for the group to 
-				// "target: at(ctrl,'sourceModel')", if holdModelUntilCommit is false it does not matter.
+				// If you use holdModelUntilCommit true, you will want to bind the output address for the group to 
+				// "target: at(ctrl,'sourceModel')", if holdModelUntilCommit is false it does not matter sourceModel or model work.
 				//
 				// You can change holdModelUntilCommit to true to see how that works.
 				// The ctrlclz constructor sets sourceModel to the results of the getStateful call which will take json data and create make it Stateful
@@ -59,8 +59,7 @@
 				<h2>Step 3 of test for Controllers with mixins, uses an EditControllerMixin.</h2>
 				<h2>Enter Shipping Address</h2>
 			</div>
-			<div class="row" data-dojo-type="dojox/mvc/Group"
-							data-dojo-props="target: ctrl">
+			<div class="row" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: ctrl">
 				<div class="row">
 					<label class="cell" for="nameInput">Name:</label>
 					<input class="cell" id="nameInput" data-dojo-type="dijit/form/TextBox"
@@ -95,10 +94,9 @@
 			
 			<br/>
 			<div>
-				<h2>Output of the current shipping address, will not update until saved.</h2>
+				<h2>Output of the current shipping address, will not update until saved if holdModelUntilCommit is true.</h2>
 			</div>
-			<div class="row" data-dojo-type="dojox/mvc/Group"
-							data-dojo-props="target: at(ctrl,'sourceModel')">
+			<div class="row" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at(ctrl,'sourceModel')">
 				<div class="row">
 					<div class="namecell" id="nameOutput" data-dojo-type="dojox/mvc/Output"
 							data-dojo-props="value: at('rel:', 'Name')"></div>

@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
-		<title>Step 4 problem using a StoreControllerMixin without an EditControllerMixin fails.</title>
+		<title>Step 4 of test for Controllers with mixins, uses a StoreControllerMixin without an EditControllerMixin.</title>
 		<style type="text/css">
 			@import "../css/app-format.css";
 			@import "../../../../dijit/themes/claro/claro.css";
@@ -42,15 +42,13 @@
 				]
 			};
 				
-				// To move from ModelRefController/EditController to use ModelRefController/StoreControllerMixin, need to require StoreControllerMixin, Memory, and When 
+				// To move from ModelRefController to use ModelRefController/StoreControllerMixin, need to require StoreControllerMixin, Memory, and When 
 				// also needed to change the data to be valid for a store query. 
 				// Setup ctrlclz with ModelRefController and the mixins, and use ctrl.queryStore() to setup the models.
 				//
-				// *** The error is occurring in StoreControllerMixin, line 126 because _self._refSourceModelProp is undefined. ***
-				//
 				// Because of the queryStore call had to move the call to parser.parse inside the when to wait for it. 
-				// The change in the data for queryStore required changes to the bindings. had to add a group with target: at('rel:0') or
-				// use rel:0 instead of just rel: for the bindings of fields.  
+				// The change in the data for queryStore required changes to the bindings. had to add a group with target: at('rel:','0')
+				// for the bindings of fields.  
 				//
 				// The ctrlclz constructor sets store to the memory store and uses queryStore() to setup the models.
 
@@ -68,66 +66,63 @@
 		<div id="wrapper">
 		<div id="main">
 			<div>
-				<h2>Step 4 problem using a StoreControllerMixin without an EditControllerMixin fails.</h2>
+				<h2>Step 4 of test for Controllers with mixins, uses a StoreControllerMixin without an EditControllerMixin.</h2>
 				<h2>Enter Shipping Address</h2>
 			</div>
-			<div class="row" data-dojo-type="dojox/mvc/Group"
-							data-dojo-props="target: at(ctrl,'model')">
-			<div class="row" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at('rel:0')">
-				<div class="row">
-					<label class="cell" for="nameInput">Name:</label>
-					<input class="cell" id="nameInput" data-dojo-type="dijit/form/TextBox"
+			<div class="row" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at(ctrl,'model')">
+				<div class="row" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at('rel:','0')">
+					<div class="row">
+						<label class="cell" for="nameInput">Name:</label>
+						<input class="cell" id="nameInput" data-dojo-type="dijit/form/TextBox"
 							data-dojo-props="value: at('rel:', 'Name')">
+					</div>
+					<div class="row">
+						<label class="cell" for="streetInput">Street:</label>
+						<input class="cell" id="streetInput" data-dojo-type="dijit/form/TextBox"
+							data-dojo-props="value: at('rel:', 'Street')">
+					</div>
+					<div class="row">
+						<label class="cell" for="cityInput">City:</label>
+						<input class="cell" id="cityInput" data-dojo-type="dijit/form/TextBox"
+							data-dojo-props="value: at('rel:', 'City')">
+					</div>
+					<div class="row">
+						<label class="cell" for="stateInput">State:</label>
+						<input class="cell" id="stateInput" data-dojo-type="dijit/form/TextBox"
+							data-dojo-props="value: at('rel:', 'State')">
+					</div>
+					<div class="row">
+						<label class="cell" for="zipInput">Zipcode:</label>
+						<input class="cell" id="zipInput" data-dojo-type="dijit/form/TextBox"
+							data-dojo-props="value: at('rel:', 'Zip')">
+					</div>
 				</div>
-				<div class="row">
-					<label class="cell" for="streetInput">Street:</label>
-					<input class="cell" id="streetInput" data-dojo-type="dijit/form/TextBox"
-						data-dojo-props="value: at('rel:', 'Street')">
-				</div>
-				<div class="row">
-					<label class="cell" for="cityInput">City:</label>
-					<input class="cell" id="cityInput" data-dojo-type="dijit/form/TextBox"
-						data-dojo-props="value: at('rel:', 'City')">
-				</div>
-				<div class="row">
-					<label class="cell" for="stateInput">State:</label>
-					<input class="cell" id="stateInput" data-dojo-type="dijit/form/TextBox"
-						data-dojo-props="value: at('rel:', 'State')">
-				</div>
-				<div class="row">
-					<label class="cell" for="zipInput">Zipcode:</label>
-					<input class="cell" id="zipInput" data-dojo-type="dijit/form/TextBox"
-						data-dojo-props="value: at('rel:', 'Zip')">
-				</div>
-			</div>
 			</div>
 			
 			<br/>
 			<div>
-				<h2>Output of the current shipping address, will not update until saved.</h2>
+				<h2>Output of the current shipping address.</h2>
 			</div>
-			<div class="row" data-dojo-type="dojox/mvc/Group"
-							data-dojo-props="target: at(ctrl,'model')">
-		<!--  either add this group or add 0 to the rel: lines in the list...
-				<div class="row" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at('rel:0')"> -->
-				<div class="row">
-					<div class="namecell" id="nameOutput" data-dojo-type="dojox/mvc/Output"
-							data-dojo-props="value: at('rel:0', 'Name')"></div>
-				</div>
-				<div class="row">
-					<div class="namecell" id="streetOutput" data-dojo-type="dojox/mvc/Output"
-						data-dojo-props="value: at('rel:0', 'Street')"></div>
-				</div>
-				<div class="row">
-					<div class="namecell" id="cityOutput" data-dojo-type="dojox/mvc/Output"
-						data-dojo-props="value: at('rel:0', 'City')">${this.value},</div>
-					<div class="namecell" id="stateOutput" data-dojo-type="dojox/mvc/Output"
-						data-dojo-props="value: at('rel:0', 'State')"></div>
-					<div class="namecell" id="zipOutput" data-dojo-type="dojox/mvc/Output"
-						data-dojo-props="value: at('rel:0', 'Zip')"></div>
+			<div class="row" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at(ctrl,'model')">
+				<div class="row" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at('rel:','0')">
+					<div class="row">
+						<div class="namecell" id="nameOutput" data-dojo-type="dojox/mvc/Output"
+							data-dojo-props="value: at('rel:', 'Name')"></div>
+					</div>
+					<div class="row">
+						<div class="namecell" id="streetOutput" data-dojo-type="dojox/mvc/Output"
+							data-dojo-props="value: at('rel:', 'Street')"></div>
+					</div>
+					<div class="row">
+						<div class="namecell" id="cityOutput" data-dojo-type="dojox/mvc/Output"
+							data-dojo-props="value: at('rel:', 'City')">${this.value},</div>
+						<div class="namecell" id="stateOutput" data-dojo-type="dojox/mvc/Output"
+							data-dojo-props="value: at('rel:', 'State')"></div>
+						<div class="namecell" id="zipOutput" data-dojo-type="dojox/mvc/Output"
+							data-dojo-props="value: at('rel:', 'Zip')"></div>
+					</div>
 				</div>
 			</div>
-	<!--	</div> -->
 		</div>
 	</body>
 </html>

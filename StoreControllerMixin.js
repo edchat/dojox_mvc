@@ -98,8 +98,8 @@ define([
 		_resultsWatchHandle: null,
 
 		constructor: function(){
-			if(!this[this._refSourceModelProp]){
-				this[this._refSourceModelProp] = "model";
+			if(!this._refSourceModelProp){
+				this._refSourceModelProp = "model";
 			}
 		},
 

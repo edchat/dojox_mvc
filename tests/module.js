@@ -6,6 +6,7 @@ define([
 	"./doh/wildcard",
 	"./doh/_Controller",
 	"./doh/ModelRefController",
+	"./doh/StoreControllerMixin",
 	"./doh/ListControllerMixin",
 	"./doh/StoreRefControllerTest",
 	"./doh/WidgetList",

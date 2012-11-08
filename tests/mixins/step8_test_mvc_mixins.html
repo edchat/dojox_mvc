@@ -25,8 +25,8 @@
 			'dojox/mvc/parserExtension',
 			'dijit/form/TextBox',
 			'dijit/form/Button',
-			'dojox/mvc/Group',
 			'dijit/form/RadioButton',
+			'dojox/mvc/Group',
 			'dojox/mvc/WidgetList',
 			'dojox/mvc/_InlineTemplateMixin',
 			'dojox/mvc/Output'
@@ -80,13 +80,13 @@
 
 					transformRadioChecked : {
 						format: function(checked){
-							return checked;
-						},
-						parse: function(checked){
 							if(checked){
 								ctrl.set('cursorIndex', this.target.index);
 								console.log("in transformRadioChecked setting cursorIndex to "+this.target.index);
 							}
+							return checked;
+						},
+						parse: function(checked){
 							return checked;
 						}
 					},
@@ -129,7 +129,6 @@
 							};
 						}
 						this.model.splice(idx, 0, getStateful(data));
-						ctrl.set('cursorIndex',idx);
 					}
 
 				});

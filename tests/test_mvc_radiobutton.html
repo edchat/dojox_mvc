@@ -28,7 +28,7 @@ require([
     		radio2Value: "Coffee",
     		radio3Checked: false,
     		radio3Value: "Coke",
-    		radio4Checked: false,
+    		radio4Checked: true,
 			radio4Value: "Pepsi"
     };
 	
@@ -47,15 +47,20 @@ require([
 				}
 			};
 	
-    ready(function(){
+	ready(function(){
     	
-        registry.byId("radio3").set("value", at(model, "radio3Value"));
-        registry.byId("radio3").set("checked", at(model, "radio3Checked").transform(transformRadioChecked));
-        registry.byId("radio4").set("value", at(model, "radio4Value"));
-        registry.byId("radio4").set("checked", at(model, "radio4Checked").transform(transformRadioChecked));
-        registry.byId("radio1").set("checked", true);
-        
-    });
+		registry.byId("radio3").set("value", at(model, "radio3Value"));
+		registry.byId("radio3").set("checked", at(model, "radio3Checked").transform(transformRadioChecked));
+		registry.byId("radio4").set("value", at(model, "radio4Value"));
+		registry.byId("radio4").set("checked", at(model, "radio4Checked").transform(transformRadioChecked));
+
+		// When "value" is set on a RadioButton it also sets "checked" true, so we have to re-initialize the checked here,
+		// either of the next two lines would set checked for the first radio button.  
+		// If "value" were not set/bound this would not be needed.
+		//registry.byId("radio1").set("checked", true);
+		registry.byId("radio1").set("value", at(model, "radio1Value"));
+
+	});
 });</script>
 </head>
 <body class="claro">
@@ -65,16 +70,16 @@ require([
 	
     <form id="myform">
     <input type="radio" data-dojo-type="dijit/form/RadioButton" name="drink" id="radio1" 
-    	data-dojo-props="value: at(model, 'radio1Value'), checked: at(model, 'radio1Checked').transform(transformRadioChecked)"/> 
+    	data-dojo-props="checked: at(model, 'radio1Checked').transform(transformRadioChecked), value: at(model, 'radio1Value'), "/> 
     <label for="radio1" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at(model, 'radio1Value')"></label> <br />
     <input type="radio" data-dojo-type="dijit/form/RadioButton" name="drink" id="radio2" 
-    	data-dojo-props="value: at(model, 'radio2Value'), checked: at(model, 'radio2Checked').transform(transformRadioChecked)"/> 
+    	data-dojo-props="checked: at(model, 'radio2Checked').transform(transformRadioChecked), value: at(model, 'radio2Value')"/> 
     <label for="radio2" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at(model, 'radio2Value')"></label> <br />
+    <!-- For radio3 and radio4 checked is bound in the js code above. -->
     <input type="radio" data-dojo-type="dijit/form/RadioButton" name="drink" id="radio3"/> 
-    <label for="radio3" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at(model, 'radio3Value')"></label> <br />
+    <label for="radio3" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at(model, 'radio3Value')"></label> <br />    
     <input type="radio" data-dojo-type="dijit/form/RadioButton" name="drink" id="radio4"/> 
     <label for="radio4" data-dojo-type="dojox/mvc/Output" data-dojo-props="value: at(model, 'radio4Value')"></label> <br />
-
 </form>
 <br />
     <label>Selected Value is:</label> <br />

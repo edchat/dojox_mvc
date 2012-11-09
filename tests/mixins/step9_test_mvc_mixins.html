@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
-		<title>Step 8 of test for Controllers with mixins, uses an EditControllerMixin, StoreControllerMixin, and ListControllerMixin.</title>
+		<title>Step 9 of test for Controllers with mixins, uses an EditControllerMixin, StoreControllerMixin, and ListControllerMixin with holdModelUntilCommit: true.</title>
 		<style type="text/css">
 			@import "../css/app-format.css";
 			@import "../../../../dijit/themes/claro/claro.css";
@@ -17,6 +17,7 @@
 			'dojo/ready',
 			'dojo/when',
 			'dojo/store/Memory',
+			'dojox/mvc/at',
 			'dojox/mvc/getStateful',
 			'dojox/mvc/ModelRefController',
 			'dojox/mvc/EditControllerMixin',
@@ -30,7 +31,7 @@
 			'dojox/mvc/WidgetList',
 			'dojox/mvc/_InlineTemplateMixin',
 			'dojox/mvc/Output'
-			], function(parser, declare, ready, when, Memory, getStateful, 
+			], function(parser, declare, ready, when, Memory, at, getStateful, 
 						ModelRefController, EditControllerMixin, StoreControllerMixin, ListControllerMixin){
 				// Initial data
 				var storeData = {
@@ -64,14 +65,17 @@
 				};
 
 
-				// To move from ModelRefController with EditControllerMixin, ListControllerMixin to also use StoreControllerMixin
-				// I had to add the following
-				// Need to require for StoreControllerMixin, when, and Memory 
-				// I also needed to change the data to be valid for a store query.   
-				// Needed to setup ctrlclz with ModelRefController and the mixins, and and use when and ctrl.queryStore() to setup the models. 
+				// To move from ModelRefController with EditControllerMixin, ListControllerMixin, and StoreControllerMixin
+				// with holdModelUntilCommit: false to use holdModelUntilCommit: true 
+				// I had to add the require for dojox/mvc/at 
 				//
-				// This test uses holdModelUntilCommit: false on the WidgetList, so updates to the address will immediately showup in 
-				// the verify section and in the select an address section, but changes can be "Reset" back to their last saved state.
+				// This test uses holdModelUntilCommit: true on the WidgetList, so updates to the address will not showup in 
+				// the "Verify" section and in the "Select an address" section until "Save" is pressed.
+				// But using holdModelUntilCommit: true requires use of a second controller (ctrlSource) which is bound to
+				// the sourceModel and cursorIndex of the first controller (ctrl).
+				//
+				// The "Verify" section and the "Select an address" section are bound to at(ctrlSource,'cursor') and at(ctrlSource, 'model') respectively.
+				// To set the Radio buttons correctly, "Checked" has to be updated in ctrl.model inside the transformRadioChecked. 
 				//
 
 				var ctrlclz = declare([ModelRefController, EditControllerMixin, StoreControllerMixin, ListControllerMixin], {
@@ -82,6 +86,7 @@
 								ctrl.set('cursorIndex', this.target.index);
 								console.log("in transformRadioChecked setting cursorIndex to "+this.target.index);
 							}
+							ctrl.model[this.target.index].set("Checked", checked);  // had to do this here to update the ctrl.model too.
 							return checked;
 						},
 						parse: function(checked){
@@ -126,11 +131,14 @@
 								"Zip" : this.cursor.Zip
 							};
 						}
-						this.model.splice(idx, 0, getStateful(data));
+						var statefulData = getStateful(data);
+						this.model.splice(idx, 0, statefulData);
+						ctrlSource.model.splice(idx, 0, statefulData);
 					}
 
 				});
-				ctrl = new ctrlclz({store: new Memory({data:storeData}), holdModelUntilCommit: false});
+				ctrl = new ctrlclz({store: new Memory({data:storeData}), holdModelUntilCommit: true});
+				ctrlSource = new (declare([ModelRefController, ListControllerMixin], {}))({model: at(ctrl, "sourceModel"), cursorIndex: at(ctrl, "cursorIndex")});
 				when(ctrl.queryStore(), function(){
 							parser.parse();
 				});
@@ -142,13 +150,13 @@
 		<div id="wrapper">
 		<div id="main">
 			<div>
-				<h2>Step 8 of test for Controllers with mixins, uses an EditControllerMixin, StoreControllerMixin, and ListControllerMixin.</h2>
+				<h2>Step 9 of test for Controllers with mixins, uses an EditControllerMixin, StoreControllerMixin, and ListControllerMixin with holdModelUntilCommit: true</h2>
 				<h2>Select the Shipping Address to use.</h2>
 			</div>
 
 			<div data-dojo-type="dojox/mvc/WidgetList"
 				 data-dojo-mixins="dojox/mvc/_InlineTemplateMixin"
-				 data-dojo-props="children: at(ctrl, 'model'), partialRebuild:true">
+				 data-dojo-props="children: at(ctrlSource, 'model'), partialRebuild:true">
 					<script type="dojox/mvc/InlineTemplate">
 						<div>
 							<input type="radio" data-dojo-type="dijit/form/RadioButton" name="AddressName" id="radio${indexAtStartup}" 
@@ -217,7 +225,7 @@
 
 			<br/>
 
-			<div class="fullrow" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at(ctrl,'cursor')"> 
+			<div class="fullrow" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at(ctrlSource,'cursor')"> 
 			<div>
 				<h2>Verify the shipping address for:
 					<div class="namecell" id="AddressNameOutput" data-dojo-type="dojox/mvc/Output"

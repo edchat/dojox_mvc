@@ -17,6 +17,7 @@
 			'dojo/ready',
 			'dojo/when',
 			'dojo/store/Memory',
+			'dojox/mvc/at',
 			'dojox/mvc/getStateful',
 			'dojox/mvc/ModelRefController',
 			'dojox/mvc/EditControllerMixin',
@@ -30,7 +31,7 @@
 			'dojox/mvc/WidgetList',
 			'dojox/mvc/_InlineTemplateMixin',
 			'dojox/mvc/Output'
-			], function(parser, declare, ready, when, Memory, getStateful, 
+			], function(parser, declare, ready, when, Memory, at, getStateful, 
 						ModelRefController, EditControllerMixin, StoreControllerMixin, ListControllerMixin){
 				// Initial data
 				var storeData = {
@@ -132,7 +133,8 @@
 					}
 
 				});
-				ctrl = new ctrlclz({store: new Memory({data:storeData}), holdModelUntilCommit: false});
+				ctrl = new ctrlclz({store: new Memory({data:storeData}), holdModelUntilCommit: true});
+				ctrlSource = new (declare([ModelRefController, ListControllerMixin], {}))({model: at(ctrl, "sourceModel"), cursorIndex: at(ctrl, "cursorIndex")});
 				when(ctrl.queryStore(), function(){
 							parser.parse();
 				});
@@ -150,7 +152,7 @@
 
 			<div data-dojo-type="dojox/mvc/WidgetList"
 				 data-dojo-mixins="dojox/mvc/_InlineTemplateMixin"
-				 data-dojo-props="children: at(ctrl, 'model'), partialRebuild:true">
+				 data-dojo-props="children: at(ctrlSource, 'model'), partialRebuild:true">
 					<script type="dojox/mvc/InlineTemplate">
 						<div>
 							<input type="radio" data-dojo-type="dijit/form/RadioButton" name="AddressName" id="radio${indexAtStartup}" 
@@ -219,8 +221,7 @@
 
 			<br/>
 
-			<!-- I guess I can not use cursor here if I want to use sourceModel so holdModelUntilCommit: true does not work well with ListControllerMixin -->
-			<div class="fullrow" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at(ctrl,'cursor')"> 
+			<div class="fullrow" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at(ctrlSource,'cursor')"> 
 			<div>
 				<h2>Verify the shipping address for:
 					<div class="namecell" id="AddressNameOutput" data-dojo-type="dojox/mvc/Output"

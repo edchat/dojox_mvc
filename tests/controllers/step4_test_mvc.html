@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
-		<title>Step 4 of test for Controllers with mixins, uses a StoreControllerMixin without an EditControllerMixin.</title>
+		<title>Step 4 of test for Controllers, uses a StoreRefController.</title>
 		<style type="text/css">
 			@import "../css/app-format.css";
 			@import "../../../../dijit/themes/claro/claro.css";
@@ -13,19 +13,17 @@
  
 		require([
 			'dojo/parser',
-			'dojo/_base/declare',
 			'dojo/ready',
 			'dojo/when',
 			'dojo/store/Memory',
 			'dojox/mvc/getStateful',
-			'dojox/mvc/ModelRefController',
-			'dojox/mvc/StoreControllerMixin',
+			'dojox/mvc/StoreRefController',
 			'dojox/mvc/parserExtension',
 			'dijit/form/TextBox',
 			'dijit/form/Button',
 			'dojox/mvc/Group',
 			'dojox/mvc/Output'
-			], function(parser, declare, ready, when, Memory, getStateful, ModelRefController, StoreControllerMixin){
+			], function(parser, ready, when, Memory, getStateful, StoreRefController){
 
 				// Initial data
 			var storeData = {
@@ -44,28 +42,28 @@
 				]
 			};
 
-				// To move from ModelRefController to use ModelRefController/StoreControllerMixin, need to require StoreControllerMixin, Memory, and When 
+				// To move from ModelRefController to use StoreRefController, need to require StoreRefController, Memory, and when 
 				// also needed to change the data to be valid for a store query. 
-				// Setup ctrlclz with ModelRefController and the mixins, and use ctrl.queryStore() to setup the models.
+				// Setup StoreRefController and use ctrl.queryStore() to setup the models.
 				//
 				// Because of the queryStore call had to move the call to parser.parse inside the when to wait for it. 
 				// The change in the data for queryStore required changes to the bindings. had to add a group with target: at('rel:','0')
-				// for the bindings of fields.  
+				// for the bindings of fields.
 				//
-				// The ctrlclz constructor sets store to the memory store and uses queryStore() to setup the models.
+				// An exprchar:'%' was used for an mvc/Output just to show how it is used.  
+				//
 
-				var ctrlclz = declare([ModelRefController, StoreControllerMixin], {
-
-					transformAddress2Class : {
+				transformAddress2Class = {
 						format: function(value){
 							if(value && value.trim().length > 0){ 
 								return "row" // if AddressLine2 is set return row for class
 							}
 							return "hiderow"; // if AddressLine2 is not set return hiderow for class
 						}
-					}
-				});
-				ctrl = new ctrlclz({store: new Memory({data:storeData})});
+
+				};
+
+				ctrl = new StoreRefController({store: new Memory({data:storeData})});
 				when(ctrl.queryStore(), function(){
 							parser.parse();
 				});
@@ -78,7 +76,7 @@
 		<div id="wrapper">
 		<div id="main">
 			<div>
-				<h2>Step 4 of test for Controllers with mixins, uses a StoreControllerMixin without an EditControllerMixin.</h2>
+				<h2>Step 4 of test for Controllers, uses a StoreRefController.</h2>
 				<h2>Enter Shipping Address</h2>
 			</div>
 			<div class="fullrow" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at(ctrl,'model')">
@@ -118,19 +116,19 @@
 
 			<br/>
 			<div>
-				<h2>Verify the shipping address.</h2>
+				<h2>Verify the shipping address</h2>
 			</div>
 			<div class="fullrow" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at(ctrl,'model')">
 				<div class="fullrow" data-dojo-type="dojox/mvc/Group" data-dojo-props="target: at('rel:','0')">
 					<div class="fullrow">
-						<div class="namecell" id="nameOutput" data-dojo-type="dojox/mvc/Output"
+						<div class="boldnamecell" id="nameOutput" data-dojo-type="dojox/mvc/Output"
 							data-dojo-props="value: at('rel:', 'FullName')"></div>
 					</div>
 					<div class="fullrow">
 						<div class="namecell" data-dojo-type="dojox/mvc/Output"
 							data-dojo-props="value: at('rel:', 'AddressLine1')"></div>
 					</div>
-					<div class="hiderow" data-mvc-bindings="class: at('rel:', 'AddressLine2').direction(at.from).transform(ctrl.transformAddress2Class)">
+					<div class="hiderow" data-mvc-bindings="class: at('rel:', 'AddressLine2').direction(at.from).transform(transformAddress2Class)">
 						<div class="namecell" data-dojo-type="dojox/mvc/Output"
 							data-dojo-props="value: at('rel:', 'AddressLine2')"></div>
 					</div>

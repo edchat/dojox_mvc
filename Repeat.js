@@ -59,6 +59,7 @@ define([
 		// _relTargetProp: String
 		//		The name of the property that is used by child widgets for relative data binding.
 		_relTargetProp : "children",
+		
 
 		startup: function(){
 			// This code needed for ticket 14423 is using removeRepeatNode to work with mobile.lists

@@ -29,7 +29,7 @@ define([
 			window.at = at;			
 			this.inherited(arguments);
 		},
-
+		
 		getParent: function(){
 			console.log("Call myMvcTemplated getParent");
 			return null;

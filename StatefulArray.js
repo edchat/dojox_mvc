@@ -37,7 +37,6 @@ define([
 
 		var array = lang._toArray(a || []);
 		var ctor = StatefulArray;
-		ctor._meta = {bases: [Stateful]}; // For isInstanceOf()
 		array.constructor = ctor;
 		return lang.mixin(array, {
 			pop: function(){
@@ -134,7 +133,7 @@ define([
 				for(var i = start || 0; i < Math.min(end, this.get("length")); i++){
 					slice.push(this.get(i));
 				}
-				return new StatefulArray(slice); // dojox/mvc/StatefuArray
+				return new StatefulArray(slice); // dojox/mvc/StatefulArray
 			},
 			watchElements: function(/*Function*/ callback){
 				// summary:
@@ -162,7 +161,7 @@ define([
 							break;
 						}
 					}
-				}; 
+				};
 				return h; // dojo/handle
 			}
 		}, Stateful.prototype, {
@@ -190,9 +189,13 @@ define([
 					}
 					return this;
 				}
+			},
+			isInstanceOf: function(cls){
+				return Stateful.prototype.isInstanceOf.apply(this, arguments) || cls == StatefulArray;
 			}
 		});
 	};
 
+	StatefulArray._meta = {bases: [Stateful]}; // For isInstanceOf()
 	return lang.setObject("dojox.mvc.StatefulArray", StatefulArray);
 });

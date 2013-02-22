@@ -8,6 +8,7 @@ define([
 		//		Maps "value" attribute to form element value, innerText/innerHTML to element's innerText/innerHTML, and other attributes to DOM attributes.
 		//		Also, for form element, updates value (or checked for check box) as user edits.
 
+		_setValueAttr: {node: "domNode", type: "value"},
 		_setInnerTextAttr: {node: "domNode", type: "innerText"},
 		_setInnerHTMLAttr: {node: "domNode", type: "innerHTML"},
 

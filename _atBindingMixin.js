@@ -252,11 +252,12 @@ define([
 			if(this.constructor._attribs){
 				return this.constructor._attribs; // String[]
 			}
-			var list = ["onClick"].concat(this.constructor._setterAttrs);
-			array.forEach(["id", "excludes", "properties", "ref", "binding"], function(s){
-				var index = array.indexOf(list, s);
-				if(index >= 0){ list.splice(index, 1); }
-			});
+			var list = ["onClick"];
+			for(var s in this.constructor._props){
+				if(!/^(id|excludes|properties|ref|binding)$/.test(s)){
+					list.push(s);
+				}
+			}
 			return this.constructor._attribs = list; // String[]
 		}
 	});

@@ -13,7 +13,9 @@ define([
 	"dijit/_Container",
 	"dijit/form/TextBox",
 	"dojox/mvc/getStateful",
+    "dojox/mvc/StoreRefController",
     "dojox/mvc/EditStoreRefListController",	
+    "dojo/store/JsonRest",
     "dojo/store/Memory",
     "dojo/store/Observable",
     "dojo/when",
@@ -22,7 +24,7 @@ define([
 	"dojo/text!dojox/mvc/tests/test_WidgetList_childTemplate.html",
 	"dojo/text!dojox/mvc/tests/test_WidgetList_childBindings.json"
 ], function(doh, array, config, declare, lang, Deferred, QueryResults, _WidgetBase, at, _TemplatedMixin, _WidgetsInTemplateMixin, _Container,
-	_TextBox, getStateful, EditStoreRefListController, Memory, Observable, when, WidgetList, template, childTemplate, childBindings){
+	_TextBox, getStateful, StoreRefController, EditStoreRefListController, JsonRest, Memory, Observable, when, WidgetList, template, childTemplate, childBindings){7
     var data = {
         "identifier": "Serial",
         "items": [
@@ -169,6 +171,49 @@ define([
 					Email: "d.a@test.com"
 				});
 				ctrl.removeStore("A111");
+				return dfd;
+			},
+			function observeJsonRest(){
+				// Test we can observe results from a store that DOES defer results.
+				var store = new JsonRest({
+					target: require.toUrl("dojo/tests/store/"),
+					put: function(o){ var dfd = new Deferred(); setTimeout(function(){ dfd.resolve(o.id); }, 500); return dfd.promise; }, // Intead of making REST call, just return the ID asynchronously
+					remove: function(){ var dfd = new Deferred(); setTimeout(function(){ dfd.resolve(true); }, 500); return dfd.promise; } // Intead of making REST call, just return true asynchronously
+				});
+
+				var ctrl = new StoreRefController({store : new Observable(store)}),
+				 dfd = new doh.Deferred(),
+				 updates = [];
+
+				ctrl.queryStore("treeTestRoot").observe(dfd.getTestErrback(function(object, previousIndex, newIndex){
+					updates.push(lang.delegate(object, {
+						previousIndex: previousIndex,
+						newIndex: newIndex
+					}));
+					if(updates.length == 2){
+						doh.is({
+							id: "node6",
+							name: "node6",
+							someProperty: "somePropertyA",
+							previousIndex: -1,
+							newIndex: 0
+						}, updates[0], "The observable callback should catch the addition");
+						doh.is({
+							id: "node4",
+							name: "node4",
+							someProperty: "somePropertyA",
+							previousIndex: 4,
+							newIndex: -1
+						}, updates[1], "The observable callback should catch the removal");
+						dfd.callback(1);
+					}
+				}));
+				ctrl.addStore({
+					id: "node6",
+					name: "node6",
+					someProperty: "somePropertyA"
+				});
+				ctrl.removeStore("node4");
 				return dfd;
 			}
 		]);

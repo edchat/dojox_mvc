@@ -70,6 +70,7 @@ define([
 	]);
 
 	var wl0 = new WidgetList({
+		partialRebuild: true,
 		children: getStateful(a),
 		childParams: {
 			startup: function(){
@@ -83,6 +84,7 @@ define([
 	wl0.startup();
 
 	var wl1 = new WidgetList({
+		partialRebuild: true,
 		children: getStateful(a),
 		childBindings: eval("(" + childBindings + ")"),
 		templateString: childTemplate
@@ -147,6 +149,8 @@ define([
 			doh.is("David", children[1].inputNode.value, "The input of index #1 should be: David");
 			doh.is("E111", children[2].labelNode.value, "The label of index #2 should be: E111");
 			doh.is("Emma", children[2].inputNode.value, "The input of index #2 should be: Emma");
+			doh.is("C111", children[3].labelNode.value, "The label of index #3 should be: C111");
+			doh.is("Chad", children[3].inputNode.value, "The input of index #3 should be: Chad");
 		},
 		function replaceElement(){
 			wl0.set("children", a);
